@@ -1,6 +1,4 @@
-package ch.heigvd.amt.mvcsimple.model;
-
-import java.util.Objects;
+package ch.heigvd.amt.mvcProject.model;
 
 public class Quote {
 

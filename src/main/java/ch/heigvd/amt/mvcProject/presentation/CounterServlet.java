@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcsimple.presentation;
+package ch.heigvd.amt.mvcProject.presentation;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet;
