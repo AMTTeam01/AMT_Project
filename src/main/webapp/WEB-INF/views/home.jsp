@@ -1,0 +1,10 @@
+<html>
+<head>
+    <title>
+        Help2000
+    </title>
+</head>
+<body>
+<p>${home}</p>
+</body>
+</html>
