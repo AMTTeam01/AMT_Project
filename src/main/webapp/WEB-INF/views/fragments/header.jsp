@@ -7,10 +7,8 @@
 
     <title>Navbar Template for Bootstrap</title>
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
-
     <!-- Bootstrap core CSS -->
-    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="navbar.css" rel="stylesheet">
@@ -33,7 +31,7 @@
                 </li>
             </ul>
             <form class="form-inline my-2 my-md-0">
-                <input class="form-control" type="text" placeholder="Search">
+                <input class="form-control" type="text" placeholder="Search" />
             </form>
         </div>
     </nav>
