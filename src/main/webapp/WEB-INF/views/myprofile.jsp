@@ -11,5 +11,4 @@
   </h1>
 </div>
 
-
 <%@include file="fragments/footer.jsp"%>

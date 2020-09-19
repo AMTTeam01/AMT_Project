@@ -1,13 +1,10 @@
-<html>
-<head>
-    <title>
-        Help2000
-    </title>
-</head>
-<body>
+<%@include file="fragments/header.jsp"%>
+
 <p>${home}</p>
-<button type="button">Sign up</button>
-<div></div>
-<button type="button">login</button>
-</body>
-</html>
+
+<button>Sign up</button>
+
+<button>login</button>
+
+<%@include file="fragments/footer.jsp"%>
+
