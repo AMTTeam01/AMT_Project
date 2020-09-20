@@ -10,7 +10,7 @@
     <link type="text/css" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Webapp CSS -->
-    <link type="text/css" href="${pageContext.request.contextPath}/assets/css/mainnn.css" rel="stylesheet">
+    <link type="text/css" href="${pageContext.request.contextPath}/assets/css/main_style.css" rel="stylesheet">
 </head>
 <header>
     <!-- Navigation -->

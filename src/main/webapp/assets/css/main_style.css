@@ -10,7 +10,43 @@ h1 {
     margin: 10px;
 }
 
-/*.button {
+.split {
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    margin-top: 57px;
+}
+
+.left {
+    left: 0;
+}
+
+.img {
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.right {
+    right: 0;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.bottom {
+    bottom: 0;
+}
+
+.button {
     background-color: #4CAF50;
     border: none;
     color: white;
@@ -19,7 +55,8 @@ h1 {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-}*/
+    border-radius: 10px;
+}
 
 .questions-container {
     background-color: #5a6268;

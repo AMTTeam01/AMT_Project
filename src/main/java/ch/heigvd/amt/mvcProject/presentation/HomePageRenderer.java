@@ -1,6 +1,5 @@
 package ch.heigvd.amt.mvcProject.presentation;
 
-
 import ch.heigvd.amt.mvcProject.business.SloganGenerator;
 
 import javax.servlet.ServletConfig;
@@ -24,7 +23,7 @@ public class HomePageRenderer extends HttpServlet {
 
         String model = service.generateSlogan();
         request.setAttribute("home", model);
-        System.out.println(service.generateSlogan());
+        //System.out.println(service.generateSlogan());
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
     }
 }
