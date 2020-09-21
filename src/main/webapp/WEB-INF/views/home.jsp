@@ -2,11 +2,10 @@
 
 
 <div class="split left">
-    <div class="centered">
+    <div class="left-home-page">
         <h1>${home}</h1>
-
-        <button class="button">Sign up</button>
-        <button class="button">login</button>
+        <button class="btn btn-primary classic-button">Sign up</button>
+        <a class="btn btn-primary classic-button" href="login">Login</a>
     </div>
 </div>
 

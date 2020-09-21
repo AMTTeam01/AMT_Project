@@ -1,6 +1,6 @@
 
 body {
-    background-color: #1b1e21;
+    background-color: #3A3840;
 }
 
 h1 {
@@ -34,7 +34,7 @@ h1 {
     right: 0;
 }
 
-.centered {
+.left-home-page {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -46,23 +46,62 @@ h1 {
     bottom: 0;
 }
 
-.button {
+/*
+Buttons, inputs, ...
+ */
+
+.classic-button {
     background-color: transparent;
-    border: 2px solid #00ff3c;
+    border: 1px solid #FF7300;
     color: white;
-    padding: 15px 32px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    border-radius: 10px;
+    border-radius: 4px;
     transition-duration: 0.4s;
     cursor: pointer;
 }
 
-.button:hover {
-    background-color: #00ff3c;
-    color: black;
+.classic-button:hover {
+    background-color: #FF7300;
+    border: 1px solid #FF7300;
+}
+
+.classic-button-filled{
+    background-color: #FF7300;
+    border: 1px solid #FF7300;
+    color: white;
+    border-radius: 4px;
+}
+
+.classic-button-filled:hover{
+    background-color: #DA6200;
+    border: 1px solid #DA6200;
+}
+
+.classic-form{
+    background-color: transparent;
+    border: 1px solid #FF7300;
+    color: #FF7300;
+    margin-top: 20px;
+    border-radius: 0px;
+    margin-bottom: 20px;
+}
+
+.classic-form:focus{
+    background-color: transparent;
+    border: 1px solid #FF7300;
+    color: #FF7300;
+    box-shadow: none;
+    outline: none;
+}
+
+.classic-form::placeholder{
+    color: #A8B1A9;
+}
+
+.button-full{
+    width: 100%;
 }
 
 .questions-container {
@@ -75,4 +114,11 @@ h1 {
     left: 50%;
     bottom: 0;
     transform: translate(-50%, 80px);
+}
+
+.login-form{
+    margin-top: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
