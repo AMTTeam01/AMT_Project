@@ -1,4 +1,5 @@
-FROM payara/server-full:5.2020.5-jdk11
+FROM payara/server-full:5.2020.4-jdk11
 
 # Copy the war to the deployment dir
-COPY help_2020.war $DEPLOY_DIR
+# TODO Change to our war filename
+COPY apps/mvc-simple.war $DEPLOY_DIR
