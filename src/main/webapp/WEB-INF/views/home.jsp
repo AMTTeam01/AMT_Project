@@ -4,8 +4,8 @@
 <div class="split left">
     <div class="left-home-page">
         <h1>${home}</h1>
-        <button class="btn btn-primary classic-button">Sign up</button>
-        <a class="btn btn-primary classic-button" href="login">Login</a>
+        <a class="btn btn-primary classic-button" href="${pageContext.request.contextPath}/register">Sign up</a>
+        <a class="btn btn-primary classic-button" href="${pageContext.request.contextPath}/login">Login</a>
     </div>
 </div>
 
