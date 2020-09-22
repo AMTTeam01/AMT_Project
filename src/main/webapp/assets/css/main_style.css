@@ -1,0 +1,124 @@
+
+body {
+    background-color: #3A3840;
+}
+
+h1 {
+    color: white;
+    font-size: 18px;
+    text-align: left;
+    margin: 10px;
+}
+
+.split {
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    margin-top: 57px;
+}
+
+.left {
+    left: 0;
+}
+
+.img {
+    height:100%;
+    width:100%;
+    object-fit: cover;
+}
+
+.right {
+    right: 0;
+}
+
+.left-home-page {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.bottom {
+    bottom: 0;
+}
+
+/*
+Buttons, inputs, ...
+ */
+
+.classic-button {
+    background-color: transparent;
+    border: 1px solid #FF7300;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 4px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.classic-button:hover {
+    background-color: #FF7300;
+    border: 1px solid #FF7300;
+}
+
+.classic-button-filled{
+    background-color: #FF7300;
+    border: 1px solid #FF7300;
+    color: white;
+    border-radius: 4px;
+}
+
+.classic-button-filled:hover{
+    background-color: #DA6200;
+    border: 1px solid #DA6200;
+}
+
+.classic-form{
+    background-color: transparent;
+    border: 1px solid #FF7300;
+    color: #FF7300;
+    margin-top: 20px;
+    border-radius: 0px;
+    margin-bottom: 20px;
+}
+
+.classic-form:focus{
+    background-color: transparent;
+    border: 1px solid #FF7300;
+    color: #FF7300;
+    box-shadow: none;
+    outline: none;
+}
+
+.classic-form::placeholder{
+    color: #A8B1A9;
+}
+
+.button-full{
+    width: 100%;
+}
+
+.questions-container {
+    background-color: #5a6268;
+    height: auto;
+    width: 40%;
+    border-radius: 10px;
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 80px);
+}
+
+.login-form{
+    margin-top: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
