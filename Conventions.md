@@ -6,3 +6,5 @@
     
 ## URLs :
     - my profile -> my_profile
+
+## Use lambok!!!
