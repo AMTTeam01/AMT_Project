@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "MyProfileServlet", urlPatterns = "/my_profile")
-public class MyProfileServlet extends HttpServlet {
+public class MyProfileRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
