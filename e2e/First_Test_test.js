@@ -1,6 +1,6 @@
 Feature('First_Test');
 
 Scenario('test something', (I) => {
-    I.amOnPage('https://codecept.io/quickstart/')
-    I.see('CodeceptJS')
+    I.amOnPage('/');
+    I.see('Help2000');
 });

@@ -9,7 +9,7 @@ exports.config = {
   output: './output',
   helpers: {
     Puppeteer: {
-      url: 'https://codecept.io/quickstart/',
+      url: 'http://localhost:8080/mvc-simple',
       show: false,
       windowSize: '1200x900'
     }
