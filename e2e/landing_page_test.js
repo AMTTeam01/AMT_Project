@@ -9,10 +9,10 @@ Scenario('landing page tests', (I) => {
 
     //sign up button
     I.click('Sign up')
-    I.waitForElement('#register_username')
+    I.seeInCurrentUrl('/register')
 
     //login button
     I.amOnPage('/')
     I.click('Login')
-    I.waitForElement('#login_username')
+    I.seeInCurrentUrl('/login')
 });

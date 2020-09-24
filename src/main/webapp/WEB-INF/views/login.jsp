@@ -13,7 +13,7 @@
     <% } %>
     <form method="POST" action="${pageContext.request.contextPath}/request.login">
         <input id="login_username" name="username" class="form-control classic-form" placeholder="Insert your username" required />
-        <input name="password" class="form-control classic-form" type="password" placeholder="Insert your password" required />
+        <input id="login_password" name="password" class="form-control classic-form" type="password" placeholder="Insert your password" required />
         <button type="submit" class="btn btn-primary classic-button-filled button-full">Login</button>
     </form>
 </div>
