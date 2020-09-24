@@ -9,7 +9,7 @@ exports.config = {
   output: './output',
   helpers: {
     Puppeteer: {
-      url: 'http://localhost:8080/mvc-simple',
+      url: 'http://localhost:8080/help-2020',
       show: false,
       windowSize: '1200x900'
     }
