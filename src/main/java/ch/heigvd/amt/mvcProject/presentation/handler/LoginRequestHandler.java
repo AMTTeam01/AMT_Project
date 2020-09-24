@@ -34,7 +34,7 @@ public class LoginRequestHandler extends HttpServlet {
         if(service.doesExistUser(userRequest.getUsername(), userRequest.getPassword())){
             resp.sendRedirect(getServletContext().getContextPath());
         }else{
-            resp.sendError(401, "Username or password is incorrect");
+            resp.sendRedirect(getServletContext().getContextPath() + "/login?error=Your e-mail or your password is incorrect");
         }
     }
 }
