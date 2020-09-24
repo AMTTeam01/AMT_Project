@@ -15,4 +15,4 @@ then
 fi
 
 # TODO change to our .war filename
-cp target/mvc-simple.war docker/images/payara/apps/
+cp target/help-2020.war docker/images/payara/apps/
