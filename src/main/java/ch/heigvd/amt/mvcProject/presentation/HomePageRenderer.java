@@ -23,7 +23,6 @@ public class HomePageRenderer extends HttpServlet {
 
         String model = service.generateSlogan();
         request.setAttribute("home", model);
-        //System.out.println(service.generateSlogan());
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
     }
 }

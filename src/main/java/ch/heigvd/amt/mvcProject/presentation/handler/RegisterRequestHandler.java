@@ -43,7 +43,7 @@ public class RegisterRequestHandler extends HttpServlet {
             resp.sendRedirect(getServletContext().getContextPath());
 
         } else {
-            resp.sendError(400, "Your password and your confirmation of password aren't the same");
+            resp.sendRedirect(getServletContext().getContextPath() + "/register?error='Your password and your confirmation aren't the same'");
         }
     }
 }
