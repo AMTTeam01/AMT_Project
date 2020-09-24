@@ -80,3 +80,5 @@ fabric.properties
 /e2e/node_modules/
 
 e2e/output/
+
+docker/images/payara/apps/help-2020.war
