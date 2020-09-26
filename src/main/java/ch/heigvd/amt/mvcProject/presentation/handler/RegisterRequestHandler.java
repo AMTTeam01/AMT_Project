@@ -2,7 +2,6 @@ package ch.heigvd.amt.mvcProject.presentation.handler;
 
 
 import ch.heigvd.amt.mvcProject.business.UserService;
-import ch.heigvd.amt.mvcProject.model.User;
 import ch.heigvd.amt.mvcProject.model.UserRequest;
 
 import javax.servlet.ServletConfig;

@@ -1,11 +1,16 @@
 package ch.heigvd.amt.mvcProject.domain.user;
 
-import lombok.Builder;
-import lombok.Getter;
+import ch.heigvd.amt.mvcProject.domain.IEntity;
+import lombok.*;
 
+@Data
 @Builder
-@Getter
-public class User {
+public class User implements IEntity {
+
+    @Setter(AccessLevel.NONE)
+    private UserId id = new UserId();
+
     private String username;
+
     private String email;
 }
