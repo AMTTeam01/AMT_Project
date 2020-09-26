@@ -11,7 +11,7 @@ public class UserFacade {
         this.userRepository = userRepository;
     }
 
-    public void addNewUser(NewUserCommand command){
+    public void addNewUser(UserCommand command){
         User submittedUser = User.builder()
                 .email(command.getEmail())
                 .username(command.getUsername())

@@ -2,12 +2,9 @@ package ch.heigvd.amt.mvcProject.ui.web.user;
 
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.user.NewUserCommand;
+import ch.heigvd.amt.mvcProject.application.user.UserCommand;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
-import ch.heigvd.amt.mvcProject.business.UserService;
-import ch.heigvd.amt.mvcProject.model.UserRequest;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,7 +27,7 @@ public class RegisterRequestHandler extends HttpServlet {
 
         if (password.equals(cPasssword)) {
 
-            NewUserCommand command = NewUserCommand.builder()
+            UserCommand command = UserCommand.builder()
                     .username(req.getParameter("username"))
                     .email(req.getParameter("email"))
                     .password(password)

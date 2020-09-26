@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @EqualsAndHashCode
-public class NewUserCommand {
+public class UserCommand {
 
     private String username;
 
