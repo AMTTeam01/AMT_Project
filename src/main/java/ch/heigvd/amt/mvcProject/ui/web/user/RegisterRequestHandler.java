@@ -15,8 +15,15 @@ import java.io.IOException;
 @WebServlet(name = "RegisterRequestHandler", urlPatterns = "/request.register")
 public class RegisterRequestHandler extends HttpServlet {
 
-    private ServiceRegistry serviceRegistry = ServiceRegistry.getServiceRegistry();
-    private UserFacade userFacade = serviceRegistry.getUserFacade();
+    private ServiceRegistry serviceRegistry;
+    private UserFacade userFacade;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        serviceRegistry = ServiceRegistry.getServiceRegistry();
+        userFacade = serviceRegistry.getUserFacade();
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
