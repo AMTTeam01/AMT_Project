@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.ui.web.user;
+package ch.heigvd.amt.mvcProject.ui.web;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
