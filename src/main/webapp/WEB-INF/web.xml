@@ -6,7 +6,7 @@
     <display-name>Help2000</display-name>
     <servlet>
         <servlet-name>HomeRenderer</servlet-name>
-        <servlet-class>ch.heigvd.amt.mvcProject.presentation.HomePageRenderer</servlet-class>
+        <servlet-class>ch.heigvd.amt.mvcProject.ui.web.user.HomePageRenderer</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomeRenderer</servlet-name>
