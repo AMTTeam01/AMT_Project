@@ -37,13 +37,13 @@ public class InMemoryUserRepository implements IUserRepository {
 
     @Override
     public Collection<User> findAll() {
-        return database.values().stream().map(user -> user.builder().build()).collect(Collectors.toList());
+        return database.values().stream().map(user -> User.builder().build()).collect(Collectors.toList());
     }
 
     @Override
-    public boolean isUserExist(String username, String password) {
-        if (database.containsKey(username)) {
-            return database.get(username).equals(password);
+    public boolean isUserExist(UserId userId, String password) {
+        if (database.containsKey(userId)) {
+            return database.get(userId).equals(password);
         }
         return false;
     }
