@@ -45,31 +45,26 @@
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
-      <plugin>
-        <groupId>io.openliberty.tools</groupId>
-        <artifactId>liberty-maven-plugin</artifactId>
-        <version>3.2</version>
-        <!-- uncomment this to generate an executable jar - but packaging a .war in a Docker image is faster
-        <executions>
-            <execution>
-                <id>package-server</id>
-                <phase>package</phase>
-                <goals>
-                    <goal>create</goal>
-                    <goal>install-feature</goal>
-                    <goal>deploy</goal>
-                    <goal>package</goal>
-                </goals>
-                <configuration>
-                    <outputDirectory>target/wlp-package</outputDirectory>
-                </configuration>
-            </execution>
-        </executions>
-        <configuration>
-            <include>runnable</include>
-        </configuration>
-        -->
-      </plugin>
+      <!-- uncomment this to generate an executable jar - but packaging a .war in a Docker image is faster
+       <executions>
+           <execution>
+               <id>package-server</id>
+               <phase>package</phase>
+               <goals>
+                   <goal>create</goal>
+                   <goal>install-feature</goal>
+                   <goal>deploy</goal>
+                   <goal>package</goal>
+               </goals>
+               <configuration>
+                   <outputDirectory>target/wlp-package</outputDirectory>
+               </configuration>
+           </execution>
+       </executions>
+       <configuration>
+           <include>runnable</include>
+       </configuration>
+       -->
       <plugin>
         <groupId>io.openliberty.tools</groupId>
         <artifactId>liberty-maven-plugin</artifactId>
