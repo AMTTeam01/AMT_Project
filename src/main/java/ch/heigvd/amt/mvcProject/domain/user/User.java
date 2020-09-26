@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.model;
+package ch.heigvd.amt.mvcProject.domain.user;
 
 import lombok.Builder;
 import lombok.Getter;
