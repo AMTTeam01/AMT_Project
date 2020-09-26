@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.infrastructure.persistence;
+package ch.heigvd.amt.mvcProject.infrastructure.persistence.memory;
 
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;

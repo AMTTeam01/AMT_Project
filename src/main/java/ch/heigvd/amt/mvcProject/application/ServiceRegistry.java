@@ -2,7 +2,7 @@ package ch.heigvd.amt.mvcProject.application;
 
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
-import ch.heigvd.amt.mvcProject.infrastructure.persistence.InMemoryUserRepository;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.memory.InMemoryUserRepository;
 
 public class ServiceRegistry{
 
