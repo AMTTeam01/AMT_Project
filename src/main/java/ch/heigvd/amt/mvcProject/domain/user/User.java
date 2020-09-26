@@ -13,4 +13,6 @@ public class User implements IEntity {
     private String username;
 
     private String email;
+
+    private String password;
 }
