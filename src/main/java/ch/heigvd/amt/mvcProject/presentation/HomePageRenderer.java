@@ -4,9 +4,11 @@ import ch.heigvd.amt.mvcProject.business.SloganGenerator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 
+@WebServlet(name = "HomePageRenderer", urlPatterns = "/home")
 public class HomePageRenderer extends HttpServlet {
 
     private SloganGenerator service;
