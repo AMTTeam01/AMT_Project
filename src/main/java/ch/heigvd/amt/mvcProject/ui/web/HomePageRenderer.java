@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 
-@WebServlet(name = "HomePageRenderer", urlPatterns = "/")
+@WebServlet(name = "HomePageRenderer", urlPatterns = "/home")
 public class HomePageRenderer extends HttpServlet {
 
 
