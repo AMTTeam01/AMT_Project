@@ -1,4 +1,5 @@
-package ch.heigvd.amt.mvcProject.ui.web.user;
+package ch.heigvd.amt.mvcProject.ui.web.user.handler;
+
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.user.UserCommand;
@@ -11,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "LoginRequestHandler", urlPatterns = "/request.login")
-public class LoginRequestHandler extends HttpServlet {
+@WebServlet(name = "RegisterRequestHandler", urlPatterns = "/request.register")
+public class RegisterRequestHandler extends HttpServlet {
 
     private ServiceRegistry serviceRegistry;
     private UserFacade userFacade;
@@ -26,17 +27,27 @@ public class LoginRequestHandler extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        UserCommand command = UserCommand.builder()
-                .username(req.getParameter("username"))
-                .email("")
-                .password(req.getParameter("password"))
-                .build();
 
-        if (userFacade.isUserExist(command.getUserId())) {
+
+        String password = req.getParameter("password");
+        String cPasssword = req.getParameter("cPassword");
+
+        if (password.equals(cPasssword)) {
+
+            UserCommand command = UserCommand.builder()
+                    .username(req.getParameter("username"))
+                    .email(req.getParameter("email"))
+                    .password(password)
+                    .build();
+
+
+            userFacade.addNewUser(command);
+
             resp.sendRedirect(getServletContext().getContextPath());
+
         } else {
-            resp.sendRedirect(
-                    getServletContext().getContextPath() + "/login?error=Your e-mail or your password is incorrect");
+            resp.sendRedirect(getServletContext()
+                    .getContextPath() + "/register?error='Your password and your confirmation aren't the same'");
         }
     }
 }
