@@ -1,11 +1,10 @@
-package ch.heigvd.amt.mvcProject.presentation.handler;
+package ch.heigvd.amt.mvcProject.ui.web.user.handler;
 
 
-import ch.heigvd.amt.mvcProject.business.UserService;
-import ch.heigvd.amt.mvcProject.model.User;
-import ch.heigvd.amt.mvcProject.model.UserRequest;
+import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.user.UserCommand;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,34 +15,39 @@ import java.io.IOException;
 @WebServlet(name = "RegisterRequestHandler", urlPatterns = "/request.register")
 public class RegisterRequestHandler extends HttpServlet {
 
-    private UserService service;
+    private ServiceRegistry serviceRegistry;
+    private UserFacade userFacade;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        service = UserService.getInstance();
+    public void init() throws ServletException {
+        super.init();
+        serviceRegistry = ServiceRegistry.getServiceRegistry();
+        userFacade = serviceRegistry.getUserFacade();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+
         String password = req.getParameter("password");
         String cPasssword = req.getParameter("cPassword");
 
-        if(password.equals(cPasssword)) {
+        if (password.equals(cPasssword)) {
 
-            UserRequest userRequest = UserRequest.builder()
+            UserCommand command = UserCommand.builder()
                     .username(req.getParameter("username"))
                     .email(req.getParameter("email"))
                     .password(password)
                     .build();
 
-            service.storeUser(userRequest.getUsername(), userRequest.getPassword());
+
+            userFacade.addNewUser(command);
 
             resp.sendRedirect(getServletContext().getContextPath());
 
         } else {
-            resp.sendRedirect(getServletContext().getContextPath() + "/register?error='Your password and your confirmation aren't the same'");
+            resp.sendRedirect(getServletContext()
+                    .getContextPath() + "/register?error='Your password and your confirmation aren't the same'");
         }
     }
 }

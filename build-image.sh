@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#clean maven
+mvn clean package
+
 #Run maven
 mvn install 
 
@@ -8,11 +11,6 @@ if [[ "$?" -ne 0 ]] ; then
     echo 'could not perform tests' ; exit $rc
 fi
 
-if [ ! -d "docker/images/payara/apps/" ] 
-then
-    echo 'create docker/images/payara/apps/ directory'
-    mkdir docker/images/payara/apps/
-fi
+docker build -t amt/help2000 .
 
-# TODO change to our .war filename
-cp target/help-2020.war docker/images/payara/apps/
+docker run -p 9000:9080 amt/help2000

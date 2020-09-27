@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.presentation;
+package ch.heigvd.amt.mvcProject.ui.web.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "LoginRenderer", urlPatterns = "/login")
-public class LoginRenderer extends HttpServlet {
+@WebServlet(name = "MyProfileServlet", urlPatterns = "/my_profile")
+public class MyProfileRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
     }
 }
