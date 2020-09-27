@@ -1,16 +1,16 @@
 package ch.heigvd.amt.mvcProject.domain.user;
 
 import ch.heigvd.amt.mvcProject.domain.IRepository;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.DataCorruptionException;
+
+import java.util.Optional;
 
 public interface IUserRepository extends IRepository<User, UserId> {
 
     /**
-     * Control if the user exist in the database
-     *
-     * @param userId the user id
-     * @return true if the user is in the DB, false otherwise
+     * Find the user which has the username given
+     * @param username username of the user
+     * @return the "optional" user
      */
-    boolean isUserExist(UserId userId);
-
-    boolean isUserExist(String username, String password);
+    Optional<User> findByUsername(String username);
 }

@@ -2,8 +2,9 @@ package ch.heigvd.amt.mvcProject.ui.web.user.handler;
 
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.user.UserCommand;
-import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
+import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
+import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,43 +12,38 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet(name = "RegisterRequestHandler", urlPatterns = "/request.register")
+@WebServlet(name = "RegisterRequestHandler", urlPatterns = "/register.do")
 public class RegisterRequestHandler extends HttpServlet {
 
     private ServiceRegistry serviceRegistry;
-    private UserFacade userFacade;
+    private AuthenticationFacade authenticationFacade;
 
     @Override
     public void init() throws ServletException {
         super.init();
         serviceRegistry = ServiceRegistry.getServiceRegistry();
-        userFacade = serviceRegistry.getUserFacade();
+        authenticationFacade = serviceRegistry.getUserFacade();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getSession().removeAttribute("errors");
 
+        RegisterCommand registerCommand = RegisterCommand.builder()
+                .username(req.getParameter("txt_username"))
+                .email(req.getParameter("txt_email"))
+                .clearTxtPassword(req.getParameter("txt_password"))
+                .confirmationClearTxtPassword(req.getParameter("txt_cpassword"))
+                .build();
 
-        String password = req.getParameter("password");
-        String cPasssword = req.getParameter("cPassword");
-
-        if (password.equals(cPasssword)) {
-
-            UserCommand command = UserCommand.builder()
-                    .username(req.getParameter("username"))
-                    .email(req.getParameter("email"))
-                    .password(password)
-                    .build();
-
-
-            userFacade.addNewUser(command);
-
-            resp.sendRedirect(getServletContext().getContextPath());
-
-        } else {
-            resp.sendRedirect(getServletContext()
-                    .getContextPath() + "/register?error='Your password and your confirmation aren't the same'");
+        try{
+            authenticationFacade.register(registerCommand);
+            req.getRequestDispatcher("/login.do").forward(req, resp);
+        }catch(RegistrationFailedException e){
+            req.getSession().setAttribute("errors", List.of(e.getMessage()));
+            resp.sendRedirect("/register");
         }
     }
 }

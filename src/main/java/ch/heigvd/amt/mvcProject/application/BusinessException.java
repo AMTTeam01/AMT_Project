@@ -1,4 +1,9 @@
 package ch.heigvd.amt.mvcProject.application;
 
-public class BusinessException {
+import lombok.Value;
+
+public class BusinessException extends Exception {
+    public BusinessException(String message){
+        super(message);
+    }
 }

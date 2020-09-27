@@ -6,7 +6,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 
-@WebServlet(name = "HomePageRenderer", urlPatterns = "/home")
+// Default page : https://stackoverflow.com/questions/20455442/java-servlet-specify-start-page-wih-webservlet-annotation
+
+@WebServlet(name = "HomePageRenderer", urlPatterns = "/index.html")
 public class HomePageRenderer extends HttpServlet {
 
 
