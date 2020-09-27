@@ -47,4 +47,15 @@ public class InMemoryUserRepository implements IUserRepository {
     public boolean isUserExist(UserId userId) {
         return database.containsKey(userId);
     }
+
+    @Override
+    public boolean isUserExist(String username, String password){
+
+        for(User user : database.values()){
+            if(user.getUsername().equals(username) && user.getPassword().equals(password)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

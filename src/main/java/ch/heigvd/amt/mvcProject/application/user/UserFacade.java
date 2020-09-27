@@ -31,10 +31,6 @@ public class UserFacade {
     }
 
 
-    //TODO move this to services Resgistry
-    public boolean isUserExist(UserId userId) {
-        return userRepository.isUserExist(userId);
 
-    }
 
 }
