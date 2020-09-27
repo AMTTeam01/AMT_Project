@@ -1,6 +1,4 @@
-package ch.heigvd.amt.mvcProject.presentation;
-
-import ch.heigvd.amt.mvcProject.business.SloganGenerator;
+package ch.heigvd.amt.mvcProject.ui.web;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,20 +9,16 @@ import java.io.IOException;
 @WebServlet(name = "HomePageRenderer", urlPatterns = "/home")
 public class HomePageRenderer extends HttpServlet {
 
-    private SloganGenerator service;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        service = new SloganGenerator();
     }
 
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response)
             throws javax.servlet.ServletException,
             IOException {
 
-        String model = service.generateSlogan();
-        request.setAttribute("home", model);
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
     }
 }
