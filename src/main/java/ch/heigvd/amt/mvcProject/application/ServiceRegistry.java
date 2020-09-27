@@ -1,8 +1,12 @@
 package ch.heigvd.amt.mvcProject.application;
 
+import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.memory.InMemoryQuestionRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.memory.InMemoryUserRepository;
 
 /**
@@ -12,8 +16,13 @@ public class ServiceRegistry{
 
     private static ServiceRegistry singleton; // Code smell
 
+    // Users
     private IUserRepository userRepository;
     private UserFacade userFacade;
+
+    // Questions
+    private IQuestionRepository questionRepository;
+    private QuestionFacade questionFacade;
 
     public static ServiceRegistry getServiceRegistry(){
         if(singleton == null){
@@ -27,18 +36,32 @@ public class ServiceRegistry{
         singleton = this;
         userRepository = new InMemoryUserRepository();
         userFacade = new UserFacade(userRepository);
+        questionRepository = new InMemoryQuestionRepository();
+        questionFacade = new QuestionFacade(questionRepository);
     }
 
     public UserFacade getUserFacade() {
         return userFacade;
     }
 
-    public boolean isUserExist(UserId userId) {
-        return userRepository.isUserExist(userId);
+    public boolean hasUser(UserId userId) {
+        return userRepository.hasUser(userId);
     }
 
-    public boolean isUserExist(String username, String password) {
-        return userRepository.isUserExist(username, password);
+    public boolean hasUser(String username, String password) {
+        return userRepository.hasUser(username, password);
+    }
+
+    public QuestionFacade getQuestionFacade() {
+        return questionFacade;
+    }
+
+    public boolean hasQuestion(QuestionId questionId) {
+        return questionRepository.hasQuestion(questionId);
+    }
+
+    public boolean hasQuestion(String title) {
+        return questionRepository.hasQuestion(title);
     }
 }
 

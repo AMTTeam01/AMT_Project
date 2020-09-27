@@ -32,7 +32,7 @@ public class LoginRequestHandler extends HttpServlet {
                 .password(req.getParameter("password"))
                 .build();
 
-        if (serviceRegistry.isUserExist(command.getUsername(), command.getPassword())) {
+        if (serviceRegistry.hasUser(command.getUsername(), command.getPassword())) {
             resp.sendRedirect(getServletContext().getContextPath());
         } else {
             resp.sendRedirect(

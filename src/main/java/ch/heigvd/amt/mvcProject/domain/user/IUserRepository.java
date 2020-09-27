@@ -10,7 +10,7 @@ public interface IUserRepository extends IRepository<User, UserId> {
      * @param userId the user id
      * @return true if the user is in the DB, false otherwise
      */
-    boolean isUserExist(UserId userId);
+    boolean hasUser(UserId userId);
 
-    boolean isUserExist(String username, String password);
+    boolean hasUser(String username, String password);
 }
