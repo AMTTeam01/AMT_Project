@@ -42,6 +42,10 @@ public class AuthorizationFilter implements Filter {
         chain.doFilter(req, resp);
     }
 
+    /**
+     * @param URI
+     * @return true if the URI given is a public ressource
+     */
     private boolean isPublicRessource(String URI){
         if(URI.startsWith("/assets"))
             return true;

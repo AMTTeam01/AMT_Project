@@ -16,15 +16,19 @@ public class User implements IEntity<User, UserId> {
     @EqualsAndHashCode.Exclude
     private String encryptedPassword;
 
-    public boolean authenticate(String clearTxtPassword){
-        return clearTxtPassword.toUpperCase().equals(encryptedPassword);
-    }
-
     @Override
     public User deepClone() {
         return this.toBuilder()
                 .id(new UserId(id.asString()))
                 .build();
+    }
+
+    /**
+     * @param clearTxtPassword
+     * @return true if the clear password correspond to the encrypted password
+     */
+    public boolean authenticate(String clearTxtPassword){
+        return clearTxtPassword.toUpperCase().equals(encryptedPassword);
     }
 
     /**

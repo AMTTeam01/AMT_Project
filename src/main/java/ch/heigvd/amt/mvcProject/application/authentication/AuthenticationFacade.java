@@ -15,6 +15,13 @@ public class AuthenticationFacade {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Sign up the new user
+     * @param cmd Command of a new user
+     * @throws RegistrationFailedException exceptions possibles :
+     *  - username is already used
+     *  - password =/= confirmation of password
+     */
     public void register(RegisterCommand cmd) throws RegistrationFailedException {
         User existingUser = userRepository.findByUsername(cmd.getUsername())
                 .orElse(null);
@@ -40,6 +47,12 @@ public class AuthenticationFacade {
         }
     }
 
+    /**
+     * Logs the user
+     * @param cmd Command of authentication attempt
+     * @return The user which is stored in the database
+     * @throws LoginFailedException
+     */
     public CurrentUserDTO login(LoginCommand cmd) throws LoginFailedException {
         User user = userRepository.findByUsername(cmd.getUsername())
                 .orElseThrow(() -> new LoginFailedException("The user hasn't been found"));

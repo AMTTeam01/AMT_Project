@@ -8,9 +8,8 @@ import java.util.Optional;
 public interface IUserRepository extends IRepository<User, UserId> {
 
     /**
-     * Find the user which has the username given
      * @param username username of the user
-     * @return the "optional" user
+     * @return the user stored
      */
     Optional<User> findByUsername(String username);
 }
