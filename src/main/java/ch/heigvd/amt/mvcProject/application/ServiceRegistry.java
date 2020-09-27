@@ -4,6 +4,9 @@ import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.memory.InMemoryUserRepository;
 
+/**
+ * Reference a set of services
+ */
 public class ServiceRegistry{
 
     private static ServiceRegistry singleton; // Code smell

@@ -7,6 +7,9 @@ import lombok.Singular;
 
 import java.util.List;
 
+/**
+ * Object used to passe data between tier
+ */
 @Builder
 @Getter
 @EqualsAndHashCode

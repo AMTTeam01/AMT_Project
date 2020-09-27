@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * Encapsulate user information
+ */
 @Builder
 @Getter
 @EqualsAndHashCode

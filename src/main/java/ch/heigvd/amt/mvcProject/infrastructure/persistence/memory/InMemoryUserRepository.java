@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Implement in memory of the repository with a hashmap
+ */
 public class InMemoryUserRepository implements IUserRepository {
 
     private Map<UserId, User> database = new ConcurrentHashMap<>();
