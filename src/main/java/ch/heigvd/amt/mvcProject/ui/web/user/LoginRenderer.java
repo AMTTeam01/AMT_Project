@@ -11,6 +11,9 @@ import java.io.IOException;
 public class LoginRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Object errors = request.getSession().getAttribute("errors");
+        request.setAttribute("errors", errors);
+        request.getSession().removeAttribute("errors");
         request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
     }
 }
