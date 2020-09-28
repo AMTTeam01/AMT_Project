@@ -44,7 +44,7 @@ jobs:
       - name: Build Docker image (with mvn clean package)
         run: |
           docker login ghcr.io -u dev-help2000 --password-stdin
-          docker build -t Ikewolf77/AMT_Project
+          docker build -t AMTTeam01/AMT_Project
           ./build-image.sh
-          docker tag Ikewolf77/AMT_Project ghcr.io./amt_project/help2000
-          docker push ghcr.io/amt_project/help2000
+          docker tag AMTTeam01/AMT_Project ghcr.io./amtteam01/help2000
+          docker push ghcr.io/amtteam01/help2000
