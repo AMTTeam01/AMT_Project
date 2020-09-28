@@ -43,8 +43,7 @@ jobs:
       # Docker build (with secret)
       - name: Build Docker image (with mvn clean package)
         run: |
-          echo ${{ secrets.HELP2000_PAT }}
-          echo ${{ secrets.HELP2000_PAT }}| docker login ghcr.io -u dev-help2000 --password-stdin
+          echo ${{ secrets.HELP2000_PAT }} | docker login ghcr.io -u dev-help2000 --password-stdin
           docker build -t amt_project/help2000 .
           ./build-image.sh
           docker tag amt_project/help2000 ghcr.io./AMTTeam01/AMT_Project
