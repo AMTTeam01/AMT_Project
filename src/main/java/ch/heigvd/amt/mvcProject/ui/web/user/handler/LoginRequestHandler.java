@@ -33,7 +33,7 @@ public class LoginRequestHandler extends HttpServlet {
 
         LoginCommand loginCommand = LoginCommand.builder()
                 .username(req.getParameter("txt_username"))
-                .clearTxtPassword(req.getParameter("txt_http://172.22.22.59:9080/password"))
+                .clearTxtPassword(req.getParameter("txt_password"))
                 .build();
 
         CurrentUserDTO currentUser = null;
