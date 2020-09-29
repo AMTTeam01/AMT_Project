@@ -1,10 +1,13 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,8 +23,9 @@ public class QuestionsDTO {
     @EqualsAndHashCode
     public static class QuestionDTO {
         private String title;
+        private int ranking;
     }
 
     @Singular
-    private List<QuestionsDTO> questions;
+    private List<QuestionDTO> questions;
 }

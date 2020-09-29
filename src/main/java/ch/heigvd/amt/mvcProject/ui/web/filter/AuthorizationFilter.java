@@ -58,6 +58,8 @@ public class AuthorizationFilter implements Filter {
             return true;
         if (URI.startsWith("/browsing"))
             return true;
+        if (URI.startsWith("/new_question"))
+            return true;
         if (URI.equals("/")) // Home page
             return true;
         return false;

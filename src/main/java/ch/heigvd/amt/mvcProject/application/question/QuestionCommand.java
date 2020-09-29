@@ -23,5 +23,5 @@ public class QuestionCommand {
 
     private List<String> tags;
 
-
+    private int ranking;
 }

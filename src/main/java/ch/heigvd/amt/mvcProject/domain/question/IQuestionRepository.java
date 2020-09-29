@@ -7,4 +7,6 @@ public interface IQuestionRepository extends IRepository<Question, QuestionId> {
     boolean hasQuestion(QuestionId questionId);
 
     boolean hasQuestion(String title);
+
+
 }

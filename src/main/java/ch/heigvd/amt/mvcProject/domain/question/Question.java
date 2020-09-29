@@ -21,10 +21,16 @@ public class Question implements IEntity {
 
     private List<String> tags;
 
+    private int ranking;
+
     @Override
     public IEntity deepClone() {
         return this.toBuilder()
                 .id(new QuestionId(id.asString()))
+                .title(title)
+                .description(description)
+                .tags(tags)
+                .ranking(ranking)
                 .build();
     }
 
@@ -42,7 +48,8 @@ public class Question implements IEntity {
                 title = "Untitled";
             }
 
-            return new Question(id, title, description, tags);
+
+            return new Question(id, title, description, tags, ranking);
         }
     }
 

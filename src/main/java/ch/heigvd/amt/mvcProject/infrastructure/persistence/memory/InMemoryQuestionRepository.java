@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.memory;
 
+import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -40,8 +41,15 @@ public class InMemoryQuestionRepository implements IQuestionRepository {
 
     @Override
     public Collection<Question> findAll() {
-        return database.values().stream().map(question -> Question.builder().build()).collect(Collectors.toList());
+        return database.values().stream().map(question -> Question.builder()
+                .description(question.getDescription())
+                .id(question.getId())
+                .ranking(question.getRanking())
+                .tags(question.getTags())
+                .title(question.getTitle())
+                .build()).collect(Collectors.toList());
     }
+
 
     @Override
     public boolean hasQuestion(QuestionId questionId) {
