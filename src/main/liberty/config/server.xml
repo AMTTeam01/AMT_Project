@@ -6,7 +6,7 @@
     <variable name="default.http.port" defaultValue="9080"/>
     <variable name="default.https.port" defaultValue="9443"/>
 
-    <webApplication location="help2000.war" contextRoot="/" type="war"/>
+    <webApplication location="help2000.war" contextRoot=""/>
 
     <httpEndpoint host="*" httpPort="${default.http.port}"
                   httpsPort="${default.https.port}" id="defaultHttpEndpoint"/>
