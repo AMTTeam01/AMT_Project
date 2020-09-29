@@ -36,6 +36,7 @@ public class LoginRequestHandler extends HttpServlet {
                 .clearTxtPassword(req.getParameter("txt_password"))
                 .build();
 
+<<<<<<< HEAD
         CurrentUserDTO currentUser = null;
 
         try{
@@ -48,6 +49,13 @@ public class LoginRequestHandler extends HttpServlet {
         } catch (LoginFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect("/login");
+=======
+        if (serviceRegistry.hasUser(command.getUsername(), command.getPassword())) {
+            resp.sendRedirect(getServletContext().getContextPath());
+        } else {
+            resp.sendRedirect(
+                    getServletContext().getContextPath() + "/login?error=Your e-mail or your password is incorrect");
+>>>>>>> fb_design_new_question
         }
     }
 }
