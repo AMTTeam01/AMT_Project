@@ -12,5 +12,3 @@ if [[ "$?" -ne 0 ]] ; then
 fi
 
 docker build -t amt/help2000 .
-
-docker run -p 9000:9080 amt/help2000
