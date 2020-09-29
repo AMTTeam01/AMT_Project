@@ -1,19 +1,17 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@include file="fragments/header.jsp"%>
 
 <div class="login-form">
     <div class="mx-auto" style="width:400px">
-        <img src="${pageContext.request.contextPath}/assets/imgs/logo.png" />
+        <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/assets/imgs/logo.png" /></a>
     </div>
-    <%
-        String error = request.getParameter("error");
-        if(error != null) {
-    %>
-    <div class="col-md-12 p-2 mt-2 bg-danger text-white"><%=error%></div>
-    <% } %>
-    <form method="POST" action="${pageContext.request.contextPath}/request.login">
-        <input id="login_username" name="username" class="form-control classic-form" placeholder="Insert your username" required />
-        <input id="login_password" name="password" class="form-control classic-form" type="password" placeholder="Insert your password" required />
+    <c:forEach var="error" items="${errors}">
+        <div class="col-md-12 p-2 mt-2 bg-danger text-white">${error}</div>
+    </c:forEach>
+    <form method="POST" action="${pageContext.request.contextPath}/login.do">
+        <input id="txt_username" name="txt_username" class="form-control classic-form" placeholder="Insert your username" required />
+        <input id="txt_password" name="txt_password" class="form-control classic-form" type="password" placeholder="Insert your password" required />
         <button type="submit" class="btn btn-primary classic-button-filled button-full">Login</button>
     </form>
 </div>

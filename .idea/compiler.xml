@@ -7,9 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mvc-simple" />
-        <module name="Teaching-HEIGVD-AMT-MVC-simple-example" />
-        <module name="Projet" />
         <module name="MVC" />
+        <module name="Projet" />
+        <module name="Teaching-HEIGVD-AMT-MVC-simple-example" />
         <module name="AMT_Project" />
       </profile>
     </annotationProcessing>
