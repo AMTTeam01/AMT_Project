@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.ui.web.question.;
+package ch.heigvd.amt.mvcProject.ui.web.question;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

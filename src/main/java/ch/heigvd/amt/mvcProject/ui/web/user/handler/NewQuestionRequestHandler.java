@@ -3,8 +3,6 @@ package ch.heigvd.amt.mvcProject.ui.web.user.handler;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
-import ch.heigvd.amt.mvcProject.application.user.UserCommand;
-import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
