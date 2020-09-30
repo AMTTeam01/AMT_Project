@@ -15,7 +15,7 @@
                         (current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="border-right: 1px solid orange; padding-right: 10px; padding-left: 10px" >New Question </a>
+                    <a class="nav-link" href="${pageContext.request.contextPath}/new_question" style="border-right: 1px solid orange; padding-right: 10px; padding-left: 10px" >New Question </a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-md-0">
