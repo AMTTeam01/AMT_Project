@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
+import lombok.SneakyThrows;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -26,21 +27,6 @@ public class BrowsingRenderer extends HttpServlet {
         super.init(config);
         serviceRegistry = ServiceRegistry.getServiceRegistry();
         questionFacade = serviceRegistry.getQuestionFacade();
-
-        //Create fake questions
-        // TODO : Need to me remove
-        questionFacade.addQuestion(QuestionCommand.builder().
-                title("test")
-                .ranking(1)
-                .description("Description")
-                .tags(Arrays.asList("tag1", "tag2"))
-                .build());
-        questionFacade.addQuestion(QuestionCommand.builder()
-                .title("test2")
-                .ranking(3)
-                .description("Description")
-                .tags(Arrays.asList("tag1", "tag2"))
-                .build());
 
     }
 

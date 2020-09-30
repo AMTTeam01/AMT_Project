@@ -1,5 +1,6 @@
 
 <%@include file="fragments/header.jsp"%>
+<%@include file="fragments/navigation_bar.jsp"%>
 
 <div class="login-form">
     <h1>New Question</h1>
