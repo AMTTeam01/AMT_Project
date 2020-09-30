@@ -43,7 +43,7 @@ jobs:
       # Docker build (with pat)
       - name: Build Docker image (with mvn clean package)
         run: |
-          echo "dfb4e07c6212f42561a24ea77d7ec949a085134f" | docker login ghcr.io -u dev-help2000 --password-stdin
+          echo "Q6%Z^;/m," | docker login ghcr.io -u dev-help2000 --password-stdin
           docker build -t amt-project/help2000 .
           docker tag amt-project/help2000 ghcr.io/amtteam01/amt_project
           docker push ghcr.io/amtteam01/amt_project
