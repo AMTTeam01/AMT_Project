@@ -45,5 +45,5 @@ jobs:
         run: |
           echo ${{ secrets.HELP2000_PAT }} | docker login ghcr.io -u dev-help2000 --password-stdin
           docker build -t amt-project/help2000 .
-          docker tag amt-project/help2000 ghcr.io/amtteam01/amt_project
-          docker push ghcr.io/amtteam01/amt_project
+          docker tag amt-project/help2000 ghcr.io/amtteamheig/amt_project
+          docker push ghcr.io/amtteamheig/amt_project
