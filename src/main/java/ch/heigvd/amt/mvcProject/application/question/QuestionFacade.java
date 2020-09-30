@@ -38,6 +38,7 @@ public class QuestionFacade {
                         question -> QuestionsDTO.QuestionDTO.builder()
                                 .title(question.getTitle())
                                 .ranking(question.getRanking())
+                                .tags(question.getTags())
                                 .build()).collect(Collectors.toList());
 
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();

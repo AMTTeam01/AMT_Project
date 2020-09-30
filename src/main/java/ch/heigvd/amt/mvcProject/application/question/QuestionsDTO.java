@@ -24,6 +24,7 @@ public class QuestionsDTO {
     public static class QuestionDTO {
         private String title;
         private int ranking;
+        private List<String> tags;
     }
 
     @Singular
