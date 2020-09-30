@@ -1,8 +1,11 @@
-package ch.heigvd.amt.mvcProject.ui.web.user.handler;
+package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@WebServlet(name = "LoginRequestHandler", urlPatterns = "/request.new_question")
+@WebServlet(name = "NewQuestionRequestHandler", urlPatterns = "/new_question.do")
 public class NewQuestionRequestHandler extends HttpServlet {
 
     private ServiceRegistry serviceRegistry;
@@ -31,17 +34,21 @@ public class NewQuestionRequestHandler extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         List<String> tags_tmp = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3"));
+
         QuestionCommand command = QuestionCommand.builder()
-                .title(req.getParameter("title"))
-                .description(req.getParameter("description"))
+                .title(req.getParameter("txt_title"))
+                .description(req.getParameter("txt_description"))
                 .tags(tags_tmp)
                 .build();
 
-        if (!serviceRegistry.hasQuestion(command.getTitle())) {
-            resp.sendRedirect(getServletContext().getContextPath());
-        } else {
-            resp.sendRedirect(
-                    getServletContext().getContextPath() + "/login?error=This question has already been asked.");
+        try {
+            questionFacade.addQuestion(command);
+            resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
+
+        } catch (QuestionFailedException e) {
+            req.getSession().setAttribute("errors", List.of(e.getMessage()));
+            resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
+
         }
     }
 }

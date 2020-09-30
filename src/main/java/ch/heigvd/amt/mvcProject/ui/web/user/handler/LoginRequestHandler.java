@@ -42,7 +42,7 @@ public class LoginRequestHandler extends HttpServlet {
             currentUser = authenticationFacade.login(loginCommand);
             req.getSession().setAttribute("currentUser", currentUser);
             String targetUrl = (String) req.getSession().getAttribute("targetUrl");
-            targetUrl = (targetUrl != null) ? targetUrl : "/browse"; // TODO : à changer en fonction de l'URL choisie
+            targetUrl = (targetUrl != null) ? targetUrl : "/browsing";
             resp.sendRedirect(targetUrl);
 
         } catch (LoginFailedException e) {
