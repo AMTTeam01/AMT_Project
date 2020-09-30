@@ -1,18 +1,14 @@
-# Labels
-design:
-- src/main/webapp/assets/css/*
+# Add 'repo' label to any root file changes
+repo:
+  - ./*
 
-name: "Pull Request Labeler"
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+# Add 'java' to any java file modification
+java: src/**/*.java
 
-jobs:
-  triage:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/labeler@main
-      with:
-        repo-token: "${{ secrets.HELP2000_PAT }}"
+# Add 'web' to any file modified in the webapp folder
+web: src/main/webapp/*
+
+# Add 'frontend` label to any change to *.js files as long as the `main.js` hasn't changed
+frontend:
+- any: ['src/**/*.js']
+  all: ['!src/main.js']
