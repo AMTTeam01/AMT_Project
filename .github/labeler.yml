@@ -1,3 +1,18 @@
-
+# Labels
 design:
 - src/main/webapp/assets/css/*
+
+name: "Pull Request Labeler"
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/labeler@main
+      with:
+        repo-token: "${{ secrets.HELP2000_PAT }}"
