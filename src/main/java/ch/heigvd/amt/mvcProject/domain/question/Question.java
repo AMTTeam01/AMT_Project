@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
-public class Question implements IEntity {
+public class Question implements IEntity<Question, QuestionId> {
 
     @Setter(AccessLevel.NONE)
     private QuestionId id;
@@ -24,13 +24,9 @@ public class Question implements IEntity {
     private int ranking;
 
     @Override
-    public IEntity deepClone() {
+    public Question deepClone() {
         return this.toBuilder()
                 .id(new QuestionId(id.asString()))
-                .title(title)
-                .description(description)
-                .tags(tags)
-                .ranking(ranking)
                 .build();
     }
 
@@ -44,10 +40,13 @@ public class Question implements IEntity {
                 id = new QuestionId();
             }
 
-            if (title == null) {
-                title = "Untitled";
+            if (title == null || title.isEmpty()) {
+                throw new IllegalArgumentException("Title is mandatory");
             }
 
+            if (description == null || description.isEmpty()){
+                throw new IllegalArgumentException("Description is mandatory");
+            }
 
             return new Question(id, title, description, tags, ranking);
         }

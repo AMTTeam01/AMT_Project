@@ -19,15 +19,21 @@ public class QuestionFacade {
         this.questionRepository = questionRepository;
     }
 
-    public void addQuestion(QuestionCommand command){
-        Question submittedQuestion = Question.builder()
-                .title(command.getTitle())
-                .description(command.getDescription())
-                .ranking(command.getRanking())
-                .tags(command.getTags())
-                .build();
+    public void addQuestion(QuestionCommand command) throws QuestionFailedException {
 
-        questionRepository.save(submittedQuestion);
+        try {
+
+            Question submittedQuestion = Question.builder()
+                    .title(command.getTitle())
+                    .description(command.getDescription())
+                    .ranking(command.getRanking())
+                    .tags(command.getTags())
+                    .build();
+
+            questionRepository.save(submittedQuestion);
+        }catch(Exception e){
+            throw new QuestionFailedException(e.getMessage());
+        }
     }
 
     public QuestionsDTO getQuestions(QuestionQuery query){

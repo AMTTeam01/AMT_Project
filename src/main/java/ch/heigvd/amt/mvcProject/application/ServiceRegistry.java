@@ -48,13 +48,5 @@ public class ServiceRegistry{
         return questionFacade;
     }
 
-    public boolean hasQuestion(QuestionId questionId) {
-        return questionRepository.hasQuestion(questionId);
-    }
-
-    public boolean hasQuestion(String title) {
-        return questionRepository.hasQuestion(title);
-    }
-
 }
 
