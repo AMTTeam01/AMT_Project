@@ -1,8 +1,11 @@
-package ch.heigvd.amt.mvcProject.ui.web.user.handler;
+package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,10 +41,14 @@ public class NewQuestionRequestHandler extends HttpServlet {
                 .tags(tags_tmp)
                 .build();
 
-        if (!serviceRegistry.hasQuestion(command.getTitle())) {
+        try {
+            questionFacade.addQuestion(command);
             resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
-        } else {
+
+        } catch (QuestionFailedException e) {
+            req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
+
         }
     }
 }
