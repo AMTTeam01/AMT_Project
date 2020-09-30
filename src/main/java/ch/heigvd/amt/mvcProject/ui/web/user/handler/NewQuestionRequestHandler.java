@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@WebServlet(name = "LoginRequestHandler", urlPatterns = "/request.new_question")
+@WebServlet(name = "NewQuestionRequestHandler", urlPatterns = "/new_question.do")
 public class NewQuestionRequestHandler extends HttpServlet {
 
     private ServiceRegistry serviceRegistry;
@@ -32,16 +32,15 @@ public class NewQuestionRequestHandler extends HttpServlet {
 
         List<String> tags_tmp = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3"));
         QuestionCommand command = QuestionCommand.builder()
-                .title(req.getParameter("title"))
-                .description(req.getParameter("description"))
+                .title(req.getParameter("question_title"))
+                .description(req.getParameter("question_description"))
                 .tags(tags_tmp)
                 .build();
 
         if (!serviceRegistry.hasQuestion(command.getTitle())) {
-            resp.sendRedirect(getServletContext().getContextPath());
+            resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
         } else {
-            resp.sendRedirect(
-                    getServletContext().getContextPath() + "/login?error=This question has already been asked.");
+            resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
         }
     }
 }
