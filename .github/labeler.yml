@@ -1,14 +1,19 @@
-# Add 'repo' label to any root file changes
 repo:
   - ./*
 
-# Add 'java' to any java file modification
 java: 
   - src/**/*.java
 
 design: 
   - src/**/*.css
 
+web:
+  - src/main/webapp/*
+  
+testing:
+  - e2e/*
+  
+docker:
+  - docker/*
+  
 
-# Add 'web' to any file modified in the webapp folder
-#web: src/main/webapp/*
