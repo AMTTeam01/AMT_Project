@@ -48,7 +48,6 @@ public class NewQuestionRequestHandler extends HttpServlet {
         } catch (QuestionFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
-
         }
     }
 }

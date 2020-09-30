@@ -21,7 +21,7 @@ public class QuestionDTOFacadeIT {
     }
 
     @Test
-    public void publishQuestion(){
+    public void publishQuestion() throws QuestionFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("bla")
