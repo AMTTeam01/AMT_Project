@@ -31,9 +31,10 @@ public class NewQuestionRequestHandler extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         List<String> tags_tmp = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3"));
+
         QuestionCommand command = QuestionCommand.builder()
-                .title(req.getParameter("question_title"))
-                .description(req.getParameter("question_description"))
+                .title(req.getParameter("txt_title"))
+                .description(req.getParameter("txt_description"))
                 .tags(tags_tmp)
                 .build();
 
