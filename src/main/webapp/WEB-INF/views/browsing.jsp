@@ -10,12 +10,12 @@
 
     <h1>Browsing</h1>
 
-    <ul class="list-group">
+    <ul class="list-group" id="list-item_question">
         <c:forEach var="question" items="${questions.questions}">
          <div class="list-group-item">
-            <a href="#" >
+            <a href="#" id="link_question_url">
                 <div class="d-flex">
-                    <h4 class="p-2 mr-auto ">${question.title}</h4>
+                    <h4 class="p-2 mr-auto">${question.title}</h4>
                     <div>
                         <c:forEach begin="1" end="${question.ranking}">
                             <div class="glyphicon glyphicon-star" style="color: orange"></div>
@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <c:forEach var="tag" items="${question.tags}">
-                        <a href="#" class="badge badge-primary">${tag}</a>
+                        <a href="#" class="badge badge-primary" id="link_question_tag">${tag}</a>
                     </c:forEach>
                 </div>
             </a>
