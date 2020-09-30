@@ -30,7 +30,7 @@ public class BrowsingRenderer extends HttpServlet {
             IOException {
 
         QuestionsDTO questionsDTO = questionFacade.getQuestions(null);
-        request.setAttribute("questions", questionsDTO);
+        request.setAttribute("questions", questionsDTO.getQuestions());
         request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);
     }
 }
