@@ -12,19 +12,26 @@
 
     <ul class="list-group">
         <c:forEach var="question" items="${questions.questions}">
-            <div class="list-group-item">
-                <a href="#">
-                    <div class="d-flex">
-                        <div class="p-2 mr-auto">${question.title}</div>
-                        <div class="p-2">Ranking : ${question.ranking}</div>
+         <div class="list-group-item">
+            <a href="#" >
+                <div class="d-flex">
+                    <h4 class="p-2 mr-auto ">${question.title}</h4>
+                    <div>
+                        <c:forEach begin="1" end="${question.ranking}">
+                            <div class="glyphicon glyphicon-star" style="color: orange"></div>
+                        </c:forEach>
+                        <c:forEach begin="1" end="${5 - question.ranking}">
+                            <div class="glyphicon glyphicon-star-empty" style="color: orange"></div>
+                        </c:forEach>
                     </div>
-                </a>
+                </div>
                 <div>
                     <c:forEach var="tag" items="${question.tags}">
-                        <a href="#" class="badge">${tag}</a>
+                        <a href="#" class="badge badge-primary">${tag}</a>
                     </c:forEach>
                 </div>
-            </div>
+            </a>
+         </div>
         </c:forEach>
     </ul>
 </div>
