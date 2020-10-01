@@ -5,10 +5,9 @@ import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class QuestionDTOFacade {
+public class QuestionFacadeTest {
 
     private static ServiceRegistry serviceRegistry;
     private static QuestionFacade questionFacade;
@@ -20,7 +19,7 @@ public class QuestionDTOFacade {
     }
 
     @Test
-    public void publishQuestion() throws QuestionFailedException {
+    public void addQuestion() throws QuestionFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("bla")
@@ -33,6 +32,9 @@ public class QuestionDTOFacade {
         assertNotNull(view);
         assertEquals(1, view.getQuestions().size());
         assertEquals(command.getTitle(), view.getQuestions().get(0).getTitle());
+    }
 
+    @Test void getQuestion_WhenEmpty_ReturnEmptyList(){
+            assertTrue(questionFacade.getQuestions(null).getQuestions().size()== 0);
     }
 }
