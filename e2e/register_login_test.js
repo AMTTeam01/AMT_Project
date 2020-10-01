@@ -13,10 +13,16 @@ function makeid(length) {
 var username = makeid(5);
 
 Scenario('test registration and login process', (I) => {
-    //registering
-    I.amOnPage('/register')
+
+    //login not found account
+    I.amOnPage('/login')
+    I.fillField('#txt_username', username)
+    I.fillField('#txt_password',secret('123456'))
+    I.click('Login')
+    I.waitForText('The user hasn\'t been found')
 
     //not matching passwords
+    I.amOnPage('/register')
     I.fillField('#txt_username', username)
     I.fillField('#txt_email','123@123')
     I.fillField('#txt_password',secret('12345'))
@@ -31,6 +37,15 @@ Scenario('test registration and login process', (I) => {
     I.fillField('#txt_cpassword',secret('12345'))
     I.click('Sign up')
     I.dontSeeInCurrentUrl('/register')
+
+    //trying to register again
+    I.amOnPage('/register')
+    I.fillField('#txt_username', username)
+    I.fillField('#txt_email','123@123')
+    I.fillField('#txt_password',secret('12345'))
+    I.fillField('#txt_cpassword',secret('123456'))
+    I.click('Sign up')
+    I.waitForText('Username is already used')
 
     //login
     I.amOnPage('/login')
