@@ -58,3 +58,6 @@ src/
     - `persistence` : The connection with the data
 - `ui` : Interaction with the UI
     - `web` : servlet, dependance, framework
+
+## Downloading the package
+The package can be downloaded from the organisation's packages, since the organisation is private you need to ask for privileges to one of the administrators. Then you can run this command with docker to get the container : `docker pull ghcr.io/amtteamheig/amt_project:latest`
