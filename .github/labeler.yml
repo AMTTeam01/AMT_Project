@@ -1,0 +1,19 @@
+repo:
+  - ./*
+
+java: 
+  - src/**/*.java
+
+design: 
+  - src/**/*.css
+
+web:
+  - src/main/webapp/*
+  
+testing:
+  - e2e/*
+  
+docker:
+  - docker/*
+  
+
