@@ -121,3 +121,7 @@ Buttons, inputs, ...
     margin-right: auto;
     width: 50%;
 }
+
+.nav-item-cell {
+    border-right: 1px solid #FF7300;
+}
