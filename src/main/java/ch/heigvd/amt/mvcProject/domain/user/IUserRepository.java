@@ -12,4 +12,5 @@ public interface IUserRepository extends IRepository<User, UserId> {
      * @return the user stored
      */
     Optional<User> findByUsername(String username);
+
 }
