@@ -2,14 +2,13 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class QuestionDTOFacadeIT {
+public class QuestionDTOFacade {
 
     private static ServiceRegistry serviceRegistry;
     private static QuestionFacade questionFacade;
