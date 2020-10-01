@@ -11,6 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "codeceptjs": "^2.6.11",
-    "puppeteer": "^5.3.1"
+    "faker": "^5.1.0",
+    "puppeteer": "^5.3.1",
+    "rosie": "^2.0.1"
   }
 }
