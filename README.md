@@ -11,7 +11,7 @@
 - Install npm modules via `npm install`
 - Run the server
 - Execute with `npx codeceptjs run --steps`
-- Run a single test with `codeceptjs run . my_test.js`
+- Run a single test with `npx codeceptjs run my_test.js`
 
 ## How to write a new test
 
