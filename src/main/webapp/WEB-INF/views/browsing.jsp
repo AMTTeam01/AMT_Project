@@ -6,7 +6,7 @@
 <jsp:useBean scope="request" id="questions" type="ch.heigvd.amt.mvcProject.application.question.QuestionsDTO"/>
 
 
-<div class="container">
+<div class="container body-with-navbar">
 
     <h1>Browsing</h1>
 
