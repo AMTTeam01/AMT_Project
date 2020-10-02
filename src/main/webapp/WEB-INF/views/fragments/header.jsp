@@ -6,6 +6,10 @@
 
     <title>Help 2000</title>
 
+    <!-- favicon.ico -->
+
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/assets/favicon.ico">
+
     <!-- Bootstrap core CSS -->
     <link type="text/css" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet">
 
