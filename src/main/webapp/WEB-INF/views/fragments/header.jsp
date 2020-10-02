@@ -8,8 +8,15 @@
 
     <!-- Bootstrap core CSS -->
     <link type="text/css" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome CSS -->
+    <link type="text/css" href="${pageContext.request.contextPath}/assets/css/all.min.css" rel="stylesheet">
 
     <!-- Webapp CSS -->
     <link type="text/css" href="${pageContext.request.contextPath}/assets/css/main_style.css" rel="stylesheet">
+
+    <!-- Jquery & Bootstrap -->
+
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.slim.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
 </head>
