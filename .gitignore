@@ -82,3 +82,5 @@ fabric.properties
 e2e/output/
 
 docker/images/payara/apps/help-2020.war
+
+.idea/compiler.xml
