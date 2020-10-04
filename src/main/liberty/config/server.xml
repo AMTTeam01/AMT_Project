@@ -3,9 +3,6 @@
         <feature>webProfile-8.0</feature>
     </featureManager>
 
-    <variable name="default.http.port" defaultValue="9080"/>
-    <variable name="default.https.port" defaultValue="9443"/>
-
     <webApplication location="help2000.war" contextRoot="/">
 
         <!-- Declare the jar files for MySql access through JDBC -->
@@ -18,8 +15,8 @@
             <properties databaseName="AMT_HELP2000"
                         serverName="localhost"
                         portNumber="9906"
-                        user="root"
-                        password="$help2000$"/>
+                        user="${USER}"
+                        password="${PASSWORD}"/>
         </dataSource>
 
     </webApplication>
