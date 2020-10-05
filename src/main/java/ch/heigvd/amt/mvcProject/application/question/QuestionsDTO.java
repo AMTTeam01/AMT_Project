@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Object used to passe data between tier
+ * Object used to pass data between tier
  */
 @Builder
 @Getter

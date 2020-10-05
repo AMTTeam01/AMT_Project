@@ -1,5 +1,9 @@
 package ch.heigvd.amt.mvcProject.ui.web.user;
 
+import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,6 +13,16 @@ import java.io.IOException;
 
 @WebServlet(name = "MyProfileServlet", urlPatterns = "/my_profile")
 public class MyProfileRenderer extends HttpServlet {
+
+    private ServiceRegistry serviceRegistry;
+    private UserFacade userFacade;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        serviceRegistry = ServiceRegistry.getServiceRegistry();
+
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);

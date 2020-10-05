@@ -1,5 +1,6 @@
 
 <%@include file="fragments/header.jsp"%>
+<%@include file="fragments/navigation_bar.jsp"%>
 
 <h1>
   <b>Username</b>
