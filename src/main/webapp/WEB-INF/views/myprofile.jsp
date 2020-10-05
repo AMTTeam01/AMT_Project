@@ -2,9 +2,9 @@
 <%@include file="fragments/navigation_bar.jsp"%>
 
 <div class="body-with-navbar">
-  <h1>Username : ${user.username}</h1>
+  <h1 class="test">Username : ${user.username}</h1>
   <h1>Email : ${user.email}</h1>
-  <a class="nav-link" href="${pageContext.request.contextPath}/edit_profile"><i class="fas fa-pen"></i> EDIT</a>
+  <h1><a href="${pageContext.request.contextPath}/edit_profile"><i class="fas fa-pen"></i> EDIT</a></h1>
 
   <div class="questions-container">
     <h1>
