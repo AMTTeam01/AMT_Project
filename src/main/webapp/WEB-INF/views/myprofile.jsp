@@ -1,14 +1,20 @@
 
 <%@include file="fragments/header.jsp"%>
+<%@include file="fragments/navigation_bar.jsp"%>
 
-<h1>
-  <b>Username</b>
-</h1>
-
-<div class="questions-container">
+<div class="body-with-navbar">
   <h1>
-    My Questions :
+    <p>Username : <b>${user.username}</b></p>
   </h1>
+  <h1>
+    <p>Email : <b>${user.email}</b></p>
+  </h1>
+
+  <div class="questions-container">
+    <h1>
+      My Questions :
+    </h1>
+  </div>
 </div>
 
 <%@include file="fragments/footer.jsp"%>

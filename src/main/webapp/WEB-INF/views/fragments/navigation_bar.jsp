@@ -8,6 +8,9 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item nav-item-cell">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/my_profile"><i class="fas fa-user"></i> Profile</a>
+                </li>
+                <li class="nav-item nav-item-cell">
                     <a class="nav-link" href="${pageContext.request.contextPath}/browsing"><i class="fas fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item nav-item-cell">
