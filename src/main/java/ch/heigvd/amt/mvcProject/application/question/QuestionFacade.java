@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 
@@ -49,7 +50,5 @@ public class QuestionFacade {
 
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();
     }
-
-
 
 }
