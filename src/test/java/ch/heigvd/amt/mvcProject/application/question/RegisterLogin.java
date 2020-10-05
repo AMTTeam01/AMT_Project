@@ -14,7 +14,7 @@ public class RegisterLogin {
     @BeforeAll
     public static void init(){
         serviceRegistry = ServiceRegistry.getServiceRegistry();
-        authenticationFacade = serviceRegistry.getUserFacade();
+        authenticationFacade = serviceRegistry.getAuthenticationFacade();
     }
 
     @Test

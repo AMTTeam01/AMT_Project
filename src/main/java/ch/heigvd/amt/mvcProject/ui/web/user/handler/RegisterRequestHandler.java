@@ -24,7 +24,7 @@ public class RegisterRequestHandler extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         serviceRegistry = ServiceRegistry.getServiceRegistry();
-        authenticationFacade = serviceRegistry.getUserFacade();
+        authenticationFacade = serviceRegistry.getAuthenticationFacade();
     }
 
     @Override
