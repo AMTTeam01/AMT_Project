@@ -40,7 +40,7 @@ public class ServiceRegistry{
 
     }
 
-    public AuthenticationFacade getUserFacade() {
+    public AuthenticationFacade getAuthenticationFacade() {
         return authenticationFacade;
     }
 
