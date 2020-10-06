@@ -1,16 +1,16 @@
 
-/* modif test */
-
 body {
     background-color: #3A3840;
 }
 
 h1 {
-    color: white;
-    font-size: 18px;
+    color: whitesmoke;
+    font-size: 40px;
     text-align: left;
     margin: 10px;
 }
+
+
 
 .split {
     height: 100%;
@@ -115,6 +115,7 @@ Buttons, inputs, ...
     left: 50%;
     bottom: 0;
     transform: translate(-50%, 80px);
+    padding: 0px 10px;
 }
 
 .bigger-text-area{
