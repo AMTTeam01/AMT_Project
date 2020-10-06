@@ -172,15 +172,3 @@ Buttons, inputs, ...
 a{
     text-decoration: none;
 }
-
-.list-group-item, .badge-primary {
-    background-color: transparent;
-}
-
-.list-group-item {
-    border-color: #FF7300;
-}
-
-.p-2 {
-    color: whitesmoke;
-}
