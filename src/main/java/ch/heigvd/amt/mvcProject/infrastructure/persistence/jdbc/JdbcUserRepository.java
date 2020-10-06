@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
@@ -10,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -38,5 +40,26 @@ public class JdbcUserRepository implements IUserRepository {
             throwables.printStackTrace();
         }
 
+        return null;
+    }
+
+    @Override
+    public void save(User entity) {
+
+    }
+
+    @Override
+    public void remove(UserId id) {
+
+    }
+
+    @Override
+    public Optional<User> findById(UserId id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return null;
     }
 }

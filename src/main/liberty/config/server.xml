@@ -15,15 +15,13 @@
             <properties databaseName="AMT_HELP2000"
                         serverName="localhost"
                         portNumber="9906"
-                        user="${USER}"
-                        password="${PASSWORD}"/>
+                        user="root"
+                        password="test"/>
         </dataSource>
 
     </webApplication>
 
     <httpEndpoint host="*" httpPort="${default.http.port}"
                   httpsPort="${default.https.port}" id="defaultHttpEndpoint"/>
-
-
 
 </server>
