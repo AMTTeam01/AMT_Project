@@ -1,0 +1,53 @@
+@use 'colors' as *;
+
+.classic-form{
+  background-color: transparent;
+  border: 1px solid $main-color;
+  color: $main-color;
+  margin-top: 20px;
+  border-radius: 0px;
+  margin-bottom: 20px;
+  &:focus{
+    background-color: transparent;
+    border: 1px solid $main-color;
+    color: $main-color;
+    box-shadow: none;
+    outline: none;
+  }
+  &::placeholder{
+    color: $grey-color;
+  }
+}
+
+.button-full{
+  width: 100%;
+}
+
+.questions-container {
+  background-color: #5a6268;
+  height: auto;
+  width: 40%;
+  border-radius: 10px;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 80px);
+  padding: 0px 10px;
+}
+
+.bigger-text-area{
+  height: 500px;
+}
+
+.new-question-form{
+  background-color: #504E58;
+  padding: 20px;
+}
+
+.login-form{
+  margin-top: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}

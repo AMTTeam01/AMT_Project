@@ -1,0 +1,27 @@
+@use "colors" as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
+body {
+  background: $body-color;
+  color: $color-white;
+  font-family: 'Raleway', sans-serif;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
+
+.bottom {
+  bottom: 0;
+}
+
+.img {
+  height:100%;
+  width:100%;
+  object-fit: cover;
+}

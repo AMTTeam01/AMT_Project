@@ -1,0 +1,38 @@
+@use 'colors' as *;
+
+.navbar-nav .nav-item-cell i{
+  color: $main-color;
+}
+
+@media(min-width: 768px) {
+
+  .navbar-nav .nav-item-cell {
+    border-left: 1px solid $main-color;
+  }
+
+  .navbar-nav .nav-item-cell:last-child {
+    border-right: 1px solid $main-color;
+  }
+}
+
+.navbar-brand .logo{
+  height: 50px;
+}
+
+.btn-search {
+  border:1px solid $main-color;
+  background: none;
+  color: $main-color;
+}
+
+.btn-search{
+  &:hover,
+  &:focus{
+    background-color: $main-color;
+    color: white;
+  }
+}
+
+.body-with-navbar{
+  margin-top: 100px;
+}
