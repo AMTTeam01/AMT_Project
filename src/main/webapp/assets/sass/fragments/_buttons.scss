@@ -1,0 +1,44 @@
+@use 'colors' as *;
+
+.classic-link {
+  padding-bottom: 5px;
+  border-bottom: 1px solid $main-color;
+  color: $main-color;
+  &:hover{
+    text-decoration: none;
+    color: $color-white;
+    transition: all .5s;
+  }
+}
+
+.btn-classic {
+  background-color: transparent;
+  border: 1px solid #FF7300;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  &:hover{
+    background-color: $main-color;
+    border: 1px solid $main-color;
+  }
+}
+
+.btn-classic-filled{
+  background-color: $main-color;
+  border: 1px solid $main-color;
+  color: $color-white;
+  border-radius: 4px;
+  &:hover{
+    background-color: $main-color;
+    border: 1px solid $main-color;
+  }
+}
+
+.btn-wide{
+  padding-left: 50px;
+  padding-right: 50px;
+}

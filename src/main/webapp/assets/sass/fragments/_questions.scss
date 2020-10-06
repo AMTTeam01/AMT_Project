@@ -1,0 +1,13 @@
+@use 'colors' as *;
+
+.list-group-item-classic{
+  background: transparent;
+  border: 1px solid $main-color;
+
+  .badge-primary{
+    background-color: $main-color;
+    &:hover{
+      background-color: darken($main-color, 10%);
+    }
+  }
+}

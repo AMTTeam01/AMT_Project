@@ -2,10 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean scope="request" id="questions" type="ch.heigvd.amt.mvcProject.application.question.QuestionsDTO"/>
 
-<ul class="list-group" id="list-item_question">
+<ul class="list-group mt-2 mb-2" id="list-item_question">
     <c:forEach var="question" items="${questions.questions}">
-        <div class="list-group-item">
-            <a href="#" id="link_question_url">
+        <div class="list-group-item list-group-item-classic">
+            <a class="classic-link" href="#" id="link_question_url">
                 <div class="d-flex">
                     <h4 class="p-2 mr-auto">${question.title}</h4>
                     <div>

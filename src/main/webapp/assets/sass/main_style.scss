@@ -1,0 +1,10 @@
+/* Attention, l'étoile signifie qu'il n'y a pas besoin de spécifier
+l'espace de nom précédant la variable sinon on devrait écrire base.$main-color */
+
+@use 'fragments/colors';
+@use 'fragments/base';
+@use 'fragments/home';
+@use 'fragments/forms';
+@use 'fragments/buttons';
+@use 'fragments/navbar';
+@use 'fragments/questions';
