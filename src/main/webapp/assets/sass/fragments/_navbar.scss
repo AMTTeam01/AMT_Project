@@ -1,5 +1,9 @@
 @use 'colors' as *;
 
+.navbar{
+  background-color: $color-white;
+}
+
 .navbar-nav .nav-item-cell i{
   color: $main-color;
 }
