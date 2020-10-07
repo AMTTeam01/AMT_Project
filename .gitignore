@@ -86,3 +86,5 @@ docker/images/payara/apps/help-2020.war
 .idea/compiler.xml
 
 .idea/
+
+*.iml
