@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.UUID;
 
 @WebServlet(name = "QuestionRenderer", urlPatterns = "/question")
 public class QuestionRenderer extends HttpServlet {
@@ -37,7 +36,7 @@ public class QuestionRenderer extends HttpServlet {
 
         //check if question ID exists. If not, come back to browsing
         try {
-            questionDTO = questionFacade.getCurrentQuestion(command);
+            questionDTO = questionFacade.getQuestionsById(command);
             request.setAttribute("question", questionDTO);
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
         } catch (QuestionFailedException e) {
