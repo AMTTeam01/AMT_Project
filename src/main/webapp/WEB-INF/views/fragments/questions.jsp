@@ -5,7 +5,7 @@
 <ul class="list-group mt-2 mb-2" id="list-item_question">
     <c:forEach var="question" items="${questions.questions}">
         <div class="list-group-item list-group-item-classic">
-            <a class="classic-link" href="${pageContext.request.contextPath}/question?id=1" id="link_question_url">
+            <a class="classic-link" href="${pageContext.request.contextPath}/question?id=${question.id}" id="link_question_url">
                 <div class="d-flex">
                     <h4 class="p-2 mr-auto">${question.title}</h4>
                     <div>

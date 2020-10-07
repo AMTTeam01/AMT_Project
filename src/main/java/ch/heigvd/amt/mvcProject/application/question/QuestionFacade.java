@@ -1,8 +1,10 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,9 +48,26 @@ public class QuestionFacade {
                                 .title(question.getTitle())
                                 .ranking(question.getRanking())
                                 .tags(question.getTags())
+                                .description(question.getDescription())
+                                .id(question.getId())
                                 .build()).collect(Collectors.toList());
 
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();
+    }
+
+    public QuestionsDTO.QuestionDTO getCurrentQuestion(QuestionCommand command) throws QuestionFailedException {
+        Question question = questionRepository.findById(command.getQuestionId())
+                .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+
+        QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
+                .ranking(question.getRanking())
+                .tags(question.getTags())
+                .title(question.getTitle())
+                .description(question.getDescription())
+                .id(question.getId())
+                .build();
+
+        return currentQuestionDTO;
     }
 
 }

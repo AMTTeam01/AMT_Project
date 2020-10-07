@@ -1,14 +1,9 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: simon
-  Date: 07.10.2020
-  Time: 12:27
-  To change this template use File | Settings | File Templates.
---%>
+<jsp:useBean id="question" scope="request" type="ch.heigvd.amt.mvcProject.application.question.QuestionsDTO.QuestionDTO"/>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
-    <title>Title</title>
+    <title>${question.id}</title>
 </head>
 <body>
 
