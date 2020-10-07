@@ -1,0 +1,195 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+body {
+  background: #3A3840;
+  color: white;
+  font-family: "Raleway", sans-serif;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
+
+.bottom {
+  bottom: 0;
+}
+
+.img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.home-container .title {
+  font-size: 60px;
+}
+.home-container .btn-browse {
+  font-size: 34px;
+}
+
+.split-home {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+}
+
+.left-home-page {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.classic-form {
+  background-color: transparent;
+  border: 1px solid #FF7300;
+  color: #FF7300;
+  margin-top: 20px;
+  border-radius: 0px;
+  margin-bottom: 20px;
+}
+.classic-form:focus {
+  background-color: transparent;
+  border: 1px solid #FF7300;
+  color: #FF7300;
+  box-shadow: none;
+  outline: none;
+}
+.classic-form::placeholder {
+  color: #A8B1A9;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.questions-container {
+  background-color: #5a6268;
+  height: auto;
+  width: 40%;
+  border-radius: 10px;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 80px);
+  padding: 0px 10px;
+}
+
+.bigger-text-area {
+  height: 500px;
+}
+
+.new-question-form {
+  padding: 20px;
+}
+
+.login-form {
+  margin-top: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.classic-link {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #FF7300;
+  color: #FF7300;
+}
+.classic-link:hover {
+  text-decoration: none;
+  color: white;
+  transition: all 0.5s;
+}
+
+.btn-classic {
+  background-color: transparent;
+  border: 1px solid #FF7300;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.btn-classic:hover {
+  background-color: #FF7300;
+  border: 1px solid #FF7300;
+}
+
+.btn-classic-filled {
+  background-color: #FF7300;
+  border: 1px solid #FF7300;
+  color: white;
+  border-radius: 4px;
+}
+.btn-classic-filled:hover {
+  background-color: #FF7300;
+  border: 1px solid #FF7300;
+}
+
+.btn-wide {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.navbar {
+  background-color: white;
+}
+
+.navbar-nav .nav-item-cell i {
+  color: #FF7300;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav .nav-item-cell {
+    border-left: 1px solid #FF7300;
+  }
+
+  .navbar-nav .nav-item-cell:last-child {
+    border-right: 1px solid #FF7300;
+  }
+}
+.navbar-brand .logo {
+  height: 50px;
+}
+
+.btn-search {
+  border: 1px solid #FF7300;
+  background: none;
+  color: #FF7300;
+}
+
+.btn-search:hover, .btn-search:focus {
+  background-color: #FF7300;
+  color: white;
+}
+
+.body-with-navbar {
+  margin-top: 100px;
+}
+
+.list-group-item-classic {
+  background: transparent;
+  border: 1px solid #FF7300;
+}
+.list-group-item-classic .badge-primary {
+  background-color: #FF7300;
+}
+.list-group-item-classic .badge-primary:hover {
+  background-color: #cc5c00;
+}
+
+/* Attention, l'étoile signifie qu'il n'y a pas besoin de spécifier
+l'espace de nom précédant la variable sinon on devrait écrire base.$main-color */
+
+/*# sourceMappingURL=main_style.css.map */
