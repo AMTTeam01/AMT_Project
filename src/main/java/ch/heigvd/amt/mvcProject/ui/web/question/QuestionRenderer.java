@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @WebServlet(name = "QuestionRenderer", urlPatterns = "/question")
 public class QuestionRenderer extends HttpServlet {
@@ -30,7 +31,7 @@ public class QuestionRenderer extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         //build a question command with attribute id in URL
-        QuestionId id = (QuestionId) request.getAttribute("id");
+        QuestionId id = new QuestionId(request.getParameter("id"));
         QuestionCommand command = QuestionCommand.builder().questionId(id).build();
         QuestionsDTO.QuestionDTO questionDTO = null;
 
