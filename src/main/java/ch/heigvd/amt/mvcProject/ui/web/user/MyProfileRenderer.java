@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @WebServlet(name = "MyProfileServlet", urlPatterns = "/my_profile")
 public class MyProfileRenderer extends HttpServlet {
 
+    @Inject
     private ServiceRegistry serviceRegistry;
     private QuestionFacade questionFacade;
 
@@ -27,7 +29,6 @@ public class MyProfileRenderer extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         questionFacade = serviceRegistry.getQuestionFacade();
 
     }

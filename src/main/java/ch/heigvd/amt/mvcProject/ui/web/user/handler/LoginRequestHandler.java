@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,13 +18,13 @@ import java.util.List;
 @WebServlet(name = "LoginRequestHandler", urlPatterns = "/login.do")
 public class LoginRequestHandler extends HttpServlet {
 
+    @Inject
     private ServiceRegistry serviceRegistry;
     private AuthenticationFacade authenticationFacade;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
     }
 

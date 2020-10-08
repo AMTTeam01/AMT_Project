@@ -14,7 +14,6 @@ public class QuestionFacadeTest {
 
     @BeforeAll
     public static void init() {
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         questionFacade = serviceRegistry.getQuestionFacade();
     }
 
