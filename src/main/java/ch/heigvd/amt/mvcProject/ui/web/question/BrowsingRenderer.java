@@ -28,12 +28,10 @@ public class BrowsingRenderer extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         questionFacade = serviceRegistry.getQuestionFacade();
-
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         QuestionsDTO questionsDTO = questionFacade.getQuestions(null);
         request.setAttribute("questions", questionsDTO);
         request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);

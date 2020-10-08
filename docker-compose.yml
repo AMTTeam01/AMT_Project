@@ -17,8 +17,11 @@ services:
     image: mysql:5.7
     restart: always
     container_name: 'help2000_db_container'
+    command: --init-file database.sql
+    volumes:
+      - ./dump.sql:/docker-entrypoint-initdb.d/database.sql
     environment:
-      MYSQL_DATABASE: 'help2000_db'
+      MYSQL_DATABASE: 'help2000'
       # User so we don't have to use root
       MYSQL_USER: 'dbDevHelp2000'
       MYSQL_PASSWORD: 'devpass'

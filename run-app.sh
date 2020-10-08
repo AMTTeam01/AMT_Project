@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Run database
-#docker run --ulimit memlock=-1:-1 -it --rm=true --memory-swappiness=0 \
-#           --name mysql-liberty \
-#           -e MYSQL_DATABASE=help2000_db \
-#           -e MYSQL_USER=dbDevHelp2000 \
-#           -e MYSQL_PASSWORD=devpass \
-#           -p 9906:9906 \
-#           mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
-
+# Restart web app and database
+docker-compose down
+rm -rf ./volumes/db
+docker-compose build
 docker-compose up
+
+# Create database with the file init
+cat database.sql | docker exec -i help2000_db_container mysql -u dbDevHelp2000 -p devpass help2000
