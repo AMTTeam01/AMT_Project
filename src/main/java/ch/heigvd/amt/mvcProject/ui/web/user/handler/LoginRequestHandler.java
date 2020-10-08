@@ -51,5 +51,6 @@ public class LoginRequestHandler extends HttpServlet {
             resp.sendRedirect("/login");
 
         }
+
     }
 }

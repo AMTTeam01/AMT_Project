@@ -14,7 +14,7 @@
         <input id="txt_email" name="txt_email" type="email" class="form-control classic-form" placeholder="Insert your e-mail" required />
         <input id="txt_password" name="txt_password" class="form-control classic-form" type="password" placeholder="Insert your password" required />
         <input id="txt_cpassword" name="txt_cpassword" class="form-control classic-form" type="password" placeholder="Confirm your password" required />
-        <button type="submit" class="btn btn-primary classic-button-filled button-full">Sign up</button>
+        <button type="submit" class="btn btn-primary btn-classic-filled btn-full">Sign up</button>
     </form>
 </div>
 
