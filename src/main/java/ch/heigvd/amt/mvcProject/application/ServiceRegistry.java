@@ -17,7 +17,7 @@ import javax.inject.Named;
  * Reference a set of services
  */
 @ApplicationScoped
-public class ServiceRegistry{
+public class ServiceRegistry {
 
     // Users
     @Inject @Named("JdbcUserRepository")

@@ -8,8 +8,15 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.Registration
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 public class AuthenticationFacade {
+
     private IUserRepository userRepository;
+
+    public AuthenticationFacade() {
+    }
 
     public AuthenticationFacade(IUserRepository userRepository){
         this.userRepository = userRepository;

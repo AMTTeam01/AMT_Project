@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Web app
+  web:
+    image: ghcr.io/amtteamheig/amt_project:latest
+    container_name: 'help2000_webapp_container'
+    ports:
+      - "8000:8080"
+    depends_on:
+      - db
+
+  # Database
+  db:
+    image: mysql:5.7
+    restart: always
+    container_name: 'help2000_db_container'
+    environment:
+      MYSQL_DATABASE: 'help2000_db'
+      # User so we don't have to use root
+      MYSQL_USER: 'dbDevHelp2000'
+      MYSQL_PASSWORD: 'devpass'
+      MYSQL_ROOT_PASSWORD: 'devpass_but_tricky_to_crack'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-db:/var/lib/mysql
