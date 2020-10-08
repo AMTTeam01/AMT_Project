@@ -25,6 +25,7 @@ public class RegisterRequestHandler extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+        System.out.println("Getting the auth facade from : " + serviceRegistry);
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
     }
 
@@ -40,6 +41,7 @@ public class RegisterRequestHandler extends HttpServlet {
                 .build();
 
         try{
+            System.out.println("Registering...");
             authenticationFacade.register(registerCommand);
             req.getRequestDispatcher("/login.do").forward(req, resp);
         }catch(RegistrationFailedException e){

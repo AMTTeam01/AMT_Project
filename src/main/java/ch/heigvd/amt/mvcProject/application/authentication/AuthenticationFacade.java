@@ -7,18 +7,20 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterComm
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcUserRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 public class AuthenticationFacade {
 
-    private IUserRepository userRepository;
+    private JdbcUserRepository userRepository;
 
     public AuthenticationFacade() {
     }
 
-    public AuthenticationFacade(IUserRepository userRepository){
+    public AuthenticationFacade(JdbcUserRepository userRepository){
+        System.out.println("Auth Facade : setting the repo with " + userRepository);
         this.userRepository = userRepository;
     }
 
@@ -30,6 +32,7 @@ public class AuthenticationFacade {
      *  - password =/= confirmation of password
      */
     public void register(RegisterCommand cmd) throws RegistrationFailedException {
+        System.out.println("Registering FROM FACADE");
         User existingUser = userRepository.findByUsername(cmd.getUsername())
                 .orElse(null);
 
