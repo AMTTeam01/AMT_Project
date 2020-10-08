@@ -14,9 +14,9 @@
             <jdbcDriver libraryRef="MySqlLib"/>
             <properties databaseName="AMT_HELP2000"
                         serverName="localhost"
-                        portNumber="9906"
+                        portNumber="3306"
                         user="root"
-                        password="test"/>
+                        password="mypassword"/>
         </dataSource>
 
     </webApplication>

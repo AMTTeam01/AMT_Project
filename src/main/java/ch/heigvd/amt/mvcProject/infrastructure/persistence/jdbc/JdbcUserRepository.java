@@ -22,6 +22,7 @@ public class JdbcUserRepository implements IUserRepository {
     DataSource dataSource;
 
     public JdbcUserRepository() {
+        
     }
 
     public JdbcUserRepository(DataSource dataSource) {
