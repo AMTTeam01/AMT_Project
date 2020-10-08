@@ -55,8 +55,8 @@ public class QuestionFacade {
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();
     }
 
-    public QuestionsDTO.QuestionDTO getQuestionsById(QuestionCommand command) throws QuestionFailedException {
-        Question question = questionRepository.findById(command.getQuestionId())
+    public QuestionsDTO.QuestionDTO getQuestionById(QuestionQuery query) throws QuestionFailedException {
+        Question question = questionRepository.findById(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()

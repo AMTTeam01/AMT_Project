@@ -44,6 +44,7 @@ public class QuestionFacadeTest {
 
 
     @Test
+    @Order(3)
     public void getQuestionByIdShouldWork() throws QuestionFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -55,11 +56,11 @@ public class QuestionFacadeTest {
 
         QuestionsDTO view = questionFacade.getQuestions(null);
         QuestionId id = view.getQuestions().get(0).getId();
-        QuestionCommand commandID = QuestionCommand.builder()
+        QuestionQuery query = QuestionQuery.builder()
                 .questionId(id)
                 .build();
 
-        QuestionsDTO.QuestionDTO viewID = questionFacade.getQuestionsById(commandID);
+        QuestionsDTO.QuestionDTO viewID = questionFacade.getQuestionById(query);
         assertEquals(id, viewID.getId());
     }
 

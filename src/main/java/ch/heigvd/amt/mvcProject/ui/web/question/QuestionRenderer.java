@@ -1,10 +1,7 @@
 package ch.heigvd.amt.mvcProject.ui.web.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
-import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
-import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
-import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
+import ch.heigvd.amt.mvcProject.application.question.*;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.servlet.ServletException;
@@ -31,12 +28,12 @@ public class QuestionRenderer extends HttpServlet {
 
         //build a question command with attribute id in URL
         QuestionId id = new QuestionId(request.getParameter("id"));
-        QuestionCommand command = QuestionCommand.builder().questionId(id).build();
+        QuestionQuery query = QuestionQuery.builder().questionId(id).build();
         QuestionsDTO.QuestionDTO questionDTO = null;
 
         //check if question ID exists. If not, come back to browsing
         try {
-            questionDTO = questionFacade.getQuestionsById(command);
+            questionDTO = questionFacade.getQuestionById(query);
             request.setAttribute("question", questionDTO);
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
         } catch (QuestionFailedException e) {
