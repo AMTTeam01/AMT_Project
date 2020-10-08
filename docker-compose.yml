@@ -6,9 +6,11 @@ services:
     image: ghcr.io/amtteamheig/amt_project:latest
     container_name: 'help2000_webapp_container'
     ports:
-      - "8000:8080"
+      - "9080:9080"
     depends_on:
       - db
+    expose:
+      - '9080'
 
   # Database
   db:
@@ -23,10 +25,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'devpass_but_tricky_to_crack'
     ports:
       # <Port exposed> : < MySQL Port running inside container>
-      - '9906:9906'
+      - '3306:3306'
     expose:
       # Opens port 3306 on the container
       - '3306'
-      # Where our data will be persisted
-    #volumes:
-    #  - my-db:database.sql
