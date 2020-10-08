@@ -3,6 +3,9 @@
         <feature>webProfile-8.0</feature>
     </featureManager>
 
+    <variable name="USER" value="root" />
+    <variable name="PASSWORD" value="$help2000$" />
+
     <webApplication location="help2000.war" contextRoot="/">
 
         <!-- Declare the jar files for MySql access through JDBC -->
@@ -10,18 +13,19 @@
             <fileset dir="${server.config.dir}" includes="*.jar"/>
         </library>
 
-        <dataSource jndiName="jdbc/help2000DS">
-            <jdbcDriver libraryRef="MySqlLib"/>
+        <jdbcDriver libraryRef="MySqlLib"/>
+
+        <dataSource jndiName="jdbc/help2000DS" jdbcDriverRef="MySqlLib">
             <properties databaseName="AMT_HELP2000"
                         serverName="localhost"
-                        portNumber="9906"
-                        user="root"
-                        password="test"/>
+                        portNumber="${env.MYSQL_PORT}"
+                        user="${env.MYSQL_USER}"
+                        password="${env.MYSQL_PASSWORD}"/>
         </dataSource>
 
     </webApplication>
 
-    <httpEndpoint host="*" httpPort="${default.http.port}"
-                  httpsPort="${default.https.port}" id="defaultHttpEndpoint"/>
+    <httpEndpoint host="*" httpPort="${env.HTTP_PORT}"
+                  httpsPort="${env.HTTPS_PORT}" id="defaultHttpEndpoint"/>
 
 </server>

@@ -5,37 +5,32 @@ import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcUserRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.memory.InMemoryQuestionRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.memory.InMemoryUserRepository;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Reference a set of services
  */
+@ApplicationScoped
 public class ServiceRegistry{
 
-    private static ServiceRegistry singleton; // Code smell
-
     // Users
-    private IUserRepository userRepository;
+    @Inject @Named("JdbcUserRepository")
+    IUserRepository userRepository;
     private AuthenticationFacade authenticationFacade;
 
     // Questions
-    private IQuestionRepository questionRepository;
+    @Inject @Named("InMemoryQuestionRepository")
+    IQuestionRepository questionRepository;
     private QuestionFacade questionFacade;
 
-    public static ServiceRegistry getServiceRegistry(){
-        if(singleton == null){
-            singleton = new ServiceRegistry();
-        }
-
-        return singleton;
-    }
-
     public ServiceRegistry() {
-        singleton = this;
-        userRepository = new InMemoryUserRepository();
         authenticationFacade = new AuthenticationFacade(userRepository);
-        questionRepository = new InMemoryQuestionRepository();
         questionFacade = new QuestionFacade(questionRepository);
 
     }

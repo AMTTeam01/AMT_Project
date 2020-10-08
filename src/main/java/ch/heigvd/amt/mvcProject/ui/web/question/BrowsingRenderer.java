@@ -7,6 +7,7 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import lombok.SneakyThrows;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,13 +20,13 @@ import java.util.Arrays;
 @WebServlet(name = "BrowsingRenderer", urlPatterns = "/browsing")
 public class BrowsingRenderer extends HttpServlet {
 
+    @Inject
     private ServiceRegistry serviceRegistry;
     private QuestionFacade questionFacade;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         questionFacade = serviceRegistry.getQuestionFacade();
 
     }

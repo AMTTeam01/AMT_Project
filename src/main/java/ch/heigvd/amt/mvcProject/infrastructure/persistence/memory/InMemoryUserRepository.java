@@ -7,6 +7,8 @@ import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.DataCorruptionException;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.IntegrityConstraintViolationException;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 /**
  * Implement in memory of the repository with a hashmap
  */
+@ApplicationScoped
+@Named("InMemoryUserRepository")
 public class InMemoryUserRepository extends InMemoryRepository<User, UserId> implements IUserRepository {
 
     private Map<UserId, User> database = new ConcurrentHashMap<>();

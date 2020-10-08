@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,13 +18,13 @@ import java.util.List;
 @WebServlet(name = "RegisterRequestHandler", urlPatterns = "/register.do")
 public class RegisterRequestHandler extends HttpServlet {
 
+    @Inject
     private ServiceRegistry serviceRegistry;
     private AuthenticationFacade authenticationFacade;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
     }
 

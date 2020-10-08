@@ -8,6 +8,8 @@ import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -17,5 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Implement in memory of the repository with a hashmap
  */
+@ApplicationScoped
+@Named("InMemoryQuestionRepository")
 public class InMemoryQuestionRepository extends InMemoryRepository<Question, QuestionId> implements IQuestionRepository {
 }

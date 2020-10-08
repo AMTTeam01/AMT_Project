@@ -10,6 +10,8 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.Registration
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.*;
 
+import javax.inject.Inject;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -20,7 +22,6 @@ public class AuthenticationFacadeTest {
 
     @BeforeAll
     public static void init(){
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
     }
 

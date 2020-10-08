@@ -7,6 +7,7 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,13 +21,13 @@ import java.util.List;
 @WebServlet(name = "NewQuestionRequestHandler", urlPatterns = "/new_question.do")
 public class NewQuestionRequestHandler extends HttpServlet {
 
+    @Inject
     private ServiceRegistry serviceRegistry;
     private QuestionFacade questionFacade;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        serviceRegistry = ServiceRegistry.getServiceRegistry();
         questionFacade = serviceRegistry.getQuestionFacade();
     }
 
