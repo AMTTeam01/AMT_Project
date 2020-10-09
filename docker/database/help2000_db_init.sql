@@ -17,7 +17,7 @@ USE `help2000`;
 -- Table `help2000`.`tblUser`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblUser` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `userName` VARCHAR(512) NOT NULL,
   `email` VARCHAR(512) NOT NULL,
   `encryptedPassword` VARCHAR(512) NULL,
@@ -31,7 +31,7 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblQuestion`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblQuestion` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `title` VARCHAR(512) NOT NULL,
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
@@ -51,7 +51,7 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblTag`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblTag` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `name` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
@@ -62,7 +62,7 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblAnswer`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblAnswer` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
@@ -81,7 +81,7 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblComment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblComment` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
@@ -107,8 +107,8 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblTag_has_tblQuestion`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblTag_has_tblQuestion` (
-  `tblTag_id` INT NOT NULL,
-  `tblQuestion_id` INT NOT NULL,
+  `tblTag_id` VARCHAR(256) NOT NULL,
+  `tblQuestion_id` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`tblTag_id`, `tblQuestion_id`),
   INDEX `fk_tblTag_has_tblQuestion_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
   INDEX `fk_tblTag_has_tblQuestion_tblTag1_idx` (`tblTag_id` ASC) VISIBLE,
