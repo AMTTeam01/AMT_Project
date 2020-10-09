@@ -71,6 +71,7 @@ public class AuthenticationFacade {
         CurrentUserDTO currentUser = CurrentUserDTO.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .userId(user.getId())
                 .build();
 
         return currentUser;

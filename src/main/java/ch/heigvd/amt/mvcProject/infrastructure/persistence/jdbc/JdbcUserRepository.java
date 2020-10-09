@@ -41,8 +41,13 @@ public class JdbcUserRepository implements IUserRepository {
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
+
             statement.setString(1, username);
-            user = Optional.of(getUsers(statement.executeQuery()).get(0));
+
+            ResultSet rs = statement.executeQuery();
+
+            if(rs.next())
+                user = Optional.of(getUsers(statement.executeQuery()).get(0));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -129,13 +134,14 @@ public class JdbcUserRepository implements IUserRepository {
     private ArrayList<User> getUsers(ResultSet rs) throws SQLException {
         ArrayList<User> users = new ArrayList<>();
         while(rs.next()) {
-            rs.first();
+
             User foundUser = User.builder()
                     .id(new UserId(rs.getString("id") + ""))
                     .email(rs.getString("email"))
                     .username(rs.getString("userName"))
                     .encryptedPassword(rs.getString("encryptedPassword"))
                     .build();
+
             users.add(foundUser);
         }
 

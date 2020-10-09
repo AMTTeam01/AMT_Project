@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblQuestion` (
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
-  `tblUser_id` INT NOT NULL,
+  `tblUser_id` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_tblQuestion_tblUser_idx` (`tblUser_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblQuestion_tblUser`
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblAnswer` (
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
-  `tblQuestion_id` INT NOT NULL,
+  `tblQuestion_id` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_tblAnswer_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblAnswer_tblQuestion1`
@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblComment` (
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
-  `tblAnswer_id` INT NULL,
-  `tblQuestion_id` INT NULL,
+  `tblAnswer_id` VARCHAR(256) NULL,
+  `tblQuestion_id` VARCHAR(256) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_tblComment_tblAnswer1_idx` (`tblAnswer_id` ASC) VISIBLE,
   INDEX `fk_tblComment_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
