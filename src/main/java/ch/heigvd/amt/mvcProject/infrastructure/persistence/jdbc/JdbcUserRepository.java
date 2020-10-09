@@ -22,7 +22,6 @@ public class JdbcUserRepository implements IUserRepository {
     DataSource dataSource;
 
     public JdbcUserRepository() {
-        
     }
 
     public JdbcUserRepository(DataSource dataSource) {
@@ -40,6 +39,8 @@ public class JdbcUserRepository implements IUserRepository {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+        // todo : return results
 
         return null;
     }

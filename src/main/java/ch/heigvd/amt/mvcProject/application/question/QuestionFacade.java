@@ -1,10 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
-import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcQuestionRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,9 +13,9 @@ import java.util.stream.Collectors;
  */
 public class QuestionFacade {
 
-    private IQuestionRepository questionRepository;
+    private JdbcQuestionRepository questionRepository;
 
-    public QuestionFacade(IQuestionRepository questionRepository) {
+    public QuestionFacade(JdbcQuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
 

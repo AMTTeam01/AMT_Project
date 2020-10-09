@@ -15,11 +15,11 @@
 
         <dataSource jndiName="jdbc/help2000DS">
             <jdbcDriver libraryRef="MySqlLib"/>
-            <properties databaseName="help2000_db"
+            <properties databaseName="help2000"
                         serverName="localhost"
                         portNumber="${env.MYSQL_PORT}"
-                        user="${env.MYSQL_USER}"
-                        password="${env.MYSQL_PASSWORD}"/>
+                        user="root"
+                        password="devpa$$"/>
         </dataSource>
 
     </webApplication>

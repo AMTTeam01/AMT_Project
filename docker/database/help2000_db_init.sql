@@ -10,6 +10,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema help2000
 -- -----------------------------------------------------
+DROP DATABASE IF EXISTS `help2000`
 CREATE SCHEMA IF NOT EXISTS `help2000` ;
 USE `help2000` ;
 

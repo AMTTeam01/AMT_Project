@@ -1,11 +1,8 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import lombok.*;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 
 /**

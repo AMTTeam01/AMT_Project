@@ -20,7 +20,6 @@ public class AuthenticationFacade {
     }
 
     public AuthenticationFacade(JdbcUserRepository userRepository){
-        System.out.println("Auth Facade : setting the repo with " + userRepository);
         this.userRepository = userRepository;
     }
 
@@ -32,7 +31,6 @@ public class AuthenticationFacade {
      *  - password =/= confirmation of password
      */
     public void register(RegisterCommand cmd) throws RegistrationFailedException {
-        System.out.println("Registering FROM FACADE");
         User existingUser = userRepository.findByUsername(cmd.getUsername())
                 .orElse(null);
 

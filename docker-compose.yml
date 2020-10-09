@@ -17,18 +17,17 @@ services:
     image: mysql:5.7
     restart: always
     container_name: 'help2000_db_container'
-    command: --init-file database.sql
-    volumes:
-      - ./dump.sql:/docker-entrypoint-initdb.d/database.sql
     environment:
       MYSQL_DATABASE: 'help2000'
       # User so we don't have to use root
       MYSQL_USER: 'dbDevHelp2000'
       MYSQL_PASSWORD: 'devpass'
-      MYSQL_ROOT_PASSWORD: 'devpass_but_tricky_to_crack'
+      MYSQL_ROOT_PASSWORD: 'devpa$$'
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
     expose:
       # Opens port 3306 on the container
       - '3306'
+    volumes:
+      - ./docker/database/:/docker-entrypoint-initdb.d/
