@@ -3,9 +3,6 @@
         <feature>webProfile-8.0</feature>
     </featureManager>
 
-    <variable name="USER" value="root" />
-    <variable name="PASSWORD" value="$help2000$" />
-
     <webApplication location="help2000.war" contextRoot="/">
 
         <!-- Declare the jar files for MySql access through JDBC -->
@@ -18,8 +15,8 @@
             <properties databaseName="help2000"
                         serverName="localhost"
                         portNumber="${env.MYSQL_PORT}"
-                        user="root"
-                        password="devpa$$"/>
+                        user="${env.MYSQL_USER}"
+                        password="${env.MYSQL_PASSWORD}"/>
         </dataSource>
 
     </webApplication>

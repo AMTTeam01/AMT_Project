@@ -14,7 +14,7 @@ services:
 
   # Database
   db:
-    image: mysql:5.7
+    image: library/mysql:8.0.21
     restart: always
     container_name: 'help2000_db_container'
     environment:

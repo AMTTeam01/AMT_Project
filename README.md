@@ -11,8 +11,8 @@ To get started and launch the database and the web app, run the command `./run-a
 To get access to the database, you need to follow those steps : 
 
 1. Connect to the mysql container: 
-`docker exec -it help2000_db_container mysql -u root -p`
-2. Enter the root password : `devpass_but_tricky_to_crack`
+`docker exec -it help2000_db_container mysql -u dbDevHelp2000 -p`
+2. Enter the root password : `devpass`
 3. Enter the app's database by typing : `mysql> USE help2000`
 4. Now you can display all tables with the command : `show tables;`
 

@@ -10,9 +10,9 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema help2000
 -- -----------------------------------------------------
-DROP DATABASE IF EXISTS `help2000`
+-- DROP DATABASE IF EXISTS `help2000`;
 CREATE SCHEMA IF NOT EXISTS `help2000` ;
-USE `help2000` ;
+USE `help2000`;
 
 -- -----------------------------------------------------
 -- Table `help2000`.`tblUser`
@@ -124,7 +124,6 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblTag_has_tblQuestion` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
