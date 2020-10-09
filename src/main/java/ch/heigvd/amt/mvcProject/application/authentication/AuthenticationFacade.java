@@ -5,12 +5,10 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
-import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcUserRepository;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 public class AuthenticationFacade {
 
@@ -20,6 +18,7 @@ public class AuthenticationFacade {
     }
 
     public AuthenticationFacade(IUserRepository userRepository){
+        System.out.println("Setup facade with : " + userRepository);
         this.userRepository = userRepository;
     }
 

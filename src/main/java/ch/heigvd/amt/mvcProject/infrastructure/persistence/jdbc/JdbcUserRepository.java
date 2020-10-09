@@ -31,8 +31,6 @@ public class JdbcUserRepository implements IUserRepository {
     @Override
     public Optional<User> findByUsername(String username) {
         try {
-
-
             System.out.println("Data source : " + dataSource);
 
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
@@ -44,7 +42,7 @@ public class JdbcUserRepository implements IUserRepository {
             throwables.printStackTrace();
         }
 
-        // todo : return results
+        // todo : return results when datasource isn't null anymore...
 
         return null;
     }

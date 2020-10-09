@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.application;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcQuestionRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcUserRepository;
@@ -29,7 +30,6 @@ public class ServiceRegistry {
     private QuestionFacade questionFacade;
 
     public ServiceRegistry() {
-
     }
 
     @PostConstruct
