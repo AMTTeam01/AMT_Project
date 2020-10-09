@@ -40,11 +40,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-            
-      # Maven package
-      - name: Build with Maven
-        run: mvn clean package
-
+          
       # Codeceptjs
       - uses: actions/checkout@v2
       - name : Use Node.js${{matrix.node-version}}
@@ -56,6 +52,10 @@ jobs:
           npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
         env:
           CI: true
+          
+      # Maven package
+      - name: Build with Maven
+        run: mvn clean package
 
       # Docker build (with PAT)
       - name: Build Docker image (with mvn clean package)
