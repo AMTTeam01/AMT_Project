@@ -30,21 +30,31 @@ public class JdbcUserRepository implements IUserRepository {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        try {
-            System.out.println("Data source : " + dataSource);
 
+        Optional<User> user = Optional.empty();
+
+        try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblUser WHERE userName = '" + username + "'"
+                    "SELECT * FROM tblUser WHERE userName = ?"
             );
             statement.setString(1, username);
             ResultSet rs = statement.executeQuery();
+            if(!rs.next()) {
+                // No user found
+            } else {
+                rs.first();
+                User foundUser = User.builder()
+                        .id(new UserId(rs.getInt("id") + ""))
+                        .email(rs.getString("email"))
+                        .username(rs.getString("userName"))
+                        .build();
+                user = Optional.of(foundUser);
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        // todo : return results when datasource isn't null anymore...
-
-        return null;
+        return user;
     }
 
     @Override
