@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcQuestionRepository;
 
@@ -13,16 +14,14 @@ import java.util.stream.Collectors;
  */
 public class QuestionFacade {
 
-    private JdbcQuestionRepository questionRepository;
+    private IQuestionRepository questionRepository;
 
-    public QuestionFacade(JdbcQuestionRepository questionRepository) {
+    public QuestionFacade(IQuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
 
     public void addQuestion(QuestionCommand command) throws QuestionFailedException {
-
         try {
-
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())

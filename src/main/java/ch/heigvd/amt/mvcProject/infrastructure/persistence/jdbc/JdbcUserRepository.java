@@ -31,8 +31,12 @@ public class JdbcUserRepository implements IUserRepository {
     @Override
     public Optional<User> findByUsername(String username) {
         try {
+
+
+            System.out.println("Data source : " + dataSource);
+
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM users WHERE username = '" + username + "'"
+                    "SELECT * FROM tblUser WHERE userName = '" + username + "'"
             );
             statement.setString(1, username);
             ResultSet rs = statement.executeQuery();

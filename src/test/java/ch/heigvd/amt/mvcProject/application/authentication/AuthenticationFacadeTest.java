@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthenticationFacadeTest {
 
-    private static ServiceRegistry serviceRegistry;
+    /*private static ServiceRegistry serviceRegistry;
     private static AuthenticationFacade authenticationFacade;
 
     @BeforeAll
@@ -124,6 +124,6 @@ public class AuthenticationFacadeTest {
         assertThrows(RegistrationFailedException.class, () -> {
             authenticationFacade.register(registerCommand);
         });
-    }
+    }*/
 
 }

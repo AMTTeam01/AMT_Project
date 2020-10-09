@@ -25,7 +25,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     DataSource dataSource;
 
     public JdbcQuestionRepository() {
-
     }
 
     public JdbcQuestionRepository(DataSource dataSource) {

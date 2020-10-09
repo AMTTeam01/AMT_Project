@@ -14,12 +14,12 @@ import javax.inject.Inject;
 
 public class AuthenticationFacade {
 
-    private JdbcUserRepository userRepository;
+    private IUserRepository userRepository;
 
     public AuthenticationFacade() {
     }
 
-    public AuthenticationFacade(JdbcUserRepository userRepository){
+    public AuthenticationFacade(IUserRepository userRepository){
         this.userRepository = userRepository;
     }
 

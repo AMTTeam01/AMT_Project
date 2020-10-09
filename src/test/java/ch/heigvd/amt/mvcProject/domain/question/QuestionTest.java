@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class QuestionTest {
 
-    @Test
+    /*@Test
     public void deepCloneShouldReturnNewObject (){
         Question q1 = Question.builder()
                 .title("titre")
@@ -23,6 +23,6 @@ public class QuestionTest {
        assertEquals(q1, q2);
        assertFalse(q1 == q2);
         
-    }
+    }*/
 
 }

@@ -2,8 +2,12 @@ package ch.heigvd.amt.mvcProject.application;
 
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
+import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcQuestionRepository;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcUserRepository;
+
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,15 +20,20 @@ public class ServiceRegistry {
 
     // Users
     @Inject @Named("JdbcUserRepository")
-    JdbcUserRepository userRepository;
-    private final AuthenticationFacade authenticationFacade;
+    IUserRepository userRepository;
+    private AuthenticationFacade authenticationFacade;
 
     // Questions
     @Inject @Named("JdbcQuestionRepository")
-    JdbcQuestionRepository questionRepository;
-    private final QuestionFacade questionFacade;
+    IQuestionRepository questionRepository;
+    private QuestionFacade questionFacade;
 
     public ServiceRegistry() {
+
+    }
+
+    @PostConstruct
+    private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
         questionFacade = new QuestionFacade(questionRepository);
     }
