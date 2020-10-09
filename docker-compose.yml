@@ -5,7 +5,6 @@ services:
   web:
     image: ghcr.io/amtteamheig/amt_project:latest
     container_name: 'help2000_webapp_container'
-    #build: .
     ports:
       - "9080:9080"
     depends_on:

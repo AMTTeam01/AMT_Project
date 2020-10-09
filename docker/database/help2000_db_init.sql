@@ -17,7 +17,7 @@ USE `help2000`;
 -- Table `help2000`.`tblUser`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblUser` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `userName` VARCHAR(512) NOT NULL,
   `email` VARCHAR(512) NOT NULL,
   `encryptedPassword` VARCHAR(512) NULL,

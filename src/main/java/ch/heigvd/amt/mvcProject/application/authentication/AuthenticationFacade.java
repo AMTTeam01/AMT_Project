@@ -18,7 +18,6 @@ public class AuthenticationFacade {
     }
 
     public AuthenticationFacade(IUserRepository userRepository){
-        System.out.println("Setup facade with : " + userRepository);
         this.userRepository = userRepository;
     }
 
