@@ -17,6 +17,11 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Fix node js version
+    strategy:
+      matrix:
+        node-version: [ 12.x ]
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -39,6 +44,18 @@ jobs:
       # Maven package
       - name: Build with Maven
         run: mvn clean package
+
+      # Codeceptjs
+      - uses: actions/checkout@v2
+      - name : Use Node.js${{matrix.node-version}}
+        uses : actions/setup-node@v1
+        with :
+          node-version: ${{matrix.node-version}}
+      - run: |
+          npm install
+          npx codeceptjs run --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
+        env:
+          CI: true
 
       # Docker build (with PAT)
       - name: Build Docker image (with mvn clean package)
