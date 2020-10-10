@@ -5,11 +5,17 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 
 public class AuthenticationFacade {
+
     private IUserRepository userRepository;
+
+    public AuthenticationFacade() {
+    }
 
     public AuthenticationFacade(IUserRepository userRepository){
         this.userRepository = userRepository;
@@ -65,6 +71,7 @@ public class AuthenticationFacade {
         CurrentUserDTO currentUser = CurrentUserDTO.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .userId(user.getId())
                 .build();
 
         return currentUser;

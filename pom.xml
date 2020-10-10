@@ -69,6 +69,10 @@
         <groupId>io.openliberty.tools</groupId>
         <artifactId>liberty-maven-plugin</artifactId>
         <version>3.2</version>
+        <configuration>
+          <configFile>src/main/liberty/config/server.xml</configFile>
+          <serverEnv>src/main/liberty/config/server.env</serverEnv>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

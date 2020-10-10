@@ -1,10 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
-import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,14 +20,13 @@ public class QuestionFacade {
     }
 
     public void addQuestion(QuestionCommand command) throws QuestionFailedException {
-
         try {
-
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .ranking(command.getRanking())
-                    .tags(command.getTags())
+                    .vote(command.getVote())
+                    .authorId(command.getAuthorId())
+                    .creationDate(command.getCreationDate())
                     .build();
 
             questionRepository.save(submittedQuestion);
@@ -46,8 +42,7 @@ public class QuestionFacade {
                 allQuestions.stream().map(
                         question -> QuestionsDTO.QuestionDTO.builder()
                                 .title(question.getTitle())
-                                .ranking(question.getRanking())
-                                .tags(question.getTags())
+                                .ranking(question.getVote())
                                 .description(question.getDescription())
                                 .id(question.getId())
                                 .build()).collect(Collectors.toList());
@@ -60,8 +55,7 @@ public class QuestionFacade {
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
-                .ranking(question.getRanking())
-                .tags(question.getTags())
+                .ranking(question.getVote())
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())

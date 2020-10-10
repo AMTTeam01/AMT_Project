@@ -1,5 +1,21 @@
 # AMT_Project
 
+## Introduction
+
+## Get Started
+
+To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker container.
+
+## Access to the database
+
+To get access to the database, you need to follow those steps : 
+
+1. Connect to the mysql container: 
+`docker exec -it help2000_db_container mysql -u dbDevHelp2000 -p`
+2. Enter the root password : `devpass`
+3. Enter the app's database by typing : `mysql> USE help2000`
+4. Now you can display all tables with the command : `show tables;`
+
 ## How to automate the docker deployment
 
 - Build the image with the script `build-image.sh`

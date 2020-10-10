@@ -11,7 +11,6 @@ import java.io.IOException;
 @WebServlet(name = "HomePageRenderer", urlPatterns = "/index.html")
 public class HomePageRenderer extends HttpServlet {
 
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);

@@ -3,12 +3,23 @@
         <feature>webProfile-8.0</feature>
     </featureManager>
 
-    <variable name="default.http.port" defaultValue="9080"/>
-    <variable name="default.https.port" defaultValue="9443"/>
-
     <webApplication location="help2000.war" contextRoot="/"/>
 
-    <httpEndpoint host="*" httpPort="${default.http.port}"
-                  httpsPort="${default.https.port}" id="defaultHttpEndpoint"/>
+    <!-- Declare the jar files for MySql access through JDBC -->
+    <library id="MySqlLib">
+        <fileset dir="${server.config.dir}" includes="*.jar"/>
+    </library>
+
+    <dataSource jndiName="jdbc/help2000DS">
+        <jdbcDriver libraryRef="MySqlLib"/>
+        <properties databaseName="help2000"
+                    serverName="localhost"
+                    portNumber="${env.MYSQL_PORT}"
+                    user="${env.MYSQL_USER}"
+                    password="${env.MYSQL_PASSWORD}"/>
+    </dataSource>
+
+    <httpEndpoint host="*" httpPort="${env.HTTP_PORT}"
+                  httpsPort="${env.HTTPS_PORT}" id="defaultHttpEndpoint"/>
 
 </server>

@@ -1,11 +1,13 @@
 package ch.heigvd.amt.mvcProject.domain.question;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,9 +21,11 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private String description;
 
-    private List<String> tags;
+    private int vote;
 
-    private int ranking;
+    private Date creationDate;
+
+    private UserId authorId;
 
     @Override
     public Question deepClone() {
@@ -48,7 +52,15 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("Description is mandatory");
             }
 
-            return new Question(id, title, description, tags, ranking);
+            if (creationDate == null ){
+                throw new IllegalArgumentException("CreationDate is mandatory");
+            }
+
+            if (authorId == null ) {
+                throw new IllegalArgumentException("AuthorId is mandatory");
+            }
+
+            return new Question(id, title, description, vote, creationDate, authorId);
         }
     }
 
