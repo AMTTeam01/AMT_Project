@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "EditProfileHandler", urlPatterns = "/edit_profile.do")
-public class EditProfileHandler extends HttpServlet {
+@WebServlet(name = "EditProfileRequestHandler", urlPatterns = "/edit_profile.do")
+public class EditProfileRequestHandler extends HttpServlet {
 
     @Inject
     private ServiceRegistry serviceRegistry;
@@ -43,9 +43,9 @@ public class EditProfileHandler extends HttpServlet {
         EditUserCommand command = EditUserCommand.builder()
                 .id(currentUser.getUserId().asString())
                 .email(req.getParameter("txt_email"))
-                .username("txt_username")
-                .password("txt_password")
-                .confirmationPassword("txt_cpassword").build();
+                .username(req.getParameter("txt_username"))
+                .password(req.getParameter("txt_password"))
+                .confirmationPassword(req.getParameter("txt_cpassword")).build();
 
         try{
             editFacade.editUser(command);
