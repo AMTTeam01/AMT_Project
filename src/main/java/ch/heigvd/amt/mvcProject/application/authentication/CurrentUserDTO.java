@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.application.authentication.login;
+package ch.heigvd.amt.mvcProject.application.user;
 
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.Value;
 @Builder
 @Getter
 @EqualsAndHashCode
-public class CurrentUserDTO {
+public class UserDTO {
     private UserId userId;
     private String username;
     private String email;
