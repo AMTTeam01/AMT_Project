@@ -7,6 +7,7 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -36,12 +37,14 @@ public class QuestionVoteHandler extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        int voteValue = (req.getParameter("upvote").equals("true")) ? 1 : -1;
-        QuestionId id = new QuestionId(req.getParameter("id"));
+        // We differentiate a downvote or an upvote from the upvote boolean
+        // TODO : modifier la db pour ajouter une valeur (upvote / downvote)
+        QuestionId questionId = new QuestionId(req.getParameter("id"));
+        UserId userId = new UserId(req.getParameter("currentUser"));
 
         try {
-            questionFacade.addVote(voteValue, id);
-            resp.sendRedirect("/question?id=" + id.asString());
+            questionFacade.addVote(userId, questionId);
+            resp.sendRedirect("/question?id=" + questionId.asString());
         } catch (QuestionFailedException e) {
             e.printStackTrace();
         }

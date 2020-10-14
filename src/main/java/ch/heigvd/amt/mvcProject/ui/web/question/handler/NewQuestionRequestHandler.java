@@ -54,7 +54,6 @@ public class NewQuestionRequestHandler extends HttpServlet {
         try {
             questionFacade.addQuestion(command);
             resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
-
         } catch (QuestionFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect(getServletContext().getContextPath() + "/new_question");

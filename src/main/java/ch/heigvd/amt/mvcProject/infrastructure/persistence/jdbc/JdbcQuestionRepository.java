@@ -132,15 +132,17 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     }
 
     @Override
-    public void addVote(int voteValue, QuestionId id) {
+    public void addVote(UserId userId, QuestionId questionId) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "UPDATE tblQuestion SET vote = ? WHERE id = ?",
+                    "INSERT INTO tblUser_vote_tblQuestion (tblUser_id, tblQuestion_id)" +
+                            "VALUES (?, ?)",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
-            statement.setInt(1, voteValue);
-            statement.setString(2, id.asString());
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, questionId.asString());
 
             statement.execute();
         } catch (SQLException throwables) {
@@ -149,9 +151,9 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     }
 
     /**
-     * Get all users corresponding to the given result set
+     * Get all questions corresponding to the given result set
      * @param rs : result set
-     * @return list of users
+     * @return list of questions
      * @throws SQLException
      */
     private ArrayList<Question> getQuestions(ResultSet rs) throws SQLException {
