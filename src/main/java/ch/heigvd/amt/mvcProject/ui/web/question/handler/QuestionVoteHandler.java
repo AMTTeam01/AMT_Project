@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -19,7 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@WebServlet(name = "QuestionVoteHandler", urlPatterns = "/vote.do")
+@WebServlet(name = "QuestionVoteHandler", urlPatterns = "/vote")
 public class QuestionVoteHandler extends HttpServlet {
 
     @Inject
@@ -33,14 +34,13 @@ public class QuestionVoteHandler extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        int voteValue = (boolean) req.getSession().getAttribute("voteValue") ? 1 : -1;
-        QuestionQuery query = (QuestionQuery) req.getSession().getAttribute("currentQuestion");
-
+        int voteValue = (req.getParameter("upvote").equals("true")) ? 1 : -1;
+        QuestionId id = new QuestionId(req.getParameter("id"));
 
         try {
-            questionFacade.addVote(voteValue, query);
+            questionFacade.addVote(voteValue, id);
         } catch (QuestionFailedException e) {
             e.printStackTrace();
         }

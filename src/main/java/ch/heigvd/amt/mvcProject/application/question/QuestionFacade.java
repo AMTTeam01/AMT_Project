@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,9 +36,9 @@ public class QuestionFacade {
         }
     }
 
-    public void addVote(int voteValue, QuestionQuery query) throws QuestionFailedException {
+    public void addVote(int voteValue, QuestionId id) throws QuestionFailedException {
         try {
-            questionRepository.addVote(voteValue, query.getQuestionId());
+            questionRepository.addVote(voteValue, id);
         } catch(Exception e){
             throw new QuestionFailedException(e.getMessage());
         }

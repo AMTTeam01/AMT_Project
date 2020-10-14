@@ -25,12 +25,13 @@ public class QuestionRenderer extends HttpServlet {
         questionFacade = serviceRegistry.getQuestionFacade();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         //build a question command with attribute id in URL
         QuestionId id = new QuestionId(request.getParameter("id"));
         QuestionQuery query = QuestionQuery.builder().questionId(id).build();
-        QuestionsDTO.QuestionDTO questionDTO = null;
+        QuestionsDTO.QuestionDTO questionDTO;
 
         //check if question ID exists. If not, come back to browsing
         try {

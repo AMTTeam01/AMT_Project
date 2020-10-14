@@ -1,13 +1,12 @@
 <jsp:useBean id="question" scope="request" type="ch.heigvd.amt.mvcProject.application.question.QuestionsDTO.QuestionDTO"/>
 
-
 <%@include file="fragments/header.jsp"%>
 <%@include file="fragments/navigation_bar.jsp"%>
 
 <div class="container-fluid body-with-navbar">
     <div class="row">
         <div class="col">
-            <a href="${pageContext.request.contextPath}/vote.do" name="btn_up" class="row justify-content-center"><i class="fas fa-arrow-alt-circle-up"></i></a>
+            <a href="${pageContext.request.contextPath}/vote?upvote=true&id=${question.id.asString()}" name="btn_up" class="row justify-content-center"><i class="fas fa-arrow-alt-circle-up"></i></a>
             <div class="row justify-content-center">${question.ranking}</div>
             <a name="btn_down" class="row justify-content-center"><i class="fas fa-arrow-alt-circle-down"></i></a>
         </div>
