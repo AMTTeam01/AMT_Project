@@ -132,6 +132,23 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         return questions;
     }
 
+    @Override
+    public void addVote(int voteValue, QuestionId id) {
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "UPDATE tblQuestion SET vote = ? WHERE id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+            statement.setInt(1, voteValue);
+            statement.setString(2, id.asString());
+
+            statement.executeQuery();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     /**
      * Get all users corresponding to the given result set
      * @param rs : result set

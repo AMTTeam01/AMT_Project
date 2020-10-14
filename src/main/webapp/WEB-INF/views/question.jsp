@@ -7,9 +7,9 @@
 <div class="container-fluid body-with-navbar">
     <div class="row">
         <div class="col">
-            <div class="row justify-content-center"><i class="fas fa-arrow-alt-circle-up"></i></div>
+            <a href="${pageContext.request.contextPath}/vote.do" name="btn_up" class="row justify-content-center"><i class="fas fa-arrow-alt-circle-up"></i></a>
             <div class="row justify-content-center">${question.ranking}</div>
-            <div class="row justify-content-center"><i class="fas fa-arrow-alt-circle-down"></i></div>
+            <a name="btn_down" class="row justify-content-center"><i class="fas fa-arrow-alt-circle-down"></i></a>
         </div>
         <div class="col-10">
             <h4>${question.title}</h4>

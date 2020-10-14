@@ -30,7 +30,15 @@ public class QuestionFacade {
                     .build();
 
             questionRepository.save(submittedQuestion);
-        }catch(Exception e){
+        } catch(Exception e){
+            throw new QuestionFailedException(e.getMessage());
+        }
+    }
+
+    public void addVote(int voteValue, QuestionQuery query) throws QuestionFailedException {
+        try {
+            questionRepository.addVote(voteValue, query.getQuestionId());
+        } catch(Exception e){
             throw new QuestionFailedException(e.getMessage());
         }
     }
