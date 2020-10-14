@@ -18,7 +18,12 @@
         <div class="col"></div>
         <div class="col-10">
             <button name="btn_comment" href="#" class="btn btn-primary btn-classic-filled">Comment</button>
-            <button name="btn_answer" href="#" class="btn btn-primary btn-classic-filled">Answer</button>
+
+            <div class="col-10 m-2">
+                <textarea class="form-control" id="txt_answer" rows="3" placeholder="Your answer" required></textarea>
+                <button name="btn_answer" class="btn btn-primary btn-classic-filled mt-2 float-right" type="submit">Answer</button>
+            </div>
+
         </div>
         <div class="col-sm"></div>
     </div>
