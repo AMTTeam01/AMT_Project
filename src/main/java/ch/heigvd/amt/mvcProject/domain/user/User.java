@@ -3,9 +3,7 @@ package ch.heigvd.amt.mvcProject.domain.user;
 import ch.heigvd.amt.mvcProject.domain.IEntity;
 import lombok.*;
 
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @Builder(toBuilder = true)
 public class User implements IEntity<User, UserId> {
 

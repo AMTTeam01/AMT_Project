@@ -10,18 +10,14 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema help2000
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema help2000
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `help2000` ;
-USE `help2000` ;
+USE `help2000`;
 
 -- -----------------------------------------------------
 -- Table `help2000`.`tblUser`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblUser` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `userName` VARCHAR(512) NOT NULL,
   `email` VARCHAR(512) NOT NULL,
   `encryptedPassword` VARCHAR(512) NULL,
@@ -35,12 +31,12 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblQuestion`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblQuestion` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `title` VARCHAR(512) NOT NULL,
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
-  `tblUser_id` INT NOT NULL,
+  `tblUser_id` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_tblQuestion_tblUser_idx` (`tblUser_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblQuestion_tblUser`
@@ -55,7 +51,7 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblTag`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblTag` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `name` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
@@ -66,11 +62,11 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblAnswer`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblAnswer` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
-  `tblQuestion_id` INT NOT NULL,
+  `tblQuestion_id` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_tblAnswer_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblAnswer_tblQuestion1`
@@ -85,12 +81,12 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblComment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblComment` (
-  `id` INT NOT NULL,
+  `id` VARCHAR(256) NOT NULL,
   `description` LONGTEXT NOT NULL,
   `vote` INT NOT NULL,
   `creationDate` DATETIME NOT NULL,
-  `tblAnswer_id` INT NULL,
-  `tblQuestion_id` INT NULL,
+  `tblAnswer_id` VARCHAR(256) NULL,
+  `tblQuestion_id` VARCHAR(256) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_tblComment_tblAnswer1_idx` (`tblAnswer_id` ASC) VISIBLE,
   INDEX `fk_tblComment_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
@@ -111,8 +107,8 @@ ENGINE = InnoDB;
 -- Table `help2000`.`tblTag_has_tblQuestion`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `help2000`.`tblTag_has_tblQuestion` (
-  `tblTag_id` INT NOT NULL,
-  `tblQuestion_id` INT NOT NULL,
+  `tblTag_id` VARCHAR(256) NOT NULL,
+  `tblQuestion_id` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`tblTag_id`, `tblQuestion_id`),
   INDEX `fk_tblTag_has_tblQuestion_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
   INDEX `fk_tblTag_has_tblQuestion_tblTag1_idx` (`tblTag_id` ASC) VISIBLE,
@@ -127,7 +123,6 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblTag_has_tblQuestion` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
