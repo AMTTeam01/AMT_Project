@@ -28,7 +28,7 @@ public class BrowsingRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        QuestionsDTO questionsDTO = questionFacade.getQuestions(null);
+        QuestionsDTO questionsDTO = questionFacade.getAllQuestions();
         request.setAttribute("questions", questionsDTO);
         request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);
     }

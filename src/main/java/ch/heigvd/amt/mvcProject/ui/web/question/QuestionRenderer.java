@@ -27,6 +27,7 @@ public class QuestionRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+
         //build a question command with attribute id in URL
         QuestionId id = new QuestionId(request.getParameter("id"));
         QuestionQuery query = QuestionQuery.builder().questionId(id).build();

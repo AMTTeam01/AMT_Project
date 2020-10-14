@@ -35,7 +35,7 @@ public class QuestionFacade {
         }
     }
 
-    public QuestionsDTO getQuestions(QuestionQuery query){
+    public QuestionsDTO getAllQuestions(){
         Collection<Question> allQuestions = questionRepository.findAll();
 
         List<QuestionsDTO.QuestionDTO> allQuestionsDTO =
@@ -62,6 +62,10 @@ public class QuestionFacade {
                 .build();
 
         return currentQuestionDTO;
+    }
+
+    public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
+        return null;
     }
 
 }
