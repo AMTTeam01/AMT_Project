@@ -30,7 +30,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         this.dataSource = dataSource;
     }
 
-
     @Override
     public void save(Question question) {
 
@@ -143,7 +142,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setInt(1, voteValue);
             statement.setString(2, id.asString());
 
-            statement.executeQuery();
+            statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

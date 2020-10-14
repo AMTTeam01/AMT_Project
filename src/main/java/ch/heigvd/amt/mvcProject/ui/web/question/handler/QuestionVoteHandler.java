@@ -41,6 +41,7 @@ public class QuestionVoteHandler extends HttpServlet {
 
         try {
             questionFacade.addVote(voteValue, id);
+            resp.sendRedirect("/question?id=" + id.asString());
         } catch (QuestionFailedException e) {
             e.printStackTrace();
         }
