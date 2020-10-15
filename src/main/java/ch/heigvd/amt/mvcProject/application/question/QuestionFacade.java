@@ -59,6 +59,7 @@ public class QuestionFacade {
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
+                .answers(question.getAnswers())
                 .build();
 
         return currentQuestionDTO;

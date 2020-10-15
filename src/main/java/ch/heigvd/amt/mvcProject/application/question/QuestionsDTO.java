@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import lombok.*;
 
@@ -22,6 +24,7 @@ public class QuestionsDTO {
         private int ranking;
         private List<String> tags;
         private String description;
+        private List<Answer> answers;
     }
 
     @Singular

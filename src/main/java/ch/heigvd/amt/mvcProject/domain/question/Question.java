@@ -1,12 +1,14 @@
 package ch.heigvd.amt.mvcProject.domain.question;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +28,8 @@ public class Question implements IEntity<Question, QuestionId> {
     private Date creationDate;
 
     private UserId authorId;
+
+    private List<Answer> answers;
 
     @Override
     public Question deepClone() {
@@ -60,7 +64,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("AuthorId is mandatory");
             }
 
-            return new Question(id, title, description, vote, creationDate, authorId);
+            if(answers == null){
+                answers = new ArrayList<>();
+            }
+
+            return new Question(id, title, description, vote, creationDate, authorId, answers);
         }
     }
 
