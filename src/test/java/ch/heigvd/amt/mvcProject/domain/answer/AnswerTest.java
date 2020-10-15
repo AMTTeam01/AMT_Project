@@ -1,6 +1,44 @@
 package ch.heigvd.amt.mvcProject.domain.answer;
 
 
+import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.lenient;
+
+@ExtendWith(MockitoExtension.class)
 public class AnswerTest {
+
+    @Mock
+    Question question;
+
+    @BeforeEach
+    private void prepare(){
+        lenient().when(question.getId()).thenReturn(new QuestionId());
+    }
+
+    @Test
+    public void deepCloneShouldReturnNewObject(){
+        Answer a1 = Answer.builder()
+                .creationDate(new Date())
+                .description("Test")
+                .id(new AnswerId())
+                .questionId(question.getId())
+                .build();
+
+        Answer a2 = a1.deepClone();
+
+        assertEquals(a1,a2);
+        assertFalse(a1 == a2);
+    }
 
 }
