@@ -33,12 +33,11 @@ public class AnswerHandler extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
 
         req.getSession().removeAttribute("errors");
 
         AnswerCommand answerCommand = AnswerCommand.builder()
-                .creationDate(new Date())
+                .creationDate(new Date()) // TODO add time
                 .description(req.getParameter("txt_answer"))
                 .questionId(new QuestionId(req.getParameter("hidden_id")))
                 .build();
@@ -46,8 +45,7 @@ public class AnswerHandler extends HttpServlet {
 
         try {
             answerFacade.addAnswer(answerCommand);
-            String temp = getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id");
-            resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id"));
+            resp.sendRedirect( getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id"));
         } catch (AnswerFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }
