@@ -3,23 +3,19 @@ package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
-import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.sql.DataSource;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @ApplicationScoped
 @Named("JdbcAnswerRepository")
@@ -66,12 +62,12 @@ public class JdbcAnswerRepository implements IAnswerRepository {
                     "INSERT INTO tblAnswer(id, description, vote ,creationDate, tblQuestion_id ) VALUES(?,?,?,?,?)"
             );
 
-            java.sql.Date creationDate = new Date(answer.getCreationDate().getTime());
+            Timestamp creationDate = new Timestamp(answer.getCreationDate().getTime());
 
             statement.setString(1, answer.getId().asString());
             statement.setString(2, answer.getDescription());
             statement.setInt(3,0);
-            statement.setDate(4, creationDate);
+            statement.setTimestamp(4, creationDate);
             statement.setString(5, answer.getQuestionId().asString());
 
             statement.execute();
@@ -123,7 +119,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
                 Answer foundAnswer = Answer.builder()
                         .id(new AnswerId(rs.getString("id")))
                         .description(rs.getString("description"))
-                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                         .questionId(new QuestionId(rs.getString("tblQuestion_id")))
                         .build();
 
@@ -157,11 +153,13 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     private ArrayList<Answer> getAnswers(ResultSet rs) throws SQLException {
         ArrayList<Answer> answers = new ArrayList<>();
 
+        DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
         while (rs.next()) {
             Answer foundAnswer = Answer.builder()
                     .id(new AnswerId(rs.getString("id")))
                     .description(rs.getString("description"))
-                    .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                    .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                     .questionId(new QuestionId(rs.getString("tblQuestion_id")))
                     .build();
 

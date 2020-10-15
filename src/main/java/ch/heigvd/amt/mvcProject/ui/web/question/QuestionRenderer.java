@@ -39,7 +39,7 @@ public class QuestionRenderer extends HttpServlet {
         QuestionsDTO.QuestionDTO questionDTO = null;
 
 
-        AnswersDTO answerDTO = null;
+        AnswersDTO answersDTO = null;
         AnswerQuery answerQuery = AnswerQuery.builder().questionId(id).build();
 
         //check if question ID exists. If not, come back to browsing
@@ -47,8 +47,8 @@ public class QuestionRenderer extends HttpServlet {
             questionDTO = questionFacade.getQuestionById(query);
             request.setAttribute("question", questionDTO);
 
-            answerDTO = answerFacade.getAnswersByQuestion(answerQuery);
-            request.setAttribute("answers", answerDTO);
+            answersDTO = answerFacade.getAnswersByQuestion(answerQuery);
+            request.setAttribute("answers", answersDTO);
 
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
         } catch (QuestionFailedException | AnswerFailedException e) {

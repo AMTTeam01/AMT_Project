@@ -7,11 +7,11 @@
 <%@include file="fragments/header.jsp" %>
 <%@include file="fragments/navigation_bar.jsp" %>
 
-<div class="container-fluid body-with-navbar">
+<div class="container-fluid body-with-navbar col-8">
+    <h1>${question.title}</h1>
     <div class="row">
         <%@include file="fragments/vote.jsp" %>
         <div class="col-10">
-            <h4>${question.title}</h4>
             <p class="justify-content-between">${question.description}</p>
         </div>
         <div class="col-sm"></div>
@@ -21,15 +21,16 @@
         <div class="col-10">
             <button name="btn_comment" href="#" class="btn btn-primary btn-classic-filled">Comment</button>
 
-            <div class="col-10 m-2">
+            <div>
                 <c:forEach var="answer" items="${answers.answers}">
                     <jsp:include page="fragments/answer.jsp">
                         <jsp:param name="answers" value="${answer.description}"/>
+                        <jsp:param name="creation_date" value="${answer.creationDate}"/>
                     </jsp:include>
                 </c:forEach>
             </div>
 
-            <div class="col-10 m-2">
+            <div class="m-2">
                 <form method="POST" action="${pageContext.request.contextPath}/answer.do">
                     <input type="hidden" id="hidden_id" name="hidden_id" value="${question.id.asString()}">
                     <textarea class="form-control" id="txt_answer" name="txt_answer" rows="3" placeholder="Your answer" required></textarea>

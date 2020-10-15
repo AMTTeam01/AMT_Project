@@ -39,7 +39,7 @@ public class AnswerFacade {
                 answers.stream().map(
                         answer -> AnswersDTO.AnswerDTO.builder()
                                 .description(answer.getDescription())
-                                .id(answer.getId())
+                                .creationDate(answer.getCreationDate())
                                 .build()).collect(Collectors.toList());
 
         return AnswersDTO.builder().answers(answersDTO).build();

@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
 
+import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -18,8 +19,8 @@ public class AnswersDTO {
     @Getter
     @EqualsAndHashCode
     public static class AnswerDTO {
-        private AnswerId id;
         private String description;
+        private Date creationDate;
     }
 
     @Singular
