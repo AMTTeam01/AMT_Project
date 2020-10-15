@@ -10,11 +10,23 @@
   <packaging>war</packaging>
 
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.6.0.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -107,6 +119,11 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-api</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!--
     <dependency>
         <groupId>org.jacoco</groupId>
@@ -126,45 +143,64 @@
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
-      <!-- uncomment this to generate an executable jar - but packaging a .war in a Docker image is faster
-       <executions>
-           <execution>
-               <id>package-server</id>
-               <phase>package</phase>
-               <goals>
-                   <goal>create</goal>
-                   <goal>install-feature</goal>
-                   <goal>deploy</goal>
-                   <goal>package</goal>
-               </goals>
-               <configuration>
-                   <outputDirectory>target/wlp-package</outputDirectory>
-               </configuration>
-           </execution>
-       </executions>
-       <configuration>
-           <include>runnable</include>
-       </configuration>
-       -->
       <plugin>
         <groupId>io.openliberty.tools</groupId>
         <artifactId>liberty-maven-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.2.3</version>
+        <!-- uncomment this to generate an executable jar - but packaging a .war in a Docker image is faster
+        <executions>
+            <execution>
+                <id>package-server</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>create</goal>
+                    <goal>install-feature</goal>
+                    <goal>deploy</goal>
+                    <goal>package</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>target/wlp-package</outputDirectory>
+                </configuration>
+            </execution>
+        </executions>
         <configuration>
-          <configFile>src/main/liberty/config/server.xml</configFile>
-          <serverEnv>src/main/liberty/config/server.env</serverEnv>
+            <include>runnable</include>
         </configuration>
+        -->
       </plugin>
+      <!--
+      <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.6</version>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                  <id>report</id>
+                  <phase>prepare-package</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.3</version>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.2</version>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
@@ -177,14 +213,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>11</source>
-          <target>11</target>
-        </configuration>
       </plugin>
     </plugins>
   </build>

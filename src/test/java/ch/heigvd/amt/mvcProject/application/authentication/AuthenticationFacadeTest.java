@@ -1,63 +1,60 @@
 package ch.heigvd.amt.mvcProject.application.authentication;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
-import lombok.extern.java.Log;
-import org.junit.jupiter.api.*;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.omg.CORBA.Current;
 
-import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@RunWith(Arquillian.class)
 public class AuthenticationFacadeTest {
 
-    private static SeContainerInitializer initializer;
+    private final static String WARNAME = "arquillian-managed.war";
 
-    @BeforeAll
-    public static void init(){
-        initializer = SeContainerInitializer.newInstance();
+    @Inject
+    ServiceRegistry serviceRegistry;
+
+    @Deployment(testable = true)
+    public static WebArchive createDeployment() {
+        WebArchive archive = ShrinkWrap.create(WebArchive.class, WARNAME)
+                .addPackages(true, "ch.heigvd.amt");
+        return archive;
     }
 
     @Test
-    @Order(1)
     public void itShouldRegisterANewUser() throws RegistrationFailedException, LoginFailedException {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
-        try (SeContainer container = initializer.initialize()) {
+        RegisterCommand registerCommand = RegisterCommand.builder()
+                .username("henri")
+                .email("henri@gmail.com")
+                .clearTxtPassword("1234")
+                .confirmationClearTxtPassword("1234")
+                .build();
 
-            ServiceRegistry serviceRegistry = container.select(ServiceRegistry.class).get();
-            AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+        authenticationFacade.register(registerCommand);
 
-            RegisterCommand registerCommand = RegisterCommand
-                    .builder()
-                    .clearTxtPassword("1234")
-                    .confirmationClearTxtPassword("1234")
-                    .username("henri")
-                    .email("henri@gmail.com")
-                    .build();
+        LoginCommand loginCommand = LoginCommand.builder()
+                .username("henri")
+                .clearTxtPassword("1234")
+                .build();
 
-            authenticationFacade.register(registerCommand);
+        CurrentUserDTO currentUserDTO = authenticationFacade.login(loginCommand);
 
-            LoginCommand command = LoginCommand
-                    .builder()
-                    .clearTxtPassword("1234")
-                    .username("henri")
-                    .build();
-
-            CurrentUserDTO currentUserDTO = authenticationFacade.login(command);
-            CurrentUserDTO expected = CurrentUserDTO.builder()
-                    .username("henri")
-                    .email("henri@gmail.com").build();
-
-            assertEquals(currentUserDTO, expected);
-        }
+        assertEquals(currentUserDTO.getUsername(), "henri");
+        assertEquals(currentUserDTO.getEmail(), "henri@gmail.com");
     }
 
     /*
