@@ -12,7 +12,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.omg.CORBA.Current;
 
 import javax.inject.Inject;
 
