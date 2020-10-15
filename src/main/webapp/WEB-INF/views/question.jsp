@@ -20,7 +20,6 @@
         <div class="col"></div>
         <div class="col-10">
             <button name="btn_comment" href="#" class="btn btn-primary btn-classic-filled">Comment</button>
-
             <div>
                 <c:forEach var="answer" items="${answers.answers}">
                     <jsp:include page="fragments/answer.jsp">
