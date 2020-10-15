@@ -41,7 +41,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblQuestion WHERE tblQuestion_id = ?",
+                    "SELECT * FROM tblAnswer WHERE tblQuestion_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -63,15 +63,16 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     public void save(Answer answer) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "INSERT INTO tblAnswer(id, desciption, creationDate, tblQuestion_id )"
+                    "INSERT INTO tblAnswer(id, description, vote ,creationDate, tblQuestion_id ) VALUES(?,?,?,?,?)"
             );
 
             java.sql.Date creationDate = new Date(answer.getCreationDate().getTime());
 
             statement.setString(1, answer.getId().asString());
             statement.setString(2, answer.getDescription());
-            statement.setDate(3, creationDate);
-            statement.setString(4, answer.getQuestionId().asString());
+            statement.setInt(3,0);
+            statement.setDate(4, creationDate);
+            statement.setString(5, answer.getQuestionId().asString());
 
             statement.execute();
         } catch (SQLException throwables) {

@@ -15,15 +15,19 @@ public class AnswerFacade {
         this.answerRepository = answerRepository;
     }
 
-    public void addAnswer(AnswerCommand command) {
+    public void addAnswer(AnswerCommand command) throws AnswerFailedException {
 
-        Answer submittedAnswer = Answer.builder()
-                .description(command.getDescription())
-                .creationDate(command.getCreationDate())
-                .questionId(command.getQuestionId())
-                .build();
+        try {
+            Answer submittedAnswer = Answer.builder()
+                    .description(command.getDescription())
+                    .creationDate(command.getCreationDate())
+                    .questionId(command.getQuestionId())
+                    .build();
 
-        answerRepository.save(submittedAnswer);
+            answerRepository.save(submittedAnswer);
+        } catch (Exception e) {
+            throw new AnswerFailedException(e.getMessage());
+        }
     }
 
     public AnswersDTO getAnswersByQuestion(AnswerQuery query) throws AnswerFailedException {

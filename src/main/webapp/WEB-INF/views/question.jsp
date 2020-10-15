@@ -20,8 +20,12 @@
             <button name="btn_comment" href="#" class="btn btn-primary btn-classic-filled">Comment</button>
 
             <div class="col-10 m-2">
-                <textarea class="form-control" id="txt_answer" rows="3" placeholder="Your answer" required></textarea>
-                <button name="btn_answer" class="btn btn-primary btn-classic-filled mt-2 float-right" type="submit">Answer</button>
+                <form method="POST" action="${pageContext.request.contextPath}/answer.do">
+                    <input type="hidden" id="hidden_id" name="hidden_id" value="${question.id.asString()}">
+                    <textarea class="form-control" id="txt_answer" name="txt_answer" rows="3" placeholder="Your answer" required></textarea>
+                    <button id="bnt_submit_answer" name="bnt_submit_answer" class="btn btn-primary btn-classic-filled mt-2 float-right" type="submit">Answer
+                    </button>
+                </form>
             </div>
 
         </div>
