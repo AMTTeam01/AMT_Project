@@ -11,14 +11,15 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AuthenticationFacadeTest {
+public class AuthenticationFacadeTestIT {
 
     private final static String WARNAME = "arquillian-managed.war";
 
@@ -33,6 +34,7 @@ public class AuthenticationFacadeTest {
     }
 
     @Test
+    @Order(1)
     public void itShouldRegisterANewUser() throws RegistrationFailedException, LoginFailedException {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
@@ -56,16 +58,17 @@ public class AuthenticationFacadeTest {
         assertEquals(currentUserDTO.getEmail(), "henri@gmail.com");
     }
 
-    /*
     @Test
     @Order(2)
     public void itShouldntRegisterAUserIfPresent() throws RegistrationFailedException {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
         RegisterCommand registerCommand = RegisterCommand
                 .builder()
                 .clearTxtPassword("1234")
                 .confirmationClearTxtPassword("1234")
                 .username("patrick")
-                .email("henri@gmail.com")
+                .email("patrick@gmail.com")
                 .build();
 
         authenticationFacade.register(registerCommand);
@@ -78,6 +81,8 @@ public class AuthenticationFacadeTest {
     @Test
     @Order(3)
     public void itShouldLoginAUserIfPresent() throws LoginFailedException {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
         LoginCommand loginCommand = LoginCommand
                 .builder()
                 .username("henri")
@@ -90,6 +95,8 @@ public class AuthenticationFacadeTest {
     @Test
     @Order(4)
     public void itShouldThrowIfUserIsntPresent(){
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
         LoginCommand loginCommand = LoginCommand
                 .builder()
                 .username("unknown")
@@ -104,6 +111,8 @@ public class AuthenticationFacadeTest {
     @Test
     @Order(5)
     public void itShouldThrowIfUserIsPresentButPasswordIncorrect() {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
         LoginCommand loginCommand = LoginCommand
                 .builder()
                 .username("henri")
@@ -118,17 +127,19 @@ public class AuthenticationFacadeTest {
     @Test
     @Order(6)
     public void itShouldThrowIfPasswordAndConfirmationPasswordArentTheSame(){
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
         RegisterCommand registerCommand = RegisterCommand
                 .builder()
                 .clearTxtPassword("1234")
                 .confirmationClearTxtPassword("12346")
-                .username("patrick")
-                .email("henri@gmail.com")
+                .username("chau")
+                .email("chau@gmail.com")
                 .build();
 
         assertThrows(RegistrationFailedException.class, () -> {
             authenticationFacade.register(registerCommand);
         });
-    }*/
+    }
 
 }
