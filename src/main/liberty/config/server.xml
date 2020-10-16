@@ -1,7 +1,11 @@
 <server description="Help2000">
     <featureManager>
         <feature>webProfile-8.0</feature>
+
+        <feature>localConnector-1.0</feature>
     </featureManager>
+
+    <applicationMonitor updateTrigger="mbean"/>
 
     <webApplication location="help2000.war" contextRoot="/"/>
 
@@ -18,6 +22,9 @@
                     user="${env.MYSQL_USER}"
                     password="${env.MYSQL_PASSWORD}"/>
     </dataSource>
+
+    <variable name="env.HTTP_PORT" defaultValue="9080" />
+    <variable name="env.HTTPS_PORT" defaultValue="9443" />
 
     <httpEndpoint host="*" httpPort="${env.HTTP_PORT}"
                   httpsPort="${env.HTTPS_PORT}" id="defaultHttpEndpoint"/>
