@@ -16,6 +16,10 @@ To get access to the database, you need to follow those steps :
 3. Enter the app's database by typing : `mysql> USE help2000`
 4. Now you can display all tables with the command : `show tables;`
 
+### DB schema
+
+![](images/db_help2000.png)
+
 ## How to automate the docker deployment
 
 - Build the image with the script `build-image.sh`
