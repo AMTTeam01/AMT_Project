@@ -3,6 +3,8 @@ package ch.heigvd.amt.mvcProject.domain.answer;
 
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,9 +23,13 @@ public class AnswerTest {
     @Mock
     Question question;
 
+    @Mock
+    User user;
+
     @BeforeEach
     private void prepare(){
         lenient().when(question.getId()).thenReturn(new QuestionId());
+        lenient().when(user.getId()).thenReturn(new UserId());
     }
 
     @Test
@@ -33,6 +39,7 @@ public class AnswerTest {
                 .description("Test")
                 .id(new AnswerId())
                 .questionId(question.getId())
+                .userId(user.getId())
                 .build();
 
         Answer a2 = a1.deepClone();

@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
+import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.stream.Collectors;
 public class AnswerFacade {
 
     private IAnswerRepository answerRepository;
+    private IUserRepository userRepository;
 
-    public AnswerFacade(IAnswerRepository answerRepository) {
+    public AnswerFacade(IAnswerRepository answerRepository, IUserRepository userRepository) {
         this.answerRepository = answerRepository;
+        this.userRepository = userRepository;
     }
 
     public void addAnswer(AnswerCommand command) throws AnswerFailedException {
@@ -22,6 +25,7 @@ public class AnswerFacade {
                     .description(command.getDescription())
                     .creationDate(command.getCreationDate())
                     .questionId(command.getQuestionId())
+                    .userId(userRepository.findByUsername(command.getUsername()).get().getId())
                     .build();
 
             answerRepository.save(submittedAnswer);

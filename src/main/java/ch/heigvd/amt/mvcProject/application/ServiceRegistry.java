@@ -43,7 +43,7 @@ public class ServiceRegistry {
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
         questionFacade = new QuestionFacade(questionRepository);
-        answerFacade = new AnswerFacade(answerRepository);
+        answerFacade = new AnswerFacade(answerRepository, userRepository);
     }
 
     public AuthenticationFacade getAuthenticationFacade() {

@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,4 +17,5 @@ public class AnswerCommand {
     private String description;
     private Date creationDate;
     private QuestionId questionId;
+    private String username;
 }
