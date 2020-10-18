@@ -114,6 +114,50 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     }
 
     @Override
+    public Optional<Question> findByIdWithAllDetails(QuestionId id) {
+        // TODO : gérer les tags toujours
+
+        Optional<Question> optionalQuestion = Optional.empty();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblQuestion " +
+                            "INNER JOIN tblAnswer ON id = tblQuestion_id" +
+                            "WHERE id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, id.asString());
+
+            ResultSet rs = statement.executeQuery();
+
+            if(rs.next()){
+
+                rs.first();
+
+                DateFormat df = DateFormat.getInstance();
+                df.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                Question foundQuestion = Question.builder()
+                        .id(new QuestionId(rs.getString("id")))
+                        .description(rs.getString("description"))
+                        .title(rs.getString("title"))
+                        .vote(rs.getInt("vote"))
+                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                        .authorId(new UserId(rs.getString("tblUser_id")))
+                        .build();
+
+                optionalQuestion = Optional.of(foundQuestion);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return optionalQuestion;
+    }
+
+    @Override
     public Collection<Question> findAll() {
         Collection<Question> questions = new ArrayList<>();
 
@@ -131,6 +175,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         return questions;
     }
+
 
     /**
      * Get all users corresponding to the given result set
@@ -159,4 +204,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         return questions;
     }
+
+
 }

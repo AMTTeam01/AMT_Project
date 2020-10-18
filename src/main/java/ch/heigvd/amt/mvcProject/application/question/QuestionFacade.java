@@ -65,4 +65,20 @@ public class QuestionFacade {
         return currentQuestionDTO;
     }
 
+
+    public QuestionsDTO.QuestionDTO getQuestionByIdWithResponse(QuestionQuery query) throws QuestionFailedException {
+        Question question = questionRepository.findById(query.getQuestionId())
+                .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+
+        QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
+                .ranking(question.getVote())
+                .title(question.getTitle())
+                .description(question.getDescription())
+                .id(question.getId())
+                .answers(question.getAnswers())
+                .build();
+
+        return currentQuestionDTO;
+    }
+
 }
