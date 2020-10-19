@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 @Getter
 @EqualsAndHashCode
+// Model
 public class AnswersDTO {
 
     @Builder
@@ -22,7 +23,7 @@ public class AnswersDTO {
     public static class AnswerDTO {
         private String description;
         private Date creationDate;
-        private UserId userId;
+        private String username;
     }
 
     @Singular

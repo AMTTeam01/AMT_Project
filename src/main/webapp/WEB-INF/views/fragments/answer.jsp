@@ -11,7 +11,7 @@
                 <%= request.getParameter("answers") %>
             </p>
             <span id="answer_bottom">
-            <span class="p-2">Author</span>
+            <span class="p-2">Author <%=request.getParameter("username") %></span>
             <span class="p-2">Creation Date : <%=request.getParameter("creation_date") %> </span>
             </span>
         </div>

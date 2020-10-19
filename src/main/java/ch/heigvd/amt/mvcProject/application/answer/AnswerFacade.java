@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.application.answer;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
+import ch.heigvd.amt.mvcProject.domain.user.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +45,7 @@ public class AnswerFacade {
                         answer -> AnswersDTO.AnswerDTO.builder()
                                 .description(answer.getDescription())
                                 .creationDate(answer.getCreationDate())
+                                .username(userRepository.findById(answer.getUserId()).get().getUsername())
                                 .build()).collect(Collectors.toList());
 
         return AnswersDTO.builder().answers(answersDTO).build();

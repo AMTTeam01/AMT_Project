@@ -164,7 +164,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
                     .description(rs.getString("description"))
                     .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                     .questionId(new QuestionId(rs.getString("tblQuestion_id")))
-                    .userId(new UserId(rs.getString("tblQuestion_id")))
+                    .userId(new UserId(rs.getString("tblUser_id")))
                     .build();
 
             answers.add(foundAnswer);

@@ -23,6 +23,7 @@
             <div>
                 <c:forEach var="answer" items="${answers.answers}">
                     <jsp:include page="fragments/answer.jsp">
+                        <jsp:param name="username" value="${answer.username}"/>
                         <jsp:param name="answers" value="${answer.description}"/>
                         <jsp:param name="creation_date" value="${answer.creationDate}"/>
                     </jsp:include>

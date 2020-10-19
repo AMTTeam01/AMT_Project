@@ -12,6 +12,7 @@ import java.util.Date;
 @Builder
 @Getter
 @EqualsAndHashCode
+// Submit
 public class AnswerCommand {
 
     private String description;
