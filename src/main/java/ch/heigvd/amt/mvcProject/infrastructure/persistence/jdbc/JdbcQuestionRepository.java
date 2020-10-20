@@ -5,18 +5,22 @@ import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
-import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.sql.DataSource;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.TimeZone;
 
 @ApplicationScoped
 @Named("JdbcQuestionRepository")
@@ -43,7 +47,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                     "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id) VALUES(?,?,?,?,?)"
             );
 
-            java.sql.Date creationDate = new java.sql.Date(question.getCreationDate().getTime());
+            Date creationDate = new Date(question.getCreationDate().getTime());
 
             statement.setString(1, question.getId().asString());
             statement.setString(2, question.getTitle());
@@ -93,14 +97,11 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
                 rs.first();
 
-                DateFormat df = DateFormat.getInstance();
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-
                 Question foundQuestion = Question.builder()
                         .id(new QuestionId(rs.getString("id")))
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
-                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                         .authorId(new UserId(rs.getString("tblUser_id")))
                         .build();
 
@@ -118,6 +119,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         // TODO : gérer les tags toujours
 
         Optional<Question> optionalQuestion = Optional.empty();
+
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
@@ -144,12 +146,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             Question foundQuestion = null;
 
+            DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+
             while (rs.next()) {
 
                 if (foundQuestion == null){
-                    DateFormat df = DateFormat.getInstance();
-                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
-
 
                     foundQuestion = Question.builder()
                             .id(new QuestionId(rs.getString("question_id")))
@@ -164,7 +166,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
                 if(username != null){
                     foundQuestion.addAnswer(Answer.builder()
-                            .creationDate(new Date(rs.getDate("answer_creationDate").getTime()))
+                            .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
                             .description(rs.getString("answer_description"))
                             .id(new AnswerId(rs.getString("answer_id")))
                             .questionId(new QuestionId(rs.getString("question_id")))
