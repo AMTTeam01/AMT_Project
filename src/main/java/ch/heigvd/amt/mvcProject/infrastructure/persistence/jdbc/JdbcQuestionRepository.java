@@ -135,7 +135,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "FROM tblQuestion Q" +
                             "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id" +
                             "         LEFT JOIN tblUser U on A.tblUser_id = U.id " +
-                            "WHERE Q.id = ?",
+                            "WHERE Q.id = ?" +
+                            "ORDER BY A.creationDate ASC",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
