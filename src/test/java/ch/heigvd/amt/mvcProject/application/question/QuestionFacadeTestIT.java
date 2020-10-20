@@ -3,8 +3,6 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -14,8 +12,10 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import javax.inject.Inject;
 
@@ -24,6 +24,8 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
+// TODO remove each insertion in DB => FixMethodOrder can't be removed
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class QuestionFacadeTestIT {
 
     private final static String WARNAME = "arquillian-managed.war";
@@ -66,7 +68,7 @@ public class QuestionFacadeTestIT {
 
 
     @Test
-    public void getQuestionWhenEmptyReturnEmptyList() {
+    public void A_GetQuestionWhenEmptyReturnEmptyList() {
 
 
         QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
@@ -75,7 +77,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void addQuestionShouldWork() throws QuestionFailedException {
+    public void B_addQuestionShouldWork() throws QuestionFailedException {
         QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
 
         QuestionCommand command = QuestionCommand.builder()
@@ -95,7 +97,7 @@ public class QuestionFacadeTestIT {
 
 
     @Test
-    public void getQuestionByIdShouldWork() throws QuestionFailedException {
+    public void C_getQuestionByIdShouldWork() throws QuestionFailedException {
         QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
 
         QuestionCommand command = QuestionCommand.builder()
