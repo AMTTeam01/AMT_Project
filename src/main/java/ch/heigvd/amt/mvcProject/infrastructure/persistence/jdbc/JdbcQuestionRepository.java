@@ -121,20 +121,19 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT" +
-                            "    Q.id as 'question_id'," +
-                            "    title," +
-                            "    Q.description as 'question_description'," +
-                            "    Q.creationDate as 'question_creationDate'," +
-                            "    Q.tblUser_id as 'question_userId'," +
-                            "    A.id as 'answer_id'," +
-                            "    A.description as 'answer_description'," +
-                            "    A.creationDate as 'answer_creationDate'," +
-                            "    A.tblUser_id as 'answer_userId'" +
-                            "FROM tblQuestion Q " +
-                            "    LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
-                            "WHERE" +
-                            "    Q.id = ?",
+                    "SELECT Q.id           as 'question_id'," +
+                            "       title," +
+                            "       Q.description  as 'question_description'," +
+                            "       Q.creationDate as 'question_creationDate'," +
+                            "       Q.tblUser_id   as 'question_userId'," +
+                            "       A.id           as 'answer_id'," +
+                            "       A.description  as 'answer_description'," +
+                            "       A.creationDate as 'answer_creationDate'," +
+                            "       U.username     as 'answer_username'" +
+                            "FROM tblQuestion Q" +
+                            "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id" +
+                            "         LEFT JOIN tblUser U on A.tblUser_id = U.id " +
+                            "WHERE Q.id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -161,15 +160,15 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .build();
                 }
 
-                String answerId = rs.getString("answer_userId");
+                String username = rs.getString("answer_username");
 
-                if(answerId != null){
+                if(username != null){
                     foundQuestion.addAnswer(Answer.builder()
-                            .userId(new UserId(rs.getString("answer_userId")))
                             .creationDate(new Date(rs.getDate("answer_creationDate").getTime()))
                             .description(rs.getString("answer_description"))
                             .id(new AnswerId(rs.getString("answer_id")))
                             .questionId(new QuestionId(rs.getString("question_id")))
+                            .username(username)
                             .build());
                 }
 

@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.application.question;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class QuestionFacade {
 
     private IQuestionRepository questionRepository;
+    private IUserRepository userRepository;
 
-    public QuestionFacade(IQuestionRepository questionRepository) {
+    public QuestionFacade(IQuestionRepository questionRepository, IUserRepository userRepository) {
         this.questionRepository = questionRepository;
+        this.userRepository = userRepository;
     }
 
     public void addQuestion(QuestionCommand command) throws QuestionFailedException {
@@ -32,12 +35,12 @@ public class QuestionFacade {
                     .build();
 
             questionRepository.save(submittedQuestion);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new QuestionFailedException(e.getMessage());
         }
     }
 
-    public QuestionsDTO getQuestions(QuestionQuery query){
+    public QuestionsDTO getQuestions(QuestionQuery query) {
         Collection<Question> allQuestions = questionRepository.findAll();
 
         List<QuestionsDTO.QuestionDTO> allQuestionsDTO =
@@ -56,6 +59,7 @@ public class QuestionFacade {
         Question question = questionRepository.findById(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
+
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
                 .ranking(question.getVote())
                 .title(question.getTitle())
@@ -73,9 +77,10 @@ public class QuestionFacade {
 
         List<AnswersDTO.AnswerDTO> answersDTO = question.getAnswers().stream().map(
                 answer -> AnswersDTO.AnswerDTO.builder()
-                .creationDate(answer.getCreationDate())
-                .description(answer.getDescription())
-                .build()
+                        .creationDate(answer.getCreationDate())
+                        .description(answer.getDescription())
+                        .username(answer.getUsername())
+                        .build()
         ).collect(Collectors.toList());
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()

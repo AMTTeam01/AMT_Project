@@ -29,7 +29,7 @@ public class AnswerTest {
     @BeforeEach
     private void prepare(){
         lenient().when(question.getId()).thenReturn(new QuestionId());
-        lenient().when(user.getId()).thenReturn(new UserId());
+        lenient().when(user.getUsername()).thenReturn("Jean");
     }
 
     @Test
@@ -39,7 +39,7 @@ public class AnswerTest {
                 .description("Test")
                 .id(new AnswerId())
                 .questionId(question.getId())
-                .userId(user.getId())
+                .username(user.getUsername())
                 .build();
 
         Answer a2 = a1.deepClone();

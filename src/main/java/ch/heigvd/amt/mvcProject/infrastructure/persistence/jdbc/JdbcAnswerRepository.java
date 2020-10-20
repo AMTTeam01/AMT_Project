@@ -60,8 +60,11 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     public void save(Answer answer) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "INSERT INTO tblAnswer(id, description ,creationDate, tblQuestion_id, tblUser_id )" +
-                            " VALUES(?,?,?,?,?)"
+                    "INSERT INTO tblAnswer(id, description, creationDate, tblQuestion_id, tblUser_id)" +
+                            "values (?, ?, ?, ?," +
+                            "        (SELECT id" +
+                            "         FROM tblUser" +
+                            "         where userName = ?))"
             );
 
             Timestamp creationDate = new Timestamp(answer.getCreationDate().getTime());
@@ -70,7 +73,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
             statement.setString(2, answer.getDescription());
             statement.setTimestamp(3, creationDate);
             statement.setString(4, answer.getQuestionId().asString());
-            statement.setString(5, answer.getUserId().asString());
+            statement.setString(5, answer.getUsername());
 
 
             statement.execute();
@@ -140,7 +143,12 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblAnswer",
+                    "SELECT userName," +
+                            "       A.id as 'answerId'," +
+                            "       description, " +
+                            "       creationDate " +
+                            "FROM tblAnswer A " +
+                            "         INNER JOIN tblUser U on A.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -164,7 +172,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
                     .description(rs.getString("description"))
                     .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                     .questionId(new QuestionId(rs.getString("tblQuestion_id")))
-                    .userId(new UserId(rs.getString("tblUser_id")))
+                    .username(rs.getString("username"))
                     .build();
 
             answers.add(foundAnswer);

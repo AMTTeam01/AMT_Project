@@ -23,7 +23,7 @@ public class Answer implements IEntity<Answer, AnswerId> {
 
     private QuestionId questionId;
 
-    private UserId userId;
+    private String username;
 
     @Override
     public Answer deepClone() {
@@ -50,11 +50,11 @@ public class Answer implements IEntity<Answer, AnswerId> {
                 throw new IllegalArgumentException("questionId is mandatory");
             }
 
-            if(userId == null){
-                throw new IllegalArgumentException("userId is mandatory");
+            if(username == null || username.isEmpty()){
+                throw new IllegalArgumentException("username is mandatory");
             }
 
-            return new Answer(id, description, creationDate, questionId, userId);
+            return new Answer(id, description, creationDate, questionId, username);
         }
     }
 }

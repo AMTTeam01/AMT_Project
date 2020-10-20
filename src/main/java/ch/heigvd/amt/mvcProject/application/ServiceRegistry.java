@@ -42,7 +42,7 @@ public class ServiceRegistry {
     @PostConstruct
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
-        questionFacade = new QuestionFacade(questionRepository);
+        questionFacade = new QuestionFacade(questionRepository, userRepository);
         answerFacade = new AnswerFacade(answerRepository, userRepository);
     }
 

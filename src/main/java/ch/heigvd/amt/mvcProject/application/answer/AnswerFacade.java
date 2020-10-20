@@ -26,7 +26,7 @@ public class AnswerFacade {
                     .description(command.getDescription())
                     .creationDate(command.getCreationDate())
                     .questionId(command.getQuestionId())
-                    .userId(userRepository.findByUsername(command.getUsername()).get().getId())
+                    .username(command.getUsername())
                     .build();
 
             answerRepository.save(submittedAnswer);
@@ -45,7 +45,7 @@ public class AnswerFacade {
                         answer -> AnswersDTO.AnswerDTO.builder()
                                 .description(answer.getDescription())
                                 .creationDate(answer.getCreationDate())
-                                .username(userRepository.findById(answer.getUserId()).get().getUsername())
+                                .username(answer.getUsername())
                                 .build()).collect(Collectors.toList());
 
         return AnswersDTO.builder().answers(answersDTO).build();
