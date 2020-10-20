@@ -119,9 +119,6 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
                 rs.first();
 
-                DateFormat df = DateFormat.getInstance();
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-
                 Answer foundAnswer = Answer.builder()
                         .id(new AnswerId(rs.getString("id")))
                         .description(rs.getString("description"))
