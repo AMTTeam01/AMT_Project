@@ -1,5 +1,4 @@
 <jsp:useBean id="question" scope="request" type="ch.heigvd.amt.mvcProject.application.question.QuestionsDTO.QuestionDTO"/>
-<jsp:useBean id="answers" scope="request" type="ch.heigvd.amt.mvcProject.application.answer.AnswersDTO"/>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -21,7 +20,7 @@
         <div class="col-10">
             <button name="btn_comment" href="#" class="btn btn-primary btn-classic-filled">Comment</button>
             <div>
-                <c:forEach var="answer" items="${answers.answers}">
+                <c:forEach var="answer" items="${question.answers}">
                     <jsp:include page="fragments/answer.jsp">
                         <jsp:param name="username" value="${answer.username}"/>
                         <jsp:param name="answers" value="${answer.description}"/>

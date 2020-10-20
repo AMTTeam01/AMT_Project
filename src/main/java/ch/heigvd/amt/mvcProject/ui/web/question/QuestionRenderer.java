@@ -38,20 +38,14 @@ public class QuestionRenderer extends HttpServlet {
         QuestionQuery query = QuestionQuery.builder().questionId(id).build();
         QuestionsDTO.QuestionDTO questionDTO = null;
 
-
-        AnswersDTO answersDTO = null;
-        AnswerQuery answerQuery = AnswerQuery.builder().questionId(id).build();
-
         //check if question ID exists. If not, come back to browsing
         try {
-            questionDTO = questionFacade.getQuestionById(query);
+            questionDTO = questionFacade.getQuestionByIdWithDetails(query);
             request.setAttribute("question", questionDTO);
 
-            answersDTO = answerFacade.getAnswersByQuestion(answerQuery);
-            request.setAttribute("answers", answersDTO);
 
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
-        } catch (QuestionFailedException | AnswerFailedException e) {
+        } catch (QuestionFailedException e) {
             e.printStackTrace();
             response.sendRedirect("/error");
         }

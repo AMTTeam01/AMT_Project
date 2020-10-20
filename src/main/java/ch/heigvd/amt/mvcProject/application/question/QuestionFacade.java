@@ -1,10 +1,12 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -59,23 +61,29 @@ public class QuestionFacade {
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
-                .answers(question.getAnswers())
                 .build();
 
         return currentQuestionDTO;
     }
 
 
-    public QuestionsDTO.QuestionDTO getQuestionByIdWithResponse(QuestionQuery query) throws QuestionFailedException {
-        Question question = questionRepository.findById(query.getQuestionId())
+    public QuestionsDTO.QuestionDTO getQuestionByIdWithDetails(QuestionQuery query) throws QuestionFailedException {
+        Question question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+
+        List<AnswersDTO.AnswerDTO> answersDTO = question.getAnswers().stream().map(
+                answer -> AnswersDTO.AnswerDTO.builder()
+                .creationDate(answer.getCreationDate())
+                .description(answer.getDescription())
+                .build()
+        ).collect(Collectors.toList());
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
                 .ranking(question.getVote())
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
-                .answers(question.getAnswers())
+                .answers(answersDTO)
                 .build();
 
         return currentQuestionDTO;

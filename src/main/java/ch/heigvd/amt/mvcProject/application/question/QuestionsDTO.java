@@ -24,7 +24,7 @@ public class QuestionsDTO {
         private int ranking;
         private List<String> tags;
         private String description;
-        private List<Answer> answers;
+        private List<AnswersDTO.AnswerDTO> answers;
     }
 
     @Singular

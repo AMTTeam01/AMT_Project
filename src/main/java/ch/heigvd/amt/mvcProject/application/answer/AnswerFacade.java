@@ -35,7 +35,7 @@ public class AnswerFacade {
         }
     }
 
-    public AnswersDTO getAnswersByQuestion(AnswerQuery query) throws AnswerFailedException {
+        public AnswersDTO getAnswersByQuestion(AnswerQuery query) throws AnswerFailedException {
         Collection<Answer> answers =
                 answerRepository.findByQuestionId(query.getQuestionId())
                         .orElseThrow(() -> new AnswerFailedException("The answer hasn't been found"));

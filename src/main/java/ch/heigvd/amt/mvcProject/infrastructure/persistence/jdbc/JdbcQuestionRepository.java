@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -119,9 +121,20 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblQuestion " +
-                            "INNER JOIN tblAnswer ON id = tblQuestion_id" +
-                            "WHERE id = ?",
+                    "SELECT" +
+                            "    Q.id as 'question_id'," +
+                            "    title," +
+                            "    Q.description as 'question_description'," +
+                            "    Q.creationDate as 'question_creationDate'," +
+                            "    Q.tblUser_id as 'question_userId'," +
+                            "    A.id as 'answer_id'," +
+                            "    A.description as 'answer_description'," +
+                            "    A.creationDate as 'answer_creationDate'," +
+                            "    A.tblUser_id as 'answer_userId'" +
+                            "FROM tblQuestion Q " +
+                            "    LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
+                            "WHERE" +
+                            "    Q.id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -130,24 +143,39 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            if(rs.next()){
+            Question foundQuestion = null;
 
-                rs.first();
+            while (rs.next()) {
 
-                DateFormat df = DateFormat.getInstance();
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                if (foundQuestion == null){
+                    DateFormat df = DateFormat.getInstance();
+                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                Question foundQuestion = Question.builder()
-                        .id(new QuestionId(rs.getString("id")))
-                        .description(rs.getString("description"))
-                        .title(rs.getString("title"))
-                        .vote(rs.getInt("vote"))
-                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
-                        .authorId(new UserId(rs.getString("tblUser_id")))
-                        .build();
 
-                optionalQuestion = Optional.of(foundQuestion);
+                    foundQuestion = Question.builder()
+                            .id(new QuestionId(rs.getString("question_id")))
+                            .description(rs.getString("question_description"))
+                            .title(rs.getString("title"))
+                            .creationDate(new Date(rs.getDate("question_creationDate").getTime()))
+                            .authorId(new UserId(rs.getString("question_userId")))
+                            .build();
+                }
+
+                String answerId = rs.getString("answer_userId");
+
+                if(answerId != null){
+                    foundQuestion.addAnswer(Answer.builder()
+                            .userId(new UserId(rs.getString("answer_userId")))
+                            .creationDate(new Date(rs.getDate("answer_creationDate").getTime()))
+                            .description(rs.getString("answer_description"))
+                            .id(new AnswerId(rs.getString("answer_id")))
+                            .questionId(new QuestionId(rs.getString("question_id")))
+                            .build());
+                }
+
             }
+            optionalQuestion = Optional.of(foundQuestion);
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

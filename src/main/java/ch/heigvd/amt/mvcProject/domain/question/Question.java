@@ -31,6 +31,10 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private List<Answer> answers;
 
+    public void addAnswer(Answer answer){
+        answers.add(answer);
+    }
+
     @Override
     public Question deepClone() {
         return this.toBuilder()
