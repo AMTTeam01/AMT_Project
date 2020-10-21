@@ -18,15 +18,14 @@ import java.util.stream.Collectors;
 public class QuestionFacade {
 
     private IQuestionRepository questionRepository;
-    private IUserRepository userRepository;
 
     public QuestionFacade(IQuestionRepository questionRepository, IUserRepository userRepository) {
         this.questionRepository = questionRepository;
-        this.userRepository = userRepository;
     }
 
-        public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
+    public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
         try {
+
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
@@ -36,11 +35,15 @@ public class QuestionFacade {
 
             questionRepository.save(submittedQuestion);
 
+
+            List<AnswersDTO.AnswerDTO> answersList = getAnswer(submittedQuestion);
+
             QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
                     .description(submittedQuestion.getDescription())
                     .id(submittedQuestion.getId())
                     .title(submittedQuestion.getTitle())
                     .username(submittedQuestion.getUsername())
+                    .answers(answersList)
                     .build();
 
             return newQuestion;
@@ -84,13 +87,7 @@ public class QuestionFacade {
         Question question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
-        List<AnswersDTO.AnswerDTO> answersDTO = question.getAnswers().stream().map(
-                answer -> AnswersDTO.AnswerDTO.builder()
-                        .creationDate(answer.getCreationDate())
-                        .description(answer.getDescription())
-                        .username(answer.getUsername())
-                        .build()
-        ).collect(Collectors.toList());
+        List<AnswersDTO.AnswerDTO> answersDTO = getAnswer(question);
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
                 .ranking(question.getVote())
@@ -101,6 +98,22 @@ public class QuestionFacade {
                 .build();
 
         return currentQuestionDTO;
+    }
+
+    private List<AnswersDTO.AnswerDTO> getAnswer(Question question) {
+        List<AnswersDTO.AnswerDTO> answersDTO = question.getAnswers().stream().map(
+                answer -> AnswersDTO.AnswerDTO.builder()
+                        .creationDate(answer.getCreationDate())
+                        .description(answer.getDescription())
+                        .username(answer.getUsername())
+                        .build()
+        ).collect(Collectors.toList());
+
+        return answersDTO;
+    }
+
+    public void delete(QuestionId id) {
+        questionRepository.remove(id);
     }
 
 }
