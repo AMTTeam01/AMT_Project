@@ -21,6 +21,7 @@ public class AnswersDTO {
     @Getter
     @EqualsAndHashCode
     public static class AnswerDTO {
+        private AnswerId id;
         private String description;
         private Date creationDate;
         private String username;
