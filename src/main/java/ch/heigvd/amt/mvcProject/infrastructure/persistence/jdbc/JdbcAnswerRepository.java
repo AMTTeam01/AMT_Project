@@ -161,8 +161,6 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     private ArrayList<Answer> getAnswers(ResultSet rs) throws SQLException {
         ArrayList<Answer> answers = new ArrayList<>();
 
-        DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
         while (rs.next()) {
             Answer foundAnswer = Answer.builder()
                     .id(new AnswerId(rs.getString("id")))

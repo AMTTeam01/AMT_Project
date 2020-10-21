@@ -11,5 +11,4 @@ import lombok.Getter;
 
 // Request
 public class AnswerQuery {
-    private QuestionId questionId;
 }
