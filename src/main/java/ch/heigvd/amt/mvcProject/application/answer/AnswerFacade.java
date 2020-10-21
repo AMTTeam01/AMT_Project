@@ -13,7 +13,7 @@ public class AnswerFacade {
         this.answerRepository = answerRepository;
     }
 
-    public void addAnswer(AnswerCommand command) throws AnswerFailedException {
+    public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command) throws AnswerFailedException {
 
         try {
             Answer submittedAnswer = Answer.builder()
@@ -24,6 +24,14 @@ public class AnswerFacade {
                     .build();
 
             answerRepository.save(submittedAnswer);
+
+            AnswersDTO.AnswerDTO newAnswer = AnswersDTO.AnswerDTO.builder()
+                    .username(submittedAnswer.getUsername())
+                    .description(submittedAnswer.getDescription())
+                    .creationDate(submittedAnswer.getCreationDate())
+                    .build();
+
+            return newAnswer;
         } catch (Exception e) {
             throw new AnswerFailedException(e.getMessage());
         }
