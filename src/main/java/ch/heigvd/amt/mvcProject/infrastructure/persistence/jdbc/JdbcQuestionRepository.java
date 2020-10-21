@@ -40,7 +40,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try{
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "INSERT INTO tblQuestion(id, title, description, vote, creationDate, tblUser_id) VALUES(?,?,?,?,?,?)"
+                    "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id) VALUES(?,?,?,?,?)"
             );
 
             java.sql.Date creationDate = new java.sql.Date(question.getCreationDate().getTime());
@@ -48,9 +48,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(1, question.getId().asString());
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
-            statement.setInt(4, question.getVote());
-            statement.setDate(5, creationDate);
-            statement.setString(6, question.getAuthorId().asString());
+            statement.setDate(4, creationDate);
+            statement.setString(5, question.getAuthorId().asString());
 
             statement.execute();
         } catch (SQLException throwables) {
@@ -107,7 +106,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                         .id(new QuestionId(rs.getString("id")))
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
-                        .vote(rs.getInt("vote"))
                         .creationDate(new Date(rs.getDate("creationDate").getTime()))
                         .authorId(new UserId(rs.getString("tblUser_id")))
                         .build();
@@ -156,7 +154,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                     .creationDate(new Date(rs.getDate("creationDate").getTime()))
                     .authorId(new UserId(rs.getString("tblUser_id")))
                     .description(rs.getString("description"))
-                    .vote(rs.getInt("vote"))
                     .title(rs.getString("title"))
                     .build();
 
