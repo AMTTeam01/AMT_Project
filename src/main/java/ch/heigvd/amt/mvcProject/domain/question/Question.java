@@ -27,9 +27,13 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private Date creationDate;
 
-    private UserId authorId;
+    private String username;
 
     private List<Answer> answers;
+
+    public void addAnswer(Answer answer){
+        answers.add(answer);
+    }
 
     @Override
     public Question deepClone() {
@@ -60,15 +64,15 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
-            if (authorId == null ) {
-                throw new IllegalArgumentException("AuthorId is mandatory");
+            if (username == null || username.isEmpty()) {
+                throw new IllegalArgumentException("username is mandatory");
             }
 
             if(answers == null){
                 answers = new ArrayList<>();
             }
 
-            return new Question(id, title, description, vote, creationDate, authorId, answers);
+            return new Question(id, title, description, vote, creationDate, username, answers);
         }
     }
 

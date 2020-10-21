@@ -11,6 +11,7 @@ import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ public class AnswerHandler extends HttpServlet {
     private ServiceRegistry serviceRegistry;
     private AnswerFacade answerFacade;
 
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -37,10 +39,21 @@ public class AnswerHandler extends HttpServlet {
 
         req.getSession().removeAttribute("errors");
 
+        // retreive the username in the cookie
+        String username = null;
+        Cookie[] cookies = req.getCookies();
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("username")) {
+                username = cookie.getValue();
+            }
+        }
+
         AnswerCommand answerCommand = AnswerCommand.builder()
-                .creationDate(new Date()) // TODO add time
+                .creationDate(new Date())
                 .description(req.getParameter("txt_answer"))
                 .questionId(new QuestionId(req.getParameter("hidden_id")))
+                .username(username)
                 .build();
 
 

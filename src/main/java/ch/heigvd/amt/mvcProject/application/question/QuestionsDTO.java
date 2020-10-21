@@ -22,9 +22,10 @@ public class QuestionsDTO {
         private QuestionId id;
         private String title;
         private int ranking;
+        private String username;
         private List<String> tags;
         private String description;
-        private List<Answer> answers;
+        private List<AnswersDTO.AnswerDTO> answers;
     }
 
     @Singular

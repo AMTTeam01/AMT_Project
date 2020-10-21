@@ -1,11 +1,9 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AnswerFacade {
 
@@ -15,34 +13,41 @@ public class AnswerFacade {
         this.answerRepository = answerRepository;
     }
 
-    public void addAnswer(AnswerCommand command) throws AnswerFailedException {
+    /**
+     * Ask to the DB to insert a answer
+     * @param command Answer command
+     * @return the Answer DTO of the given command
+     * @throws AnswerFailedException
+     */
+    public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command) throws AnswerFailedException {
 
         try {
             Answer submittedAnswer = Answer.builder()
                     .description(command.getDescription())
                     .creationDate(command.getCreationDate())
                     .questionId(command.getQuestionId())
+                    .username(command.getUsername())
                     .build();
 
             answerRepository.save(submittedAnswer);
+
+            AnswersDTO.AnswerDTO newAnswer = AnswersDTO.AnswerDTO.builder()
+                    .username(submittedAnswer.getUsername())
+                    .description(submittedAnswer.getDescription())
+                    .creationDate(submittedAnswer.getCreationDate())
+                    .build();
+
+            return newAnswer;
         } catch (Exception e) {
             throw new AnswerFailedException(e.getMessage());
         }
     }
 
-    public AnswersDTO getAnswersByQuestion(AnswerQuery query) throws AnswerFailedException {
-        Collection<Answer> answers =
-                answerRepository.findByQuestionId(query.getQuestionId())
-                        .orElseThrow(() -> new AnswerFailedException("The answer hasn't been found"));
-
-        List<AnswersDTO.AnswerDTO> answersDTO =
-                answers.stream().map(
-                        answer -> AnswersDTO.AnswerDTO.builder()
-                                .description(answer.getDescription())
-                                .creationDate(answer.getCreationDate())
-                                .build()).collect(Collectors.toList());
-
-        return AnswersDTO.builder().answers(answersDTO).build();
+    /**
+     * Ask to the DB to delete a answer
+     * @param id the id of the answer to delete
+     */
+    public void deleteAnswer(AnswerId id){
+        answerRepository.remove(id);
     }
-
 }

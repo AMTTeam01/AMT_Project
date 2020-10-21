@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @EqualsAndHashCode
+
+// Request
 public class AnswerQuery {
-    private QuestionId questionId;
 }

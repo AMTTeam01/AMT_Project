@@ -26,7 +26,7 @@ public class QuestionTest {
 
      @BeforeEach
      private void prepareUser(){
-         lenient().when(user.getId()).thenReturn(new UserId());
+         lenient().when(user.getUsername()).thenReturn("Jean");
      }
 
      @Test
@@ -36,7 +36,7 @@ public class QuestionTest {
                 .description("description")
                 .vote(2)
                 .id(new QuestionId())
-                .authorId(user.getId())
+                .username(user.getUsername())
                 .creationDate(new Date())
                 .build();
 

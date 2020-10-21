@@ -1,8 +1,9 @@
 <jsp:useBean id="question" scope="request" type="ch.heigvd.amt.mvcProject.application.question.QuestionsDTO.QuestionDTO"/>
-<jsp:useBean id="answers" scope="request" type="ch.heigvd.amt.mvcProject.application.answer.AnswersDTO"/>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <%@include file="fragments/header.jsp" %>
 <%@include file="fragments/navigation_bar.jsp" %>
@@ -21,12 +22,7 @@
         <div class="col-10">
             <button name="btn_comment" href="#" class="btn btn-primary btn-classic-filled">Comment</button>
             <div>
-                <c:forEach var="answer" items="${answers.answers}">
-                    <jsp:include page="fragments/answer.jsp">
-                        <jsp:param name="answers" value="${answer.description}"/>
-                        <jsp:param name="creation_date" value="${answer.creationDate}"/>
-                    </jsp:include>
-                </c:forEach>
+                <c:import url="fragments/answer.jsp"/>
             </div>
 
             <div class="m-2">

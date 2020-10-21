@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.domain.answer;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,8 @@ public class Answer implements IEntity<Answer, AnswerId> {
     private Date creationDate;
 
     private QuestionId questionId;
+
+    private String username;
 
     @Override
     public Answer deepClone() {
@@ -47,7 +50,11 @@ public class Answer implements IEntity<Answer, AnswerId> {
                 throw new IllegalArgumentException("questionId is mandatory");
             }
 
-            return new Answer(id, description, creationDate, questionId);
+            if(username == null || username.isEmpty()){
+                throw new IllegalArgumentException("username is mandatory");
+            }
+
+            return new Answer(id, description, creationDate, questionId, username);
         }
     }
 }

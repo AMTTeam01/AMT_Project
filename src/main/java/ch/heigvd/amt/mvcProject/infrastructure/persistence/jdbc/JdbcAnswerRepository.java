@@ -4,6 +4,7 @@ import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
@@ -37,7 +38,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblAnswer WHERE tblQuestion_id = ?",
+                    "SELECT * FROM tblAnswer WHERE tblQuestion_id = ? ORDER BY creationDate ASC",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -59,16 +60,21 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     public void save(Answer answer) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "INSERT INTO tblAnswer(id, description, vote ,creationDate, tblQuestion_id ) VALUES(?,?,?,?,?)"
+                    "INSERT INTO tblAnswer(id, description, creationDate, tblQuestion_id, tblUser_id)" +
+                            "values (?, ?, ?, ?," +
+                            "        (SELECT id" +
+                            "         FROM tblUser" +
+                            "         where userName = ?))"
             );
 
             Timestamp creationDate = new Timestamp(answer.getCreationDate().getTime());
 
             statement.setString(1, answer.getId().asString());
             statement.setString(2, answer.getDescription());
-            statement.setInt(3,0);
-            statement.setTimestamp(4, creationDate);
-            statement.setString(5, answer.getQuestionId().asString());
+            statement.setTimestamp(3, creationDate);
+            statement.setString(4, answer.getQuestionId().asString());
+            statement.setString(5, answer.getUsername());
+
 
             statement.execute();
         } catch (SQLException throwables) {
@@ -113,9 +119,6 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
                 rs.first();
 
-                DateFormat df = DateFormat.getInstance();
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-
                 Answer foundAnswer = Answer.builder()
                         .id(new AnswerId(rs.getString("id")))
                         .description(rs.getString("description"))
@@ -137,7 +140,12 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblAnswer",
+                    "SELECT userName," +
+                            "       A.id as 'answerId'," +
+                            "       description, " +
+                            "       creationDate " +
+                            "FROM tblAnswer A " +
+                            "         INNER JOIN tblUser U on A.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -153,14 +161,13 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     private ArrayList<Answer> getAnswers(ResultSet rs) throws SQLException {
         ArrayList<Answer> answers = new ArrayList<>();
 
-        DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
         while (rs.next()) {
             Answer foundAnswer = Answer.builder()
                     .id(new AnswerId(rs.getString("id")))
                     .description(rs.getString("description"))
                     .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                     .questionId(new QuestionId(rs.getString("tblQuestion_id")))
+                    .username(rs.getString("username"))
                     .build();
 
             answers.add(foundAnswer);
