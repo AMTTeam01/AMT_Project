@@ -12,6 +12,14 @@ import java.io.IOException;
 public class AuthorizationFilter implements Filter {
 
     @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    public void destroy() {
+    }
+
+    @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
@@ -55,6 +63,8 @@ public class AuthorizationFilter implements Filter {
         if (URI.startsWith("/register"))
             return true;
         if (URI.startsWith("/browsing"))
+            return true;
+        if (URI.startsWith("/arquillian-managed/"))
             return true;
         if (URI.equals("/")) // Home page
             return true;
