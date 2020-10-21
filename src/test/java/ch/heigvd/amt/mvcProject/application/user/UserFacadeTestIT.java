@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class UserFacadeTestIT {
@@ -28,6 +28,13 @@ public class UserFacadeTestIT {
 
     @Inject
     ServiceRegistry serviceRegistry;
+
+    private final String username = "chau";
+    private final String password = "1234";
+    private final String email = "chau@gmail.com";
+    private final String newUsername = "patrick";
+    private final String newEmail = "patrick@gmail.com";
+    private final String newPassword = "5678";
 
     @Deployment(testable = true)
     public static WebArchive createDeployment() {
@@ -38,6 +45,108 @@ public class UserFacadeTestIT {
 
     @Test
     @Order(1)
-    public void itShouldRegisterANewUser() throws RegistrationFailedException, EditFailedException {
+    public void itShouldGetAllUsersIfQueryIsNull() throws RegistrationFailedException, LoginFailedException {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        RegisterCommand registerCommand = RegisterCommand
+                .builder()
+                .clearTxtPassword(password)
+                .confirmationClearTxtPassword(password)
+                .username(username)
+                .email(email)
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        LoginCommand loginCommand = LoginCommand.builder()
+                .clearTxtPassword(password)
+                .username(username)
+                .build();
+
+        CurrentUserDTO currentUserDTO = authenticationFacade.login(loginCommand);
+
+        registerCommand = RegisterCommand
+                .builder()
+                .clearTxtPassword("1234")
+                .confirmationClearTxtPassword("1234")
+                .username("henri")
+                .email("henri@gmail.com")
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        UsersDTO users = userFacade.getUsers(null);
+
+        assertEquals(users.getUsers().size(), 2);
+        assertEquals(users.getUsers().get(0), UsersDTO.UserDTO.builder()
+                .id(currentUserDTO.getUserId())
+                .username(username)
+                .email(email)
+                .build());
+    }
+
+    @Test
+    @Order(2)
+    public void itShouldEditOnlyTheUsernameIfOnlyTheUsernameIsProvided() throws EditFailedException {
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .username(newUsername)
+                .build();
+
+        CurrentUserDTO currentUserDTO = userFacade.editUser(editUserCommand);
+
+        assertEquals(currentUserDTO.getUsername(), newUsername);
+    }
+
+    @Test
+    @Order(3)
+    public void itShouldEditOnlyTheEmailIfOnlyTheEmailIsProvided() throws EditFailedException {
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .email(newEmail)
+                .build();
+
+        CurrentUserDTO currentUserDTO = userFacade.editUser(editUserCommand);
+
+        assertEquals(currentUserDTO.getEmail(), newEmail);
+    }
+
+    @Test
+    @Order(4)
+    public void itShouldEditOnlyThePasswordIfTheNewPasswordIsProvided() throws EditFailedException, LoginFailedException {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .password(newPassword)
+                .confirmationPassword(newPassword)
+                .build();
+
+        userFacade.editUser(editUserCommand);
+
+        LoginCommand loginCommand = LoginCommand.builder()
+                .username(newUsername)
+                .clearTxtPassword(newPassword)
+                .build();
+
+        CurrentUserDTO currentUserDTO = authenticationFacade.login(loginCommand);
+
+        assertEquals(currentUserDTO.getUsername(), newUsername);
+    }
+
+    @Test
+    @Order(5)
+    public void itShouldThrowAnExceptionIfThePasswordAndTheConfirmationOfPasswordArentTheSame() {
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .password(newPassword)
+                .confirmationPassword(newPassword + "otherThing")
+                .build();
+
+        assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
     }
 }

@@ -42,6 +42,20 @@ public class UserTest {
                 .clearTextPassword(password)
                 .build();
 
-        assertEquals(u1.getEncryptedPassword(), password.toUpperCase());
+        assertTrue(u1.authenticate(password));
+    }
+
+    @Test
+    public void authenticateShouldFailIfPasswordIsIncorrect(){
+
+        String password = "test";
+
+        User u1 = User.builder()
+                .email("henri@gmail.com")
+                .username("henri")
+                .clearTextPassword(password)
+                .build();
+
+        assertFalse(u1.authenticate("notTheSamePassword"));
     }
 }
