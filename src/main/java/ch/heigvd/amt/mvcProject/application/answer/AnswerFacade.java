@@ -13,6 +13,12 @@ public class AnswerFacade {
         this.answerRepository = answerRepository;
     }
 
+    /**
+     * Ask to the DB to insert a answer
+     * @param command Answer command
+     * @return the Answer DTO of the given command
+     * @throws AnswerFailedException
+     */
     public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command) throws AnswerFailedException {
 
         try {
@@ -37,6 +43,10 @@ public class AnswerFacade {
         }
     }
 
+    /**
+     * Ask to the DB to delete a answer
+     * @param id the id of the answer to delete
+     */
     public void deleteAnswer(AnswerId id){
         answerRepository.remove(id);
     }

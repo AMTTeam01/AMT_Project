@@ -23,6 +23,12 @@ public class QuestionFacade {
         this.questionRepository = questionRepository;
     }
 
+    /**
+     * Ask the DB to save a question
+     * @param command question command
+     * @return the DTO of the given command
+     * @throws QuestionFailedException
+     */
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
         try {
 
@@ -67,6 +73,12 @@ public class QuestionFacade {
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();
     }
 
+    /**
+     * Get the question without detail for the given id
+     * @param query contain the id of the question
+     * @return Question DTO
+     * @throws QuestionFailedException
+     */
     public QuestionsDTO.QuestionDTO getQuestionById(QuestionQuery query) throws QuestionFailedException {
         Question question = questionRepository.findById(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
@@ -82,13 +94,19 @@ public class QuestionFacade {
         return currentQuestionDTO;
     }
 
-
+    /**
+     * Get the quedtion with details (answer & comments) for the given id
+     * @param query contain the id of the question
+     * @return Question DTO
+     * @throws QuestionFailedException
+     */
     public QuestionsDTO.QuestionDTO getQuestionByIdWithDetails(QuestionQuery query) throws QuestionFailedException {
         Question question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
         List<AnswersDTO.AnswerDTO> answersDTO = getAnswer(question);
 
+        // TODO add comments
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
                 .ranking(question.getVote())
                 .title(question.getTitle())

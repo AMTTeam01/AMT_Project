@@ -39,6 +39,7 @@ public class AnswerHandler extends HttpServlet {
 
         req.getSession().removeAttribute("errors");
 
+        // retreive the username in the cookie
         String username = null;
         Cookie[] cookies = req.getCookies();
 
@@ -49,7 +50,7 @@ public class AnswerHandler extends HttpServlet {
         }
 
         AnswerCommand answerCommand = AnswerCommand.builder()
-                .creationDate(new Date()) // TODO add time
+                .creationDate(new Date())
                 .description(req.getParameter("txt_answer"))
                 .questionId(new QuestionId(req.getParameter("hidden_id")))
                 .username(username)
