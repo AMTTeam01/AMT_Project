@@ -1,8 +1,9 @@
-package ch.heigvd.amt.mvcProject.application.authentication;
+package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
+import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
