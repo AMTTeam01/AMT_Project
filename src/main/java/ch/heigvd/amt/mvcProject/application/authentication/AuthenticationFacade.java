@@ -9,6 +9,7 @@ import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 public class AuthenticationFacade {
 
@@ -48,6 +49,7 @@ public class AuthenticationFacade {
                 .build();
 
             userRepository.save(newUser);
+
         }catch(Exception e){
             throw new RegistrationFailedException(e.getMessage());
         }
@@ -75,5 +77,9 @@ public class AuthenticationFacade {
                 .build();
 
         return currentUser;
+    }
+
+    public void delete(UserId id){
+        userRepository.remove(id);
     }
 }
