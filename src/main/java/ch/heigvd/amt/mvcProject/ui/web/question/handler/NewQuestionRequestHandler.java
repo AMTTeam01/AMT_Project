@@ -47,7 +47,6 @@ public class NewQuestionRequestHandler extends HttpServlet {
                 .description(req.getParameter("txt_description"))
                 .creationDate(new Date())
                 .username(currentUserDTO.getUsername())
-                .vote(0)
                 .tags(tags_tmp)
                 .build();
 

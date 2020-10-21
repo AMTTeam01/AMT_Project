@@ -72,7 +72,7 @@ public class Question implements IEntity<Question, QuestionId> {
                 answers = new ArrayList<>();
             }
 
-            return new Question(id, title, description, vote, creationDate, authorId, answers);
+            return new Question(id, title, description, vote, creationDate, username, answers);
         }
     }
 

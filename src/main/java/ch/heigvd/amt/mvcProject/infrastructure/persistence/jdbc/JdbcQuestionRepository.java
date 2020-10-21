@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -54,7 +55,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(1, question.getId().asString());
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
-            statement.setDate(4, creationDate);
+            statement.setTimestamp(4, creationDate);
             statement.setString(5, question.getUsername());
 
             statement.execute();
@@ -110,7 +111,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                         .id(new QuestionId(rs.getString("question_id")))
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
-                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                         .username(rs.getString("userName"))
                         .build();
 
@@ -131,19 +132,20 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT Q.id           as 'question_id'," +
-                            "       title," +
-                            "       Q.description  as 'question_description'," +
-                            "       Q.creationDate as 'question_creationDate'," +
-                            "       Q.tblUser_id   as 'question_userId'," +
-                            "       A.id           as 'answer_id'," +
-                            "       A.description  as 'answer_description'," +
-                            "       A.creationDate as 'answer_creationDate'," +
-                            "       U.username     as 'answer_username'" +
-                            "FROM tblQuestion Q" +
-                            "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id" +
-                            "         LEFT JOIN tblUser U on A.tblUser_id = U.id " +
-                            "WHERE Q.id = ?" +
+                    "SELECT Q.id           as 'question_id', " +
+                            "       title, " +
+                            "       Q.description  as 'question_description', " +
+                            "       Q.creationDate as 'question_creationDate', " +
+                            "       UQ.userName    as 'question_username', " +
+                            "       A.id           as 'answer_id', " +
+                            "       A.description  as 'answer_description', " +
+                            "       A.creationDate as 'answer_creationDate', " +
+                            "       UA.username    as 'answer_username' " +
+                            "FROM tblQuestion Q " +
+                            "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
+                            "         LEFT JOIN tblUser UA on A.tblUser_id = UA.id " +
+                            "         LEFT JOIN tblUser UQ ON Q.tblUser_id = UQ.id " +
+                            "WHERE Q.id = ? " +
                             "ORDER BY A.creationDate ASC",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
@@ -164,7 +166,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .description(rs.getString("question_description"))
                             .title(rs.getString("title"))
                             .creationDate(new Date(rs.getTimestamp("question_creationDate").getTime()))
-                            .authorId(new UserId(rs.getString("question_userId")))
+                            .username(rs.getString("question_username"))
                             .build();
                 }
 
