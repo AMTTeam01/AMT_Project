@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.application.question;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 
 import java.util.Collection;
@@ -24,17 +25,25 @@ public class QuestionFacade {
         this.userRepository = userRepository;
     }
 
-    public void addQuestion(QuestionCommand command) throws QuestionFailedException {
+        public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
         try {
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .vote(command.getVote())
                     .username(command.getUsername())
                     .creationDate(command.getCreationDate())
                     .build();
 
             questionRepository.save(submittedQuestion);
+
+            QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
+                    .description(submittedQuestion.getDescription())
+                    .id(submittedQuestion.getId())
+                    .title(submittedQuestion.getTitle())
+                    .username(submittedQuestion.getUsername())
+                    .build();
+
+            return newQuestion;
         } catch (Exception e) {
             throw new QuestionFailedException(e.getMessage());
         }

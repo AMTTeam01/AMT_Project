@@ -22,8 +22,6 @@ public class QuestionCommand {
 
     private List<String> tags;
 
-    private int vote;
-
     private Date creationDate;
 
     private String username;
