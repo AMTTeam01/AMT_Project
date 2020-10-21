@@ -12,6 +12,7 @@ import ch.heigvd.amt.mvcProject.application.user.edit.EditUserCommand;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,8 +49,17 @@ public class EditProfileRequestHandler extends HttpServlet {
                 .confirmationPassword(req.getParameter("txt_cpassword")).build();
 
         try{
-            editFacade.editUser(command);
-            req.getRequestDispatcher("/my_profile").forward(req, resp);
+
+            currentUser = editFacade.editUser(command);
+
+            // Update with the new user
+            req.getSession().setAttribute("currentUser", currentUser);
+
+            Cookie c1 = new Cookie("username", currentUser.getUsername());
+
+            resp.addCookie(c1);
+
+            resp.sendRedirect("/my_profile");
         }catch(EditFailedException e){
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect("/edit_profile");

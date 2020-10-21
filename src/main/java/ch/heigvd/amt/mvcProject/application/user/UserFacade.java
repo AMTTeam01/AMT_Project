@@ -45,25 +45,35 @@ public class UserFacade {
 
             User.UserBuilder builder = User.builder();
 
+            builder.id(userId);
+
             if(!command.getPassword().isEmpty()) {
                 builder.clearTextPassword(command.getPassword());
+            } else {
+                builder.encryptedPassword(existingUser.getEncryptedPassword());
             }
 
-            User user = builder
-                    .id(userId)
-                    .email(command.getEmail().isEmpty() ? existingUser.getEmail() : command.getEmail())
-                    .username(command.getUsername())
-                    .build();
+            if (!command.getEmail().isEmpty()){
+                builder.email(command.getEmail());
+            } else {
+                builder.email(existingUser.getEmail());
+            }
+
+            if (!command.getUsername().isEmpty()){
+                builder.username(command.getUsername());
+            } else {
+                builder.username(existingUser.getUsername());
+            }
+
+            User user = builder.build();
 
             userRepository.edit(user);
 
-            CurrentUserDTO currentUserDTO = CurrentUserDTO.builder()
+            return CurrentUserDTO.builder()
                     .userId(userId)
-                    .email(command.getEmail())
-                    .username(command.getUsername())
+                    .email(user.getEmail())
+                    .username(user.getUsername())
                     .build();
-
-            return currentUserDTO;
 
         }catch(Exception e){
             throw new EditFailedException(e.getMessage());
