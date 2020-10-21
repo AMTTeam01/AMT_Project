@@ -30,7 +30,7 @@ public class QuestionFacade {
                     .title(command.getTitle())
                     .description(command.getDescription())
                     .vote(command.getVote())
-                    .authorId(command.getAuthorId())
+                    .username(command.getUsername())
                     .creationDate(command.getCreationDate())
                     .build();
 

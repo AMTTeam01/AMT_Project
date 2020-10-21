@@ -13,11 +13,11 @@ import javax.inject.Named;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.TimeZone;
 
 @ApplicationScoped
 @Named("JdbcQuestionRepository")
@@ -39,9 +39,14 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         // TODO : gérer l'ajout des tags
 
-        try{
+        try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id) VALUES(?,?,?,?,?)"
+                    "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id)" +
+                            "VALUES (?, ?, ?, ?," +
+                            "        (" +
+                            "            SELECT id" +
+                            "            FROM tblUser" +
+                            "            WHERE userName = ?))"
             );
 
             Timestamp creationDate = new Timestamp(question.getCreationDate().getTime());
@@ -49,8 +54,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(1, question.getId().asString());
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
-            statement.setTimestamp(4, creationDate);
-            statement.setString(5, question.getAuthorId().asString());
+            statement.setDate(4, creationDate);
+            statement.setString(5, question.getUsername());
 
             statement.execute();
         } catch (SQLException throwables) {
@@ -60,7 +65,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void remove(QuestionId id) {
-        try{
+        try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "DELETE FROM tblQuestion WHERE id = ?"
             );
@@ -81,7 +86,14 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblQuestion WHERE id = ?",
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.userName" +
+                            "       FROM tblQuestion Q " +
+                            "JOIN tblUser U on Q.tblUser_id = U.id " +
+                            "WHERE Q.id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -90,16 +102,16 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
 
                 rs.first();
 
                 Question foundQuestion = Question.builder()
-                        .id(new QuestionId(rs.getString("id")))
+                        .id(new QuestionId(rs.getString("question_id")))
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
-                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                        .authorId(new UserId(rs.getString("tblUser_id")))
+                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                        .username(rs.getString("userName"))
                         .build();
 
                 optionalQuestion = Optional.of(foundQuestion);
@@ -184,7 +196,13 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblQuestion",
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.userName" +
+                            "       FROM tblQuestion Q " +
+                            "INNER JOIN tblUser U on Q.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -200,6 +218,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     /**
      * Get all users corresponding to the given result set
+     *
      * @param rs : result set
      * @return list of users
      * @throws SQLException
@@ -207,12 +226,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     private ArrayList<Question> getQuestions(ResultSet rs) throws SQLException {
         ArrayList<Question> questions = new ArrayList<>();
 
-        while(rs.next()) {
+        while (rs.next()) {
 
             Question foundQuestion = Question.builder()
-                    .id(new QuestionId(rs.getString("id")))
-                    .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                    .authorId(new UserId(rs.getString("tblUser_id")))
+                    .id(new QuestionId(rs.getString("question_id")))
+                    .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                    .username(rs.getString("userName"))
                     .description(rs.getString("description"))
                     .title(rs.getString("title"))
                     .build();
