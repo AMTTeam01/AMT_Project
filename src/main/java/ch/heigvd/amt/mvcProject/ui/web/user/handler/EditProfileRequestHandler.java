@@ -62,7 +62,7 @@ public class EditProfileRequestHandler extends HttpServlet {
             resp.sendRedirect("/my_profile");
         }catch(EditFailedException e){
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
-            resp.sendRedirect("/edit_profile");
+            resp.sendRedirect("/my_profile");
         }
     }
 }

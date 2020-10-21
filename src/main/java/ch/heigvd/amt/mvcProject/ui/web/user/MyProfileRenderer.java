@@ -40,6 +40,10 @@ public class MyProfileRenderer extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Object errors = request.getSession().getAttribute("errors");
+        request.setAttribute("errors", errors);
+        request.getSession().removeAttribute("errors");
+
         CurrentUserDTO currentUser = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
         request.setAttribute("user", currentUser);
 
