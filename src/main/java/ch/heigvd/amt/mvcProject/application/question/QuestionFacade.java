@@ -25,8 +25,8 @@ public class QuestionFacade {
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .vote(command.getVote())
                     .userId(command.getUserId())
+                    .username(command.getUsername())
                     .creationDate(command.getCreationDate())
                     .build();
 
@@ -53,7 +53,6 @@ public class QuestionFacade {
                 allQuestions.stream().map(
                         question -> QuestionsDTO.QuestionDTO.builder()
                                 .title(question.getTitle())
-                                .ranking(question.getVote())
                                 .description(question.getDescription())
                                 .id(question.getId())
                                 .userid(question.getUserId())
@@ -68,7 +67,6 @@ public class QuestionFacade {
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
-                .ranking(question.getVote())
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())

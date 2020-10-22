@@ -28,4 +28,6 @@ public class QuestionCommand {
     private Date creationDate;
 
     private UserId userId;
+
+    private String username;
 }
