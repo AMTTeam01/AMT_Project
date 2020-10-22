@@ -46,7 +46,7 @@ public class JdbcUserRepository implements IUserRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            if(rs.next())
+            if (rs.next())
                 user = Optional.of(getUsers(statement.executeQuery()).get(0));
 
         } catch (SQLException throwables) {
@@ -99,7 +99,11 @@ public class JdbcUserRepository implements IUserRepository {
                     ResultSet.CONCUR_UPDATABLE
             );
             statement.setString(1, id.asString());
-            user = Optional.of(getUsers(statement.executeQuery()).get(0));
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next())
+                user = Optional.of(getUsers(statement.executeQuery()).get(0));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -127,13 +131,14 @@ public class JdbcUserRepository implements IUserRepository {
 
     /**
      * Get all users corresponding to the given result set
+     *
      * @param rs : result set
      * @return list of users
      * @throws SQLException
      */
     private ArrayList<User> getUsers(ResultSet rs) throws SQLException {
         ArrayList<User> users = new ArrayList<>();
-        while(rs.next()) {
+        while (rs.next()) {
 
             User foundUser = User.builder()
                     .id(new UserId(rs.getString("id") + ""))
