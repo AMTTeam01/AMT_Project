@@ -23,7 +23,7 @@ public class QuestionsDTO {
         private String title;
         private int ranking;
         private String username;
-        private UserId userid;
+        private UserId userId;
         private List<String> tags;
         private String description;
         private Date creationDate;

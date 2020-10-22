@@ -1,7 +1,5 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
-import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -48,6 +46,8 @@ public class QuestionFacade {
                     .id(submittedQuestion.getId())
                     .title(submittedQuestion.getTitle())
                     .username(submittedQuestion.getUsername())
+                    .creationDate(submittedQuestion.getCreationDate())
+                    .userId(submittedQuestion.getUserId())
                     .build();
 
             return newQuestion;
@@ -66,7 +66,7 @@ public class QuestionFacade {
                                 .title(question.getTitle())
                                 .description(question.getDescription())
                                 .id(question.getId())
-                                .userid(question.getUserId())
+                                .userId(question.getUserId())
                                 .username(question.getUsername())
                                 .creationDate(question.getCreationDate())
                                 .build()).collect(Collectors.toList());
@@ -83,7 +83,7 @@ public class QuestionFacade {
                 .description(question.getDescription())
                 .id(question.getId())
                 .username(question.getUsername())
-                .userid(question.getUserId())
+                .userId(question.getUserId())
                 .creationDate(question.getCreationDate())
                 .build();
 
