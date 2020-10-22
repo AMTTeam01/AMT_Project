@@ -104,7 +104,6 @@ public class QuestionFacadeTestIT {
                 .description("Description")
                 .creationDate(new Date())
                 .userId(currentUserDTO.getUserId())
-                .username(currentUserDTO.getUsername())
                 .build();
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
@@ -127,7 +126,6 @@ public class QuestionFacadeTestIT {
                 .title("Titre")
                 .description("Description")
                 .creationDate(new Date())
-                .username(currentUserDTO.getUsername())
                 .userId(currentUserDTO.getUserId())
                 .build();
 
@@ -143,6 +141,20 @@ public class QuestionFacadeTestIT {
         assertEquals(id, viewID.getId());
 
         questionFacade.delete(question.getId());
+    }
+
+    @Test
+    public void addQuestion_ShouldThrowError_IfUserDoesntExist() {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(new UserId())
+                .build();
+
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.addQuestion(command);
+        });
     }
 
 }
