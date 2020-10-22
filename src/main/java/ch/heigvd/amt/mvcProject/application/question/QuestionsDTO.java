@@ -4,6 +4,7 @@ import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ public class QuestionsDTO {
         private UserId userid;
         private List<String> tags;
         private String description;
+        private Date creationDate;
     }
 
     @Singular

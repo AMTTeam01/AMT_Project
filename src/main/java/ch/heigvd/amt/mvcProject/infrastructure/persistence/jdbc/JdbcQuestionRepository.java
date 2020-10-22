@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 
 import java.util.*;
@@ -45,12 +46,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "VALUES (?, ?, ?, ?, ?)"
             );
 
-            java.sql.Date creationDate = new java.sql.Date(question.getCreationDate().getTime());
+            Timestamp creationDate = new Timestamp(question.getCreationDate().getTime());
 
             statement.setString(1, question.getId().asString());
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
-            statement.setDate(4, creationDate);
+            statement.setTimestamp(4, creationDate);
             statement.setString(5, question.getUserId().asString());
 
             statement.execute();
@@ -87,7 +88,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.description," +
                             "       Q.title," +
                             "       U.id AS 'user_id'," +
-                            "       U.userName "+
+                            "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "JOIN tblUser U on Q.tblUser_id = U.id " +
                             "WHERE Q.id = ?",
@@ -110,7 +111,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                         .id(new QuestionId(rs.getString("question_id")))
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
-                        .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                         .userId(new UserId(rs.getString("user_id")))
                         .username(rs.getString("userName"))
                         .build();
@@ -164,7 +165,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             Question foundQuestion = Question.builder()
                     .id(new QuestionId(rs.getString("question_id")))
-                    .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                    .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                     .userId(new UserId(rs.getString("user_id")))
                     .username(rs.getString("userName"))
                     .description(rs.getString("description"))

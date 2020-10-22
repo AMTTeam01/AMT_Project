@@ -68,6 +68,7 @@ public class QuestionFacade {
                                 .id(question.getId())
                                 .userid(question.getUserId())
                                 .username(question.getUsername())
+                                .creationDate(question.getCreationDate())
                                 .build()).collect(Collectors.toList());
 
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();
@@ -83,6 +84,7 @@ public class QuestionFacade {
                 .id(question.getId())
                 .username(question.getUsername())
                 .userid(question.getUserId())
+                .creationDate(question.getCreationDate())
                 .build();
 
         return currentQuestionDTO;
