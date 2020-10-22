@@ -26,7 +26,7 @@ public class QuestionFacade {
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .vote(command.getVote())
+                    .vote(0)
                     .authorId(command.getAuthorId())
                     .creationDate(command.getCreationDate())
                     .build();
@@ -37,9 +37,17 @@ public class QuestionFacade {
         }
     }
 
-    public void addVote(UserId userId, QuestionId questionId) throws QuestionFailedException {
+    public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException {
         try {
-            questionRepository.addVote(userId, questionId);
+            questionRepository.upvote(userId, questionId);
+        } catch(Exception e){
+            throw new QuestionFailedException(e.getMessage());
+        }
+    }
+
+    public void downvote(UserId userId, QuestionId questionId) throws QuestionFailedException {
+        try {
+            questionRepository.downvote(userId, questionId);
         } catch(Exception e){
             throw new QuestionFailedException(e.getMessage());
         }
@@ -52,7 +60,7 @@ public class QuestionFacade {
                 allQuestions.stream().map(
                         question -> QuestionsDTO.QuestionDTO.builder()
                                 .title(question.getTitle())
-                                .ranking(question.getVote())
+                                .votes(questionRepository.getVotes(question.getId()))
                                 .description(question.getDescription())
                                 .id(question.getId())
                                 .build()).collect(Collectors.toList());
@@ -65,7 +73,7 @@ public class QuestionFacade {
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
         QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
-                .ranking(question.getVote())
+                .votes(questionRepository.getVotes(question.getId()))
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())

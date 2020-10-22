@@ -41,9 +41,14 @@ public class QuestionVoteHandler extends HttpServlet {
         // TODO : modifier la db pour ajouter une valeur (upvote / downvote)
         QuestionId questionId = new QuestionId(req.getParameter("id"));
         UserId userId = new UserId(req.getParameter("currentUser"));
+        boolean upvote = req.getParameter("vote").equals("upvote");
 
         try {
-            questionFacade.addVote(userId, questionId);
+            if(upvote) {
+                questionFacade.upvote(userId, questionId);
+            } else {
+                questionFacade.downvote(userId, questionId);
+            }
             resp.sendRedirect("/question?id=" + questionId.asString());
         } catch (QuestionFailedException e) {
             e.printStackTrace();

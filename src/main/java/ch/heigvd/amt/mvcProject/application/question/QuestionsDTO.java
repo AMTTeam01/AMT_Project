@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.List;
 
 /**
- * Object used to passe data between tier
+ * Object used to pass data between tier
  */
 @Builder
 @Getter
@@ -19,7 +19,7 @@ public class QuestionsDTO {
     public static class QuestionDTO {
         private QuestionId id;
         private String title;
-        private int ranking;
+        private int votes;
         private List<String> tags;
         private String description;
     }

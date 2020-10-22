@@ -130,19 +130,59 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     }
 
     @Override
-    public void addVote(UserId userId, QuestionId questionId) {
+    public void upvote(UserId userId, QuestionId questionId) {
+        addVote(userId, questionId, 1);
+    }
+
+    @Override
+    public void downvote(UserId userId, QuestionId questionId) {
+        addVote(userId, questionId, 0);
+    }
+
+    @Override
+    public int getVotes(QuestionId questionId) {
+
+        int totalVotes = 0;
+
+        try {
+            // First we get the total number of votes
+            PreparedStatement voteStatement = dataSource.getConnection().prepareStatement(
+                    "SELECT COUNT(*) FROM tblUser_vote_tblQuestion" +
+                            "WHERE tblQuestion_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+            voteStatement.setString(1, questionId.asString());
+
+            ResultSet rs = voteStatement.executeQuery();
+
+            while (rs.next()) {
+                totalVotes = rs.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return totalVotes;
+    }
+
+    public void addVote(UserId userId, QuestionId questionId, int positive) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "INSERT INTO tblUser_vote_tblQuestion (tblUser_id, tblQuestion_id)" +
-                            "VALUES (?, ?)",
+                    "INSERT INTO tblUser_vote_tblQuestion (tblUser_id, tblQuestion_id, positiv)" +
+                            "VALUES (?, ?, ?)",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
 
             statement.setString(1, userId.asString());
             statement.setString(2, questionId.asString());
+            statement.setInt(3, positive);
 
             statement.execute();
+
+            // Update the votes
+            //updateQuestionVotes(questionId);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -174,4 +214,5 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         return questions;
     }
+
 }

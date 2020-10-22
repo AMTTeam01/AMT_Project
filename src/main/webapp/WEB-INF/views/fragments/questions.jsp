@@ -9,10 +9,10 @@
                 <div class="d-flex">
                     <h4 class="p-2 mr-auto">${question.title}</h4>
                     <div>
-                        <c:forEach begin="1" end="${question.ranking}">
+                        <c:forEach begin="1" end="${question.votes}">
                             <div class="glyphicon glyphicon-star" style="color: orange"></div>
                         </c:forEach>
-                        <c:forEach begin="1" end="${5 - question.ranking}">
+                        <c:forEach begin="1" end="${5 - question.votes}">
                             <div class="glyphicon glyphicon-star-empty" style="color: orange"></div>
                         </c:forEach>
                     </div>
