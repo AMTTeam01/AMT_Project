@@ -86,7 +86,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.id AS 'user_id'" +
+                            "       U.id AS 'user_id'," +
+                            "       U.userName "+
                             "       FROM tblQuestion Q " +
                             "JOIN tblUser U on Q.tblUser_id = U.id " +
                             "WHERE Q.id = ?",
@@ -110,7 +111,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
                         .creationDate(new Date(rs.getDate("creationDate").getTime()))
-                        .userId(new UserId(rs.getString("userId")))
+                        .userId(new UserId(rs.getString("user_id")))
+                        .username(rs.getString("userName"))
                         .build();
 
                 optionalQuestion = Optional.of(foundQuestion);
@@ -132,7 +134,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.id as 'user_id'" +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "INNER JOIN tblUser U on Q.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -163,6 +166,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                     .id(new QuestionId(rs.getString("question_id")))
                     .creationDate(new Date(rs.getDate("creationDate").getTime()))
                     .userId(new UserId(rs.getString("user_id")))
+                    .username(rs.getString("userName"))
                     .description(rs.getString("description"))
                     .title(rs.getString("title"))
                     .build();

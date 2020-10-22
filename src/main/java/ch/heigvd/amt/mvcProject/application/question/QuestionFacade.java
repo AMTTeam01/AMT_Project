@@ -45,6 +45,8 @@ public class QuestionFacade {
                                 .ranking(question.getVote())
                                 .description(question.getDescription())
                                 .id(question.getId())
+                                .userid(question.getUserId())
+                                .username(question.getUsername())
                                 .build()).collect(Collectors.toList());
 
         return QuestionsDTO.builder().questions(allQuestionsDTO).build();
@@ -59,6 +61,8 @@ public class QuestionFacade {
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
+                .username(question.getUsername())
+                .userid(question.getUserId())
                 .build();
 
         return currentQuestionDTO;
