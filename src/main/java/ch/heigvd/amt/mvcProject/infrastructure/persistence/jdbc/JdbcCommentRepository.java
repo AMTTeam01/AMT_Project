@@ -158,7 +158,7 @@ public class JdbcCommentRepository implements ICommentRepository {
 
     @Override
     public void remove(CommentId id) {
-        try{
+        try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "DELETE FROM tblComment WHERE id = ?"
             );
@@ -174,7 +174,7 @@ public class JdbcCommentRepository implements ICommentRepository {
     public Optional<Comment> findById(CommentId id) {
         Optional<Comment> optionalComment = Optional.empty();
 
-        try{
+        try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT C.id as 'comment_id', " +
                             "       C.creationDate, " +
@@ -197,7 +197,7 @@ public class JdbcCommentRepository implements ICommentRepository {
             ResultSet rs = statement.executeQuery();
 
 
-            if(rs.next()){
+            if (rs.next()) {
                 rs.first();
 
                 Comment foundComment = Comment.builder()
@@ -221,6 +221,44 @@ public class JdbcCommentRepository implements ICommentRepository {
 
     @Override
     public Collection<Comment> findAll() {
-        return null;
+        Collection<Comment> comments = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT C.id as 'comment_id', " +
+                            "       C.creationDate, " +
+                            "       C.description, " +
+                            "       U.id as 'user_id', " +
+                            "       U.userName, " +
+                            "       Q.id as 'question_id', " +
+                            "       A.id as 'answer_id' " +
+                            "from tblComment C " +
+                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
+                            "         LEFT JOIN tblQuestion Q on C.tblQuestion_id = Q.id " +
+                            "         LEFT JOIN tblAnswer A on C.tblAnswer_id = A.id ",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Comment foundComment = Comment.builder()
+                        .userId(new UserId(rs.getString("user_id")))
+                        .id(new CommentId(rs.getString("comment_id")))
+                        .answerId(new AnswerId(rs.getString("answer_id")))
+                        .questionId(new QuestionId(rs.getString("question_id")))
+                        .username(rs.getString("userName"))
+                        .description(rs.getString("description"))
+                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                        .build();
+
+                comments.add(foundComment);
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return comments;
     }
 }
