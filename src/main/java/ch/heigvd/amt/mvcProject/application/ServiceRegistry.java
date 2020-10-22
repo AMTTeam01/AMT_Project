@@ -35,6 +35,7 @@ public class ServiceRegistry {
     @PostConstruct
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
+        // User repo is used to test if the user that post a question is in the repo
         questionFacade = new QuestionFacade(questionRepository, userRepository);
     }
 
