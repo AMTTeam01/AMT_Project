@@ -157,4 +157,28 @@ public class QuestionFacadeTestIT {
         });
     }
 
+    @Test
+    public void remove_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException {
+        int sizeBefore = questionFacade.getQuestions(null).getQuestions().size();
+
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.delete(question.getId());
+
+        QuestionsDTO view = questionFacade.getQuestions(null);
+        assertNotNull(view);
+
+
+        assertEquals(sizeBefore , view.getQuestions().size());
+    }
+
+    //TODO Test remove if question id invalid
+
 }
