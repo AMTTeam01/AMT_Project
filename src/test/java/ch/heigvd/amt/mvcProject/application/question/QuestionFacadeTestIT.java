@@ -158,7 +158,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void remove_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException {
+    public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException {
         int sizeBefore = questionFacade.getQuestions(null).getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
@@ -176,9 +176,25 @@ public class QuestionFacadeTestIT {
         assertNotNull(view);
 
 
-        assertEquals(sizeBefore , view.getQuestions().size());
+        assertEquals(sizeBefore, view.getQuestions().size());
     }
 
-    //TODO Test remove if question id invalid
+    @Test
+    public void delete_ShouldThrownError_IfQuestionIdDoesntExist(){
+
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.delete(new QuestionId());
+        });
+
+    }
+
+    // TODO Get with invalid question id
+
+    @Test
+    public void getQuestionById_ShouldThrownError_IfQuestionIdDoesntExist(){
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.getQuestionById(new QuestionQuery(new QuestionId()));
+        });
+    }
 
 }
