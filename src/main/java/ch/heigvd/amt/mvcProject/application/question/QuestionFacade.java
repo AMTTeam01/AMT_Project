@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +20,7 @@ public class QuestionFacade {
         this.questionRepository = questionRepository;
     }
 
-    public void addQuestion(QuestionCommand command) throws QuestionFailedException {
+    public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
         try {
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
@@ -30,6 +31,16 @@ public class QuestionFacade {
                     .build();
 
             questionRepository.save(submittedQuestion);
+
+            QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
+                    .description(submittedQuestion.getDescription())
+                    .id(submittedQuestion.getId())
+                    .title(submittedQuestion.getTitle())
+                    .username(submittedQuestion.getUsername())
+                    .build();
+
+            return newQuestion;
+
         }catch(Exception e){
             throw new QuestionFailedException(e.getMessage());
         }
@@ -68,4 +79,7 @@ public class QuestionFacade {
         return currentQuestionDTO;
     }
 
+    public void delete(QuestionId id){
+        questionRepository.remove(id);
+    }
 }

@@ -11,6 +11,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -32,6 +33,9 @@ public class QuestionFacadeTestIT {
 
     private User user;
 
+    private AuthenticationFacade authenticationFacade;
+    private QuestionFacade questionFacade;
+
 
     @Deployment(testable = true)
     public static WebArchive createDeployment() {
@@ -47,7 +51,10 @@ public class QuestionFacadeTestIT {
 
     @Before
     public void init() throws RegistrationFailedException {
-        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+        authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
+        questionFacade = serviceRegistry.getQuestionFacade();
+
 
         user = User.builder()
                 .email((Math.random() * 100) + "@heig")
@@ -66,19 +73,20 @@ public class QuestionFacadeTestIT {
 
     }
 
+    @After
+    public void cleanUp() {
+        // TODO delete user after test
+    }
+
 
     @Test
-    public void A_GetQuestionWhenEmptyReturnEmptyList() {
-
-
-        QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
+    public void GetQuestionWhenEmptyReturnEmptyList() {
 
         assertEquals(0, questionFacade.getQuestions(null).getQuestions().size());
     }
 
     @Test
-    public void B_addQuestionShouldWork() throws QuestionFailedException {
-        QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
+    public void addQuestionShouldWork() throws QuestionFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -87,18 +95,19 @@ public class QuestionFacadeTestIT {
                 .userId(user.getId())
                 .build();
 
-        questionFacade.addQuestion(command);
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
         QuestionsDTO view = questionFacade.getQuestions(null);
         assertNotNull(view);
         assertEquals(1, view.getQuestions().size());
         assertEquals(command.getTitle(), view.getQuestions().get(0).getTitle());
+
+        questionFacade.delete(question.getId());
     }
 
 
     @Test
     public void C_getQuestionByIdShouldWork() throws QuestionFailedException {
-        QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
