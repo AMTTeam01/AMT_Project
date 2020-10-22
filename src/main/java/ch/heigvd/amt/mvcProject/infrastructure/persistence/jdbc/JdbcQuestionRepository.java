@@ -147,7 +147,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         try {
             // First we get the total number of votes
             PreparedStatement voteStatement = dataSource.getConnection().prepareStatement(
-                    "SELECT COUNT(*) FROM tblUser_vote_tblQuestion " +
+                    "SELECT SUM(positiv) FROM tblUser_vote_tblQuestion " +
                             "WHERE tblQuestion_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
@@ -170,7 +170,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "INSERT INTO tblUser_vote_tblQuestion (tblUser_id, tblQuestion_id, positiv)" +
-                            "VALUES (?, ?, ?)",
+                            "VALUES (?, ?, ?)" +
+                            "ON DUPLICATE KEY UPDATE positiv = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -178,6 +179,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(1, userId.asString());
             statement.setString(2, questionId.asString());
             statement.setInt(3, positive);
+            statement.setInt(4, positive);
 
             statement.execute();
         } catch (SQLException throwables) {
