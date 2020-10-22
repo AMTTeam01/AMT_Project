@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject.domain.answer;
 
 
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.User;
@@ -33,11 +34,10 @@ public class AnswerTest {
     }
 
     @Test
-    public void deepCloneShouldReturnNewObject(){
+    public void deepClone_ShouldReturnNewObject_WhenCalled(){
         Answer a1 = Answer.builder()
                 .creationDate(new Date())
                 .description("Test")
-                .id(new AnswerId())
                 .questionId(question.getId())
                 .username(user.getUsername())
                 .build();
@@ -46,6 +46,28 @@ public class AnswerTest {
 
         assertEquals(a1,a2);
         assertFalse(a1 == a2);
+    }
+
+    @Test
+    public void addComment_ShouldAddCommentInTheCommentsArray_WhenCalled(){
+        Answer a = Answer.builder()
+                .creationDate(new Date())
+                .description("Test")
+                .questionId(question.getId())
+                .username(user.getUsername())
+                .build();
+
+        Comment c = Comment.builder()
+                .creationDate(new Date())
+                .answerId(a.getId())
+                .description("Comments")
+                .username(user.getUsername())
+                .userId(user.getId())
+                .build();
+
+        a.addComment(c);
+
+        assertEquals(1, a.getComments().size());
     }
 
 }
