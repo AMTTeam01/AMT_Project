@@ -36,7 +36,7 @@ public class QuestionTest {
                 .description("description")
                 .vote(2)
                 .id(new QuestionId())
-                .username(user.getUsername())
+                .userId(user.getId())
                 .creationDate(new Date())
                 .build();
 

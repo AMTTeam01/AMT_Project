@@ -84,7 +84,7 @@ public class QuestionFacadeTestIT {
                 .title("Titre")
                 .description("Description")
                 .creationDate(new Date())
-                .username(user.getUsername())
+                .userId(user.getId())
                 .build();
 
         questionFacade.addQuestion(command);
@@ -104,7 +104,7 @@ public class QuestionFacadeTestIT {
                 .title("Titre")
                 .description("Description")
                 .creationDate(new Date())
-                .username(user.getUsername())
+                .userId(user.getId())
                 .build();
 
         questionFacade.addQuestion(command);

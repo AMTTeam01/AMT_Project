@@ -25,7 +25,7 @@ public class QuestionFacade {
                     .title(command.getTitle())
                     .description(command.getDescription())
                     .vote(command.getVote())
-                    .username(command.getUsername())
+                    .userId(command.getUserId())
                     .creationDate(command.getCreationDate())
                     .build();
 

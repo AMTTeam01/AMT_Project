@@ -42,11 +42,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id)" +
-                            "VALUES (?, ?, ?, ?," +
-                            "        (" +
-                            "            SELECT id" +
-                            "            FROM tblUser" +
-                            "            WHERE userName = ?))"
+                            "VALUES (?, ?, ?, ?, ?)"
             );
 
             java.sql.Date creationDate = new java.sql.Date(question.getCreationDate().getTime());
@@ -55,7 +51,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
             statement.setDate(4, creationDate);
-            statement.setString(5, question.getUsername());
+            statement.setString(5, question.getUserId().asString());
 
             statement.execute();
         } catch (SQLException throwables) {
@@ -90,7 +86,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.userName" +
+                            "       U.id AS 'user_id'" +
                             "       FROM tblQuestion Q " +
                             "JOIN tblUser U on Q.tblUser_id = U.id " +
                             "WHERE Q.id = ?",
@@ -114,7 +110,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
                         .creationDate(new Date(rs.getDate("creationDate").getTime()))
-                        .username(rs.getString("userName"))
+                        .userId(new UserId(rs.getString("userId")))
                         .build();
 
                 optionalQuestion = Optional.of(foundQuestion);
@@ -136,7 +132,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.userName" +
+                            "       U.id as 'user_id'" +
                             "       FROM tblQuestion Q " +
                             "INNER JOIN tblUser U on Q.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -166,7 +162,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             Question foundQuestion = Question.builder()
                     .id(new QuestionId(rs.getString("question_id")))
                     .creationDate(new Date(rs.getDate("creationDate").getTime()))
-                    .username(rs.getString("userName"))
+                    .userId(new UserId(rs.getString("user_id")))
                     .description(rs.getString("description"))
                     .title(rs.getString("title"))
                     .build();

@@ -27,5 +27,5 @@ public class QuestionCommand {
 
     private Date creationDate;
 
-    private String username;
+    private UserId userId;
 }
