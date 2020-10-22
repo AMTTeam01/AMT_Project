@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.comment.CommentId;
@@ -171,7 +172,51 @@ public class JdbcCommentRepository implements ICommentRepository {
 
     @Override
     public Optional<Comment> findById(CommentId id) {
-        return Optional.empty();
+        Optional<Comment> optionalComment = Optional.empty();
+
+        try{
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT C.id as 'comment_id', " +
+                            "       C.creationDate, " +
+                            "       C.description, " +
+                            "       U.id as 'user_id', " +
+                            "       U.userName, " +
+                            "       Q.id as 'question_id', " +
+                            "       A.id as 'answer_id' " +
+                            "from tblComment C " +
+                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
+                            "         LEFT JOIN tblQuestion Q on C.tblQuestion_id = Q.id " +
+                            "         LEFT JOIN tblAnswer A on C.tblAnswer_id = A.id " +
+                            "WHERE C.id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, id.asString());
+
+            ResultSet rs = statement.executeQuery();
+
+
+            if(rs.next()){
+                rs.first();
+
+                Comment foundComment = Comment.builder()
+                        .userId(new UserId(rs.getString("user_id")))
+                        .id(new CommentId(rs.getString("comment_id")))
+                        .answerId(new AnswerId(rs.getString("answer_id")))
+                        .questionId(new QuestionId(rs.getString("question_id")))
+                        .username(rs.getString("userName"))
+                        .description(rs.getString("description"))
+                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                        .build();
+
+                optionalComment = Optional.of(foundComment);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return optionalComment;
     }
 
     @Override
