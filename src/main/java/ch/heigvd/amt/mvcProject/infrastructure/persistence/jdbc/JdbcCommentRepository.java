@@ -157,7 +157,16 @@ public class JdbcCommentRepository implements ICommentRepository {
 
     @Override
     public void remove(CommentId id) {
+        try{
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "DELETE FROM tblComment WHERE id = ?"
+            );
 
+            statement.setString(1, id.asString());
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override
