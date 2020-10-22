@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.domain.comment;
 import ch.heigvd.amt.mvcProject.domain.IEntity;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class Comment implements IEntity<Comment, CommentId> {
     private QuestionId questionId;
 
     private AnswerId answerId;
+
+    private UserId userId;
 
     private String username;
 
@@ -54,12 +57,16 @@ public class Comment implements IEntity<Comment, CommentId> {
                 throw new IllegalArgumentException("questionId or answerId is mandatory");
             }
 
+
+            if (userId == null) {
+                throw new IllegalArgumentException("UserId or answerId is mandatory");
+            }
             if (username == null || username.isEmpty()) {
-                throw new IllegalArgumentException("username is mandatory");
+                throw new IllegalArgumentException("Username is mandatory");
             }
 
 
-            return new Comment(id, description, creationDate, questionId, answerId, username);
+            return new Comment(id, description, creationDate, questionId, answerId, userId,username);
         }
     }
 }
