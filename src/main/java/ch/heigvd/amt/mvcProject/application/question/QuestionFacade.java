@@ -1,8 +1,12 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
+import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
+import ch.heigvd.amt.mvcProject.domain.user.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,17 +20,24 @@ public class QuestionFacade {
 
     private IQuestionRepository questionRepository;
 
-    public QuestionFacade(IQuestionRepository questionRepository) {
+    // Need this repository to check if the user exist
+    private IUserRepository userRepository;
+
+    public QuestionFacade(IQuestionRepository questionRepository, IUserRepository userRepository) {
         this.questionRepository = questionRepository;
+        this.userRepository = userRepository;
     }
 
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
+        User existingUser = userRepository.findById(command.getUserId())
+                .orElseThrow(() -> new QuestionFailedException("The user hasn't been found"));
+
         try {
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .userId(command.getUserId())
-                    .username(command.getUsername())
+                    .userId(existingUser.getId())
+                    .username(existingUser.getUsername())
                     .creationDate(command.getCreationDate())
                     .build();
 
@@ -41,12 +52,12 @@ public class QuestionFacade {
 
             return newQuestion;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new QuestionFailedException(e.getMessage());
         }
     }
 
-    public QuestionsDTO getQuestions(QuestionQuery query){
+    public QuestionsDTO getQuestions(QuestionQuery query) {
         Collection<Question> allQuestions = questionRepository.findAll();
 
         List<QuestionsDTO.QuestionDTO> allQuestionsDTO =
@@ -77,7 +88,7 @@ public class QuestionFacade {
         return currentQuestionDTO;
     }
 
-    public void delete(QuestionId id){
+    public void delete(QuestionId id) {
         questionRepository.remove(id);
     }
 }

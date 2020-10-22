@@ -29,5 +29,4 @@ public class QuestionCommand {
 
     private UserId userId;
 
-    private String username;
 }
