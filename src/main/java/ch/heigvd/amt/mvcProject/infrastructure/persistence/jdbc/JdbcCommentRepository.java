@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -110,7 +111,7 @@ public class JdbcCommentRepository implements ICommentRepository {
 
             ArrayList<Comment> comments = new ArrayList<>();
 
-            while(rs.next()){
+            while (rs.next()) {
                 Comment comment = Comment.builder()
                         .creationDate(new Date(rs.getTimestamp("comment_creationDate").getTime()))
                         .description(rs.getString("comment_description"))
@@ -129,7 +130,28 @@ public class JdbcCommentRepository implements ICommentRepository {
     }
 
     @Override
-    public void save(Comment entity) {
+    public void save(Comment comment) {
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "INSERT INTO tblComment(id, description, creationDate, tblAnswer_id, tblQuestion_id, tblUser_id)" +
+                            "VALUES (?,?,?,?,?,?)"
+            );
+
+            Timestamp creationDate = new Timestamp(comment.getCreationDate().getTime());
+
+            statement.setString(1, comment.getId().asString());
+            statement.setString(2, comment.getDescription());
+            statement.setTimestamp(3, creationDate);
+            statement.setString(4, comment.getAnswerId() == null ? null : comment.getAnswerId().asString());
+            statement.setString(5, comment.getQuestionId() == null ? null : comment.getQuestionId().asString());
+            statement.setString(6, comment.getUserId().asString());
+
+            statement.execute();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
     }
 
