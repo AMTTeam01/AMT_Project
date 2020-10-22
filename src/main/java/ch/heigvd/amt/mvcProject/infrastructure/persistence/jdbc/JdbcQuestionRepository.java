@@ -147,7 +147,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         try {
             // First we get the total number of votes
             PreparedStatement voteStatement = dataSource.getConnection().prepareStatement(
-                    "SELECT COUNT(*) FROM tblUser_vote_tblQuestion" +
+                    "SELECT COUNT(*) FROM tblUser_vote_tblQuestion " +
                             "WHERE tblQuestion_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
@@ -180,9 +180,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setInt(3, positive);
 
             statement.execute();
-
-            // Update the votes
-            //updateQuestionVotes(questionId);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

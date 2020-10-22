@@ -36,18 +36,15 @@ public class QuestionVoteHandler extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        // We differentiate a downvote or an upvote from the upvote boolean
-        // TODO : modifier la db pour ajouter une valeur (upvote / downvote)
+        CurrentUserDTO currentUser = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
         QuestionId questionId = new QuestionId(req.getParameter("id"));
-        UserId userId = new UserId(req.getParameter("currentUser"));
         boolean upvote = req.getParameter("vote").equals("upvote");
 
         try {
             if(upvote) {
-                questionFacade.upvote(userId, questionId);
+                questionFacade.upvote(currentUser.getUserId(), questionId);
             } else {
-                questionFacade.downvote(userId, questionId);
+                questionFacade.downvote(currentUser.getUserId(), questionId);
             }
             resp.sendRedirect("/question?id=" + questionId.asString());
         } catch (QuestionFailedException e) {
