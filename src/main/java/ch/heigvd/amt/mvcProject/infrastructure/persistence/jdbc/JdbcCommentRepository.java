@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.comment.CommentId;
 import ch.heigvd.amt.mvcProject.domain.comment.ICommentRepository;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
@@ -42,7 +43,8 @@ public class JdbcCommentRepository implements ICommentRepository {
                     "SELECT C.id           AS 'comment_id',  " +
                             "       C.description  AS 'comment_description',  " +
                             "       C.creationDate AS 'comment_creationDate',  " +
-                            "       U.userName  " +
+                            "       U.userName  ," +
+                            "       U.id as 'user_id'  " +
                             "FROM tblComment C  " +
                             "         INNER JOIN tblQuestion Q on C.tblQuestion_id = Q.id  " +
                             "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
@@ -63,6 +65,7 @@ public class JdbcCommentRepository implements ICommentRepository {
                         .description(rs.getString("comment_description"))
                         .questionId(questionId)
                         .username(rs.getString("userName"))
+                        .userId(new UserId(rs.getString("user_id")))
                         .id(new CommentId(rs.getString("comment_id")))
                         .build();
 
@@ -105,7 +108,7 @@ public class JdbcCommentRepository implements ICommentRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            ArrayList<Comment> comments;
+            ArrayList<Comment> comments = new ArrayList<>();
 
             while(rs.next()){
                 Comment comment = Comment.builder()
@@ -113,6 +116,7 @@ public class JdbcCommentRepository implements ICommentRepository {
                         .description(rs.getString("comment_description"))
                         .answerId(answerId)
                         .username(rs.getString("userName"))
+                        .userId(new UserId(rs.getString("user_id")))
                         .id(new CommentId(rs.getString("comment_id")))
                         .build();
 
