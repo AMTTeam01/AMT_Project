@@ -9,7 +9,6 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedExce
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
-import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -185,6 +184,29 @@ public class QuestionFacadeTestIT {
         assertThrows(QuestionFailedException.class, () -> {
             questionFacade.delete(new QuestionId());
         });
+
+    }
+
+    @Test
+    public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed() throws QuestionFailedException {
+
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.getQuestionById(new QuestionQuery(question.getId()));
+
+        assertEquals(command.getDescription(), question.getDescription());
+        assertEquals(command.getTitle(), question.getTitle());
+        assertEquals(command.getUserId(), question.getUserId());
+        assertEquals(command.getCreationDate(), question.getCreationDate());
+
+        questionFacade.delete(question.getId());
 
     }
 
