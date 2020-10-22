@@ -188,8 +188,6 @@ public class QuestionFacadeTestIT {
 
     }
 
-    // TODO Get with invalid question id
-
     @Test
     public void getQuestionById_ShouldThrownError_IfQuestionIdDoesntExist(){
         assertThrows(QuestionFailedException.class, () -> {
