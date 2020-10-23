@@ -6,12 +6,10 @@ import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
-import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -167,24 +165,16 @@ public class QuestionFacade {
     }
 
     public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
+        //TODO : change for getting only user questions
         Collection<Question> allQuestions = questionRepository.findAll();
         Collection<Question> userQuestions = new ArrayList<>();
 
         for(Question question : allQuestions){
-            if(question.getAuthorId().equals(query.userId))
+            if(question.getUserId().equals(query.userId))
                 userQuestions.add(question);
         }
 
-        List<QuestionsDTO.QuestionDTO> questionsDTO =
-                userQuestions.stream().map(
-                        question -> QuestionsDTO.QuestionDTO.builder()
-                                .title(question.getTitle())
-                                .ranking(question.getVote())
-                                .description(question.getDescription())
-                                .id(question.getId())
-                                .build()).collect(Collectors.toList());
-
-        return QuestionsDTO.builder().questions(questionsDTO).build();
+        return getQuestionsDTO(userQuestions);
     }
 
 }
