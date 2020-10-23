@@ -48,7 +48,13 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            optionalAnswers = Optional.of(getAnswers(rs));
+            if(rs.next()) {
+
+                //reset pointer position
+                rs.beforeFirst();
+
+                optionalAnswers = Optional.of(getAnswers(rs));
+            }
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
