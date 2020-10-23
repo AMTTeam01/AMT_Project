@@ -1,6 +1,6 @@
 package ch.heigvd.amt.mvcProject.ui.web.filter;
 
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -10,6 +10,14 @@ import java.io.IOException;
 
 @WebFilter(filterName = "AuthorizationFilter", urlPatterns = "/*")
 public class AuthorizationFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    public void destroy() {
+    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -22,9 +30,9 @@ public class AuthorizationFilter implements Filter {
             return;
         }
 
-        CurrentUserDTO userDTO = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
+        CurrentUserDTO currentUserDTO = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
 
-        if (userDTO == null) {
+        if (currentUserDTO == null) {
             String targetUrl = request.getRequestURI();
 
             if (request.getQueryString() != null) {
@@ -55,6 +63,8 @@ public class AuthorizationFilter implements Filter {
         if (URI.startsWith("/register"))
             return true;
         if (URI.startsWith("/browsing"))
+            return true;
+        if (URI.startsWith("/arquillian-managed/"))
             return true;
         if (URI.equals("/")) // Home page
             return true;

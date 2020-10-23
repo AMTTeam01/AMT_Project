@@ -2,13 +2,14 @@ package ch.heigvd.amt.mvcProject.ui.web.user.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,12 @@ public class LoginRequestHandler extends HttpServlet {
             req.getSession().setAttribute("currentUser", currentUser);
             String targetUrl = (String) req.getSession().getAttribute("targetUrl");
             targetUrl = (targetUrl != null) ? targetUrl : "/browsing";
+
+            // Add coockie
+            Cookie c1 = new Cookie("username", currentUser.getUsername());
+
+            resp.addCookie(c1);
+
             resp.sendRedirect(targetUrl);
 
         } catch (LoginFailedException e) {
