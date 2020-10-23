@@ -72,33 +72,7 @@ public class QuestionFacade {
         return getQuestionsDTO(allQuestions);
     }
 
-    /**
-     * Retrieve questions asked by the query
-     * @param query Query passed
-     * @return return the result asked by the query as DTO
-     * @throws QuestionFailedException
-     */
-    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException {
-        Collection<Question> questionsFound = new ArrayList<>();
 
-        if (query == null) {
-            throw new QuestionFailedException("Query is null");
-        } else {
-
-            if (query.getQuestionId() != null) {
-                Question question = questionRepository.findById(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-                questionsFound.add(question);
-
-            } else {
-                throw new QuestionFailedException("Query invalid");
-
-            }
-        }
-
-        return getQuestionsDTO(questionsFound);
-    }
 
     /**
      * Return a single Question asked by query
@@ -133,6 +107,26 @@ public class QuestionFacade {
     }
 
     /**
+     * Get a question with a query that contains an UserID
+     * @param query query
+     * @return questions found
+     */
+    public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
+        Collection<Question> userQuestions = questionRepository.findByUserId(query.userId);
+        return getQuestionsDTO(userQuestions);
+    }
+
+    /**
+     * Get a question with a query that contains a string in title
+     * @param query query
+     * @return questions found
+     */
+    public QuestionsDTO getQuestionsByTitleContaining(QuestionQuery query){
+        Collection<Question> questions = questionRepository.findByTitleContaining(query.title);
+        return getQuestionsDTO(questions);
+    }
+
+    /**
      * Transform a collection of Question into DTO
      * @param questionsFound collection of questions
      * @return Questions DTO
@@ -164,9 +158,5 @@ public class QuestionFacade {
         questionRepository.remove(id);
     }
 
-    public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
-        Collection<Question> userQuestions = questionRepository.findByUserId(query.userId);
-        return getQuestionsDTO(userQuestions);
-    }
 
 }

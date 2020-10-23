@@ -8,4 +8,5 @@ import java.util.Collection;
 
 public interface IQuestionRepository extends IRepository<Question, QuestionId> {
     Collection<Question> findByUserId(UserId userId);
+    Collection<Question> findByTitleContaining(String title);
 }

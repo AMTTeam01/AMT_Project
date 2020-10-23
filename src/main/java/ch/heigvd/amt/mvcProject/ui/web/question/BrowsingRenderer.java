@@ -2,7 +2,9 @@ package ch.heigvd.amt.mvcProject.ui.web.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -28,7 +30,17 @@ public class BrowsingRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        QuestionsDTO questionsDTO = questionFacade.getAllQuestions();
+
+        QuestionsDTO questionsDTO = null;
+        String search = request.getParameter("tags");
+
+        if(search == null || search.isEmpty()) {
+            questionsDTO = questionFacade.getAllQuestions();
+        } else {
+            QuestionQuery query = QuestionQuery.builder().title(search).build();
+            questionsDTO = questionFacade.getQuestionsByTitleContaining(query);
+        }
+
         request.setAttribute("questions", questionsDTO);
         request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);
     }
