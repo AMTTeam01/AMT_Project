@@ -137,6 +137,13 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         return questions;
     }
 
+    public Collection<Question> findByUserId(UserId userId){
+        Collection<Question> questions = new ArrayList<>();
+
+
+        return questions;
+    }
+
     /**
      * Get all users corresponding to the given result set
      * @param rs : result set

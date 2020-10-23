@@ -2,8 +2,11 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +68,24 @@ public class QuestionFacade {
     }
 
     public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
-        return null;
+        Collection<Question> allQuestions = questionRepository.findAll();
+        Collection<Question> userQuestions = new ArrayList<>();
+
+        for(Question question : allQuestions){
+            if(question.getAuthorId().equals(query.userId))
+                userQuestions.add(question);
+        }
+
+        List<QuestionsDTO.QuestionDTO> questionsDTO =
+                userQuestions.stream().map(
+                        question -> QuestionsDTO.QuestionDTO.builder()
+                                .title(question.getTitle())
+                                .ranking(question.getVote())
+                                .description(question.getDescription())
+                                .id(question.getId())
+                                .build()).collect(Collectors.toList());
+
+        return QuestionsDTO.builder().questions(questionsDTO).build();
     }
 
 }
