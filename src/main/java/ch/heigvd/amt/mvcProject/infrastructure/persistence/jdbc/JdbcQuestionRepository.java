@@ -137,12 +137,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.description  as 'question_description', " +
                             "       Q.creationDate as 'question_creationDate', " +
                             "       UQ.userName    as 'question_username', " +
-                            "       UQ.id          as 'question_user_id' "+
+                            "       UQ.id          as 'question_user_id', "+
                             "       A.id           as 'answer_id', " +
                             "       A.description  as 'answer_description', " +
                             "       A.creationDate as 'answer_creationDate', " +
                             "       UA.username    as 'answer_username', " +
-                            "       UA.tblUser_id  as 'answer_user_id' " +
+                            "       UA.id          as 'answer_user_id' " +
                             "FROM tblQuestion Q " +
                             "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
                             "         LEFT JOIN tblUser UA on A.tblUser_id = UA.id " +
@@ -169,7 +169,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .title(rs.getString("title"))
                             .creationDate(new Date(rs.getTimestamp("question_creationDate").getTime()))
                             .username(rs.getString("question_username"))
-                            .userId(new UserId(rs.getString("quesiton_user_id")))
+                            .userId(new UserId(rs.getString("question_user_id")))
                             .build();
                 }
 
