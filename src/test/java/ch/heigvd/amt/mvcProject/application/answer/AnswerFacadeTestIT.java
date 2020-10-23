@@ -4,12 +4,13 @@ import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.application.question.*;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -56,7 +57,8 @@ public class AnswerFacadeTestIT {
     }
 
     @Before
-    public void init() throws RegistrationFailedException, QuestionFailedException, LoginFailedException {
+    public void init()
+            throws RegistrationFailedException, QuestionFailedException, LoginFailedException, UserFailedException {
         answerFacade = serviceRegistry.getAnswerFacade();
 
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
@@ -80,7 +82,7 @@ public class AnswerFacadeTestIT {
         questionFacade = serviceRegistry.getQuestionFacade();
 
         QuestionCommand questionCommand = QuestionCommand.builder()
-                .username(USERNAME)
+                .userId(currentUserDTO.getUserId())
                 .creationDate(new Date())
                 .description("TEST")
                 .title("TEST")
@@ -90,34 +92,34 @@ public class AnswerFacadeTestIT {
     }
 
     @After
-    public void cleanUp() {
+    public void cleanUp() throws QuestionFailedException {
 
-        questionFacade.delete(newQuestion.getId());
+        questionFacade.removeQuestion(newQuestion.getId());
 
         authenticationFacade.delete(currentUserDTO.getUserId());
 
     }
 
     @Test
-    public void itShouldAddAAnswer() throws AnswerFailedException, QuestionFailedException {
+    public void itShouldAddAAnswer() throws AnswerFailedException, QuestionFailedException, UserFailedException {
 
-        int sizeBefore = newQuestion.getAnswers().size();
+        int sizeBefore = newQuestion.getAnswersDTO().getAnswers().size();
 
         AnswerCommand answerCommand = AnswerCommand.builder()
                 .questionId(newQuestion.getId())
                 .description("Answer test")
                 .creationDate(new Date())
-                .username(USERNAME)
+                .userId(currentUserDTO.getUserId())
                 .build();
 
         AnswersDTO.AnswerDTO newAnswer = answerFacade.addAnswer(answerCommand);
 
         QuestionQuery query = QuestionQuery.builder()
-                .questionId(newQuestion.getId()).build();
+                .questionId(newQuestion.getId()).withDetail(true).build();
 
-        QuestionsDTO.QuestionDTO updatedQuestion = questionFacade.getQuestionById(query);
+        QuestionsDTO.QuestionDTO updatedQuestion = questionFacade.getQuestion(query);
 
-        assertEquals(updatedQuestion.getAnswers().size() - sizeBefore, 1);
+        assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore, 1);
 
         answerFacade.deleteAnswer(newAnswer.getId());
     }
