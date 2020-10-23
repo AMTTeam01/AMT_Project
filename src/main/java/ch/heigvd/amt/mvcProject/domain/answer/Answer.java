@@ -23,6 +23,8 @@ public class Answer implements IEntity<Answer, AnswerId> {
 
     private QuestionId questionId;
 
+    private UserId userId;
+
     private String username;
 
     @Override
@@ -33,28 +35,32 @@ public class Answer implements IEntity<Answer, AnswerId> {
     }
 
     public static class AnswerBuilder {
-        public Answer build(){
-            if(id == null){
+        public Answer build() {
+            if (id == null) {
                 id = new AnswerId();
             }
 
-            if(description == null || description.isEmpty()){
+            if (description == null || description.isEmpty()) {
                 throw new IllegalArgumentException("description is mandatory");
             }
 
-            if (creationDate == null ){
+            if (creationDate == null) {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
-            if (questionId == null ) {
+            if (questionId == null) {
                 throw new IllegalArgumentException("questionId is mandatory");
             }
 
-            if(username == null || username.isEmpty()){
+            if (userId == null) {
+                throw new IllegalArgumentException("userId is mandatory");
+            }
+
+            if (username == null || username.isEmpty()) {
                 throw new IllegalArgumentException("username is mandatory");
             }
 
-            return new Answer(id, description, creationDate, questionId, username);
+            return new Answer(id, description, creationDate, questionId, userId, username);
         }
     }
 }
