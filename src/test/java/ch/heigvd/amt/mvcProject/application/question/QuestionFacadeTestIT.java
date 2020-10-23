@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
@@ -14,6 +15,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.Registration
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
@@ -159,7 +161,8 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException, UserFailedException {
+    public void delete_ShouldRemoveQuestion_WhenCalled()
+            throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
@@ -171,8 +174,16 @@ public class QuestionFacadeTestIT {
                 .build();
 
 
-
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .userId(currentUserDTO.getUserId())
+                .creationDate(new Date())
+                .description("Bla")
+                .questionId(question.getId())
+                .build();
+
+        answerFacade.addAnswer(answerCommand);
 
         QuestionId questionId = question.getId();
 
@@ -182,7 +193,7 @@ public class QuestionFacadeTestIT {
         assertNotNull(view);
         assertEquals(sizeBefore, view.getQuestions().size());
 
-        assertThrows(AnswerFailedException.class, ()->{
+        assertThrows(AnswerFailedException.class, () -> {
             answerFacade.getAnswers(AnswerQuery.builder().questionId(questionId).build());
         });
     }
