@@ -2,6 +2,8 @@ package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
+import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
@@ -38,12 +40,18 @@ public class AnswerFacade {
      * @return the Answer DTO of the given command
      * @throws AnswerFailedException
      */
-    public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command) throws AnswerFailedException, UserFailedException {
+    public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command)
+            throws AnswerFailedException, UserFailedException, QuestionFailedException {
 
         UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
         if (existingUser.getUsers().size() == 0)
-            new QuestionFailedException("The user hasn't been found");
+            new UserFailedException("The user hasn't been found");
+
+        QuestionsDTO.QuestionDTO existingQuestion = questionFacade.getQuestion(QuestionQuery.builder()
+                .questionId(command.getQuestionId())
+                .build());
+
 
         try {
             UsersDTO.UserDTO user = existingUser.getUsers().get(0);
@@ -52,7 +60,7 @@ public class AnswerFacade {
             Answer submittedAnswer = Answer.builder()
                     .description(command.getDescription())
                     .creationDate(command.getCreationDate())
-                    .questionId(command.getQuestionId())
+                    .questionId(existingQuestion.getId())
                     .userId(user.getId())
                     .username(user.getUsername())
                     .build();
@@ -81,8 +89,8 @@ public class AnswerFacade {
 
             if (query.questionId != null) {
 
-                answers= answerRepository.findByQuestionId(query.getQuestionId()).orElseThrow(
-                        ()-> new AnswerFailedException("Answers for the given question not found")
+                answers = answerRepository.findByQuestionId(query.getQuestionId()).orElseThrow(
+                        () -> new AnswerFailedException("Answers for the given question not found")
                 );
             } else {
                 throw new AnswerFailedException("Query invalid");
@@ -91,11 +99,11 @@ public class AnswerFacade {
 
         List<AnswersDTO.AnswerDTO> answersDTO = answers.stream().map(
                 answer -> AnswersDTO.AnswerDTO.builder()
-                .username(answer.getUsername())
-                .description(answer.getDescription())
-                .creationDate(answer.getCreationDate())
-                .id(answer.getId())
-                .build()
+                        .username(answer.getUsername())
+                        .description(answer.getDescription())
+                        .creationDate(answer.getCreationDate())
+                        .id(answer.getId())
+                        .build()
         ).collect(Collectors.toList());
 
         return AnswersDTO.builder().answers(answersDTO).build();
