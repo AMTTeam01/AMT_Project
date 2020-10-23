@@ -73,7 +73,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     public void remove(QuestionId id) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "DELETE FROM tblQuestion WHERE id = ?"
+                    "DELETE FROM tblQuestion WHERE id = ? CASCADE"
             );
 
             statement.setString(1, id.asString());
