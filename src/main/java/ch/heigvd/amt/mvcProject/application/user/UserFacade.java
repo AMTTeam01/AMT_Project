@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.edit.EditUserCommand;
 import ch.heigvd.amt.mvcProject.application.user.edit.EditFailedException;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
@@ -29,26 +30,41 @@ public class UserFacade {
     }
 
     /**
+     * @return Returns all users
+     */
+    public UsersDTO getUsers() {
+        Collection<User> allUsers = userRepository.findAll();
+
+        List<UsersDTO.UserDTO> allUsersDTO =
+                allUsers.stream().map(
+                        user -> UsersDTO.UserDTO.builder()
+                                .email(user.getEmail())
+                                .username(user.getUsername())
+                                .id(user.getId())
+                                .build()).collect(Collectors.toList());
+
+        return UsersDTO.builder().users(allUsersDTO).build();
+    }
+
+    /**
      * Returns all users in function of the query in the parameter
      *
      * @param query Query passed
-     *              if query == null -> returns all the users
      *              if query.userId != null -> return the unique user with the id
      * @return all users which match to the query
      */
-    public UsersDTO getUsers(UserQuery query) {
+    public UsersDTO getUsers(UserQuery query) throws UserFailedException {
 
         Collection<User> allUsers = new ArrayList<>();
 
         if (query == null) {
-            allUsers = userRepository.findAll();
+            throw new UserFailedException("query is null");
         } else {
             if (query.userId == null ) {
-                allUsers = userRepository.findAll();
+                throw new UserFailedException("query.userId is null");
             } else {
                 Optional<User> userFound = userRepository.findById(query.userId);
-                if (userFound.isPresent())
-                    allUsers.add(userFound.get());
+                userFound.ifPresent(allUsers::add);
             }
         }
 
@@ -68,7 +84,7 @@ public class UserFacade {
      * @param userId the id of the user which will be removed
      */
     public void removeUser(UserId userId) {
-
+        userRepository.remove(userId);
     }
 
     /**

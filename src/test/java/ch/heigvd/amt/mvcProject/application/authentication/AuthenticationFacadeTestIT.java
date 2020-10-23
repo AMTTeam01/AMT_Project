@@ -6,10 +6,14 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
@@ -21,6 +25,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class AuthenticationFacadeTestIT {
 
+    /*
     private final static String WARNAME = "arquillian-managed.war";
 
     @Inject
@@ -33,12 +38,21 @@ public class AuthenticationFacadeTestIT {
         return archive;
     }
 
-    @Test
-    @Order(1)
-    public void itShouldRegisterANewUser() throws RegistrationFailedException, LoginFailedException {
+    @Before
+    public void init() throws RegistrationFailedException {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
-        RegisterCommand registerCommand = RegisterCommand.builder()
+        RegisterCommand registerCommand = RegisterCommand
+                .builder()
+                .clearTxtPassword("1234")
+                .confirmationClearTxtPassword("1234")
+                .username("patrick")
+                .email("patrick@gmail.com")
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        registerCommand = RegisterCommand.builder()
                 .username("henri")
                 .email("henri@gmail.com")
                 .clearTxtPassword("1234")
@@ -46,16 +60,44 @@ public class AuthenticationFacadeTestIT {
                 .build();
 
         authenticationFacade.register(registerCommand);
+    }
+
+    @After
+    public void clean() {
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        // Get all users
+
+        UsersDTO usersDTO = userFacade.getUsers();
+
+        for(UsersDTO.UserDTO user : usersDTO.getUsers()) {
+            userFacade.removeUser(user.getId());
+        }
+    }
+
+    @Test
+    @Order(1)
+    public void itShouldRegisterANewUser() throws RegistrationFailedException, LoginFailedException {
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
+        RegisterCommand registerCommand = RegisterCommand.builder()
+                .username("chau")
+                .email("chau@gmail.com")
+                .clearTxtPassword("1234")
+                .confirmationClearTxtPassword("1234")
+                .build();
+
+        authenticationFacade.register(registerCommand);
 
         LoginCommand loginCommand = LoginCommand.builder()
-                .username("henri")
+                .username("chau")
                 .clearTxtPassword("1234")
                 .build();
 
         CurrentUserDTO currentUserDTO = authenticationFacade.login(loginCommand);
 
-        assertEquals(currentUserDTO.getUsername(), "henri");
-        assertEquals(currentUserDTO.getEmail(), "henri@gmail.com");
+        assertEquals(currentUserDTO.getUsername(), "chau");
+        assertEquals(currentUserDTO.getEmail(), "chau@gmail.com");
     }
 
     @Test
@@ -140,6 +182,6 @@ public class AuthenticationFacadeTestIT {
         assertThrows(RegistrationFailedException.class, () -> {
             authenticationFacade.register(registerCommand);
         });
-    }
+    }*/
 
 }
