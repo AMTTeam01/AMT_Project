@@ -34,9 +34,11 @@ public class NewQuestionRequestHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        // TODO : gérer les tags
-
-        List<String> tags_tmp = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3"));
+        //format tags : split by commas, to lower case, remove all spaces
+        List<String> tags = Arrays.asList(req.getParameter("txt_tags")
+                .toLowerCase()
+                .replaceAll("\\s+", "")
+                .split("[,]", 0));
 
         CurrentUserDTO currentUserDTO = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
 
@@ -46,7 +48,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
                 .creationDate(new Date())
                 .authorId(currentUserDTO.getUserId())
                 .vote(0)
-                .tags(tags_tmp)
+                .tags(tags)
                 .build();
 
         try {
