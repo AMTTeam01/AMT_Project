@@ -21,11 +21,10 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 import static org.junit.Assert.*;
-
+/*
 @RunWith(Arquillian.class)
 public class AuthenticationFacadeTestIT {
 
-    /*
     private final static String WARNAME = "arquillian-managed.war";
 
     @Inject
@@ -182,6 +181,6 @@ public class AuthenticationFacadeTestIT {
         assertThrows(RegistrationFailedException.class, () -> {
             authenticationFacade.register(registerCommand);
         });
-    }*/
+    }
 
-}
+}*/

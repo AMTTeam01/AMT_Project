@@ -25,7 +25,7 @@ import javax.enterprise.inject.Stereotype;
 import javax.inject.Inject;
 
 import static org.junit.Assert.*;
-
+/*
 @RunWith(Arquillian.class)
 public class UserFacadeTestIT {
 
@@ -48,8 +48,6 @@ public class UserFacadeTestIT {
                 .addPackages(true, "ch.heigvd.amt");
         return archive;
     }
-
-    /*
 
     @Test
     @Order(1)
@@ -172,5 +170,6 @@ public class UserFacadeTestIT {
                 .build();
 
         assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
-    }*/
+    }
 }
+*/

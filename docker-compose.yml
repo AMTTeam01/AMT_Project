@@ -25,9 +25,9 @@ services:
       MYSQL_ROOT_PASSWORD: 'devpa$$'
     ports:
       # <Port exposed> : < MySQL Port running inside container>
-      - '3306:3306'
+      - '6603:3306'
     expose:
-      # Opens port 3306 on the container
-      - '3306'
+      # Opens port 6603 on the container
+      - '6603'
     volumes:
       - ./docker/database/:/docker-entrypoint-initdb.d/
