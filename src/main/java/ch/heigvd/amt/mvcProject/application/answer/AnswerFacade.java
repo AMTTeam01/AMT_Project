@@ -1,7 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
+import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
-import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
@@ -9,7 +9,7 @@ import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
-import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,9 +23,12 @@ public class AnswerFacade {
 
     private UserFacade userFacade;
 
-    public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade) {
+    private QuestionFacade questionFacade;
+
+    public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade, QuestionFacade questionFacade) {
         this.answerRepository = answerRepository;
         this.userFacade = userFacade;
+        this.questionFacade = questionFacade;
     }
 
     /**
