@@ -42,7 +42,7 @@ public class RegisterRequestHandler extends HttpServlet {
 
         try{
             authenticationFacade.register(registerCommand);
-            req.getRequestDispatcher("/login.do").forward(req, resp);
+            resp.sendRedirect("/my_profile");
         }catch(RegistrationFailedException e){
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect("/register");
