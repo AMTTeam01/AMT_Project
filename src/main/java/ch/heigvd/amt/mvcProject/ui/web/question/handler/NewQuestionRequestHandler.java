@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -32,7 +33,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         // TODO : gérer les tags
 
@@ -53,7 +54,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
             questionFacade.addQuestion(command);
             resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
 
-        } catch (QuestionFailedException e) {
+        } catch (QuestionFailedException | UserFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
         }

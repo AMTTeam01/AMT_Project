@@ -38,8 +38,7 @@ public class ServiceRegistry {
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
         userFacade = new UserFacade(userRepository);
-        // User repo is used to test if the user that post a question is in the repo
-        questionFacade = new QuestionFacade(questionRepository, userRepository);
+        questionFacade = new QuestionFacade(questionRepository, userFacade);
     }
 
     public AuthenticationFacade getAuthenticationFacade() {

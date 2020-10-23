@@ -1,5 +1,9 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+import ch.heigvd.amt.mvcProject.application.user.UserQuery;
+import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -18,24 +22,30 @@ public class QuestionFacade {
 
     private IQuestionRepository questionRepository;
 
-    // Need this repository to check if the user exist
-    private IUserRepository userRepository;
+    private UserFacade userFacade;
 
-    public QuestionFacade(IQuestionRepository questionRepository, IUserRepository userRepository) {
+
+    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade) {
         this.questionRepository = questionRepository;
-        this.userRepository = userRepository;
+        this.userFacade = userFacade;
     }
 
-    public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command) throws QuestionFailedException {
-        User existingUser = userRepository.findById(command.getUserId())
-                .orElseThrow(() -> new QuestionFailedException("The user hasn't been found"));
+    public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command)
+            throws UserFailedException, QuestionFailedException {
+        UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
+
+        if (existingUser.getUsers().size() == 0)
+            new QuestionFailedException("The user hasn't been found");
 
         try {
+
+            UsersDTO.UserDTO user = existingUser.getUsers().get(0);
+
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .userId(existingUser.getId())
-                    .username(existingUser.getUsername())
+                    .userId(user.getId())
+                    .username(user.getUsername())
                     .creationDate(command.getCreationDate())
                     .build();
 

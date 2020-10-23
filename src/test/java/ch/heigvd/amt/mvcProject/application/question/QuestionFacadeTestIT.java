@@ -3,11 +3,12 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -86,15 +87,8 @@ public class QuestionFacadeTestIT {
         authenticationFacade.delete(currentUserDTO.getUserId());
     }
 
-
     @Test
-    public void GetQuestionWhenEmptyReturnEmptyList() {
-
-        assertEquals(0, questionFacade.getQuestions(null).getQuestions().size());
-    }
-
-    @Test
-    public void addQuestionShouldWork() throws QuestionFailedException {
+    public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException {
 
         int sizeBefore = questionFacade.getQuestions(null).getQuestions().size();
 
@@ -119,7 +113,7 @@ public class QuestionFacadeTestIT {
 
 
     @Test
-    public void getQuestionByIdShouldWork() throws QuestionFailedException {
+    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -157,7 +151,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException {
+    public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException, UserFailedException {
         int sizeBefore = questionFacade.getQuestions(null).getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
@@ -188,7 +182,8 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed() throws QuestionFailedException {
+    public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed()
+            throws QuestionFailedException, UserFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
