@@ -31,7 +31,7 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private List<Answer> answers;
 
-    public void addAnswer(Answer answer){
+    public void addAnswer(Answer answer) {
         answers.add(answer);
     }
 
@@ -56,11 +56,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("Title is mandatory");
             }
 
-            if (description == null || description.isEmpty()){
+            if (description == null || description.isEmpty()) {
                 throw new IllegalArgumentException("Description is mandatory");
             }
 
-            if (creationDate == null ){
+            if (creationDate == null) {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
@@ -72,11 +72,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("Username is mandatory");
             }
 
-            if(answers == null){
+            if (answers == null) {
                 answers = new ArrayList<>();
             }
 
-            return new Question(id, title, description, vote, creationDate, username, answers);
+            return new Question(id, title, description, creationDate, userId, username, answers);
         }
     }
 
