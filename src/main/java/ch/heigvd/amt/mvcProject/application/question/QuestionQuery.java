@@ -11,4 +11,6 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class QuestionQuery {
     QuestionId questionId;
+
+    boolean withDetail;
 }

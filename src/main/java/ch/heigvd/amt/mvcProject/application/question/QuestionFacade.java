@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
@@ -11,7 +12,6 @@ import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +51,8 @@ public class QuestionFacade {
 
             questionRepository.save(submittedQuestion);
 
+            Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
+
             QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
                     .description(submittedQuestion.getDescription())
                     .id(submittedQuestion.getId())
@@ -58,6 +60,7 @@ public class QuestionFacade {
                     .username(submittedQuestion.getUsername())
                     .creationDate(submittedQuestion.getCreationDate())
                     .userId(submittedQuestion.getUserId())
+                    .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
                     .build();
 
             return newQuestion;
@@ -69,16 +72,18 @@ public class QuestionFacade {
 
     /**
      * Retrieve all question in the repo
+     *
      * @return all questions as DTO
      */
     public QuestionsDTO getQuestions() {
         Collection<Question> allQuestions = questionRepository.findAll();
 
-        return getQuestionsDTO(allQuestions);
+        return getQuestionsDTO(allQuestions, null);
     }
 
     /**
      * Retrieve questions asked by the query
+     *
      * @param query Query passed
      * @return return the result asked by the query as DTO
      * @throws QuestionFailedException
@@ -102,11 +107,12 @@ public class QuestionFacade {
             }
         }
 
-        return getQuestionsDTO(questionsFound);
+        return getQuestionsDTO(questionsFound, null);
     }
 
     /**
      * Return a single Question asked by query
+     *
      * @param query Query passed
      * @return the single question asked
      * @throws QuestionFailedException
@@ -123,11 +129,14 @@ public class QuestionFacade {
                 Question question = questionRepository.findById(query.getQuestionId())
                         .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
-                questionFound = QuestionsDTO.QuestionDTO.builder()
-                        .title(question.getTitle())
-                        .description(question.getDescription())
-                        .id(question.getId())
-                        .build();
+                Collection<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
+                if (query.isWithDetail()) {
+                    answersDTO = getAnswers(question);
+                }
+
+                questionFound = getQuestion(question, answersDTO);
+
+
             } else {
                 throw new QuestionFailedException("Query invalid");
 
@@ -139,26 +148,22 @@ public class QuestionFacade {
 
     /**
      * Transform a collection of Question into DTO
+     *
      * @param questionsFound collection of questions
      * @return Questions DTO
      */
-    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound) {
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound,
+                                         Collection<AnswersDTO.AnswerDTO> answers) {
         List<QuestionsDTO.QuestionDTO> QuestionsDTOFound =
                 questionsFound.stream().map(
-                        question -> QuestionsDTO.QuestionDTO.builder()
-                                .title(question.getTitle())
-                                .description(question.getDescription())
-                                .id(question.getId())
-                                .userId(question.getUserId())
-                                .username(question.getUsername())
-                                .creationDate(question.getCreationDate())
-                                .build()).collect(Collectors.toList());
+                        question -> getQuestion(question, answers)).collect(Collectors.toList());
 
         return QuestionsDTO.builder().questions(QuestionsDTOFound).build();
     }
 
     /**
      * Remove a question
+     *
      * @param id the id of the question to be removed
      * @throws QuestionFailedException
      */
@@ -167,5 +172,41 @@ public class QuestionFacade {
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
         questionRepository.remove(id);
+    }
+
+    /**
+     * Return the DTO of the question in the parameter
+     *
+     * @param question question to transform
+     * @param answers  list of answer to the question
+     * @return the DTO corresponding to the parameter
+     */
+    private QuestionsDTO.QuestionDTO getQuestion(Question question, Collection<AnswersDTO.AnswerDTO> answers) {
+        return QuestionsDTO.QuestionDTO.builder()
+                .title(question.getTitle())
+                .description(question.getDescription())
+                .id(question.getId())
+                .userId(question.getUserId())
+                .username(question.getUsername())
+                .creationDate(question.getCreationDate())
+                .answersDTO(AnswersDTO.builder().answers(answers).build())
+                .build();
+    }
+
+    /**
+     * Retrieve all answers associate to the question
+     *
+     * @param question Which question want the ansers
+     * @return a collection of answer DTO associate to the question
+     */
+    private Collection<AnswersDTO.AnswerDTO> getAnswers(Question question) {
+        return question.getAnswers().stream().map(
+                answer -> AnswersDTO.AnswerDTO.builder()
+                        .id(answer.getId())
+                        .creationDate(answer.getCreationDate())
+                        .description(answer.getDescription())
+                        .username(answer.getUsername())
+                        .build()
+        ).collect(Collectors.toList());
     }
 }

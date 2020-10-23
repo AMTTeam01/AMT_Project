@@ -29,6 +29,7 @@ public class QuestionsDTO {
         private List<String> tags;
         private String description;
         private Date creationDate;
+        private AnswersDTO answersDTO;
     }
 
     @Singular
