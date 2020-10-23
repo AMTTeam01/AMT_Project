@@ -1,12 +1,10 @@
 package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;

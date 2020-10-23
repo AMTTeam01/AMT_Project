@@ -63,10 +63,30 @@ public class JdbcUserRepository implements IUserRepository {
                     "INSERT INTO tblUser (id, userName, email, encryptedPassword) " +
                             "VALUES (?, ?, ?, ?);"
             );
+
             statement.setString(1, entity.getId().asString());
             statement.setString(2, entity.getUsername());
             statement.setString(3, entity.getEmail());
             statement.setString(4, entity.getEncryptedPassword());
+
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    @Override
+    public void edit(User newEntity) {
+        try{
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "UPDATE tblUser SET userName = ?, email = ?, encryptedPassword = ? " +
+                         "WHERE id = ?;"
+            );
+
+            statement.setString(1, newEntity.getUsername());
+            statement.setString(2, newEntity.getEmail());
+            statement.setString(3, newEntity.getEncryptedPassword());
+            statement.setString(4, newEntity.getId().asString());
 
             statement.execute();
         } catch (SQLException throwables) {

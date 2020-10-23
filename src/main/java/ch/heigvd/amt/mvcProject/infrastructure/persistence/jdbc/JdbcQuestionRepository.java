@@ -4,6 +4,8 @@ import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
+import jdk.jshell.spi.ExecutionControl;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
@@ -58,6 +60,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    @Override
+    public void edit(Question newEntity) {
+        // TODO : gérer l'édition de la question
+        throw new NotImplementedException("edit(Question newEntity) from " + getClass().getName() + " not implemented");
     }
 
     @Override

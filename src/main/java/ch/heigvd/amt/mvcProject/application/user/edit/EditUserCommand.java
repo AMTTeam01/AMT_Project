@@ -1,16 +1,17 @@
-package ch.heigvd.amt.mvcProject.application.authentication.login;
+package ch.heigvd.amt.mvcProject.application.user.edit;
 
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Value;
 
 @Builder
 @Getter
 @EqualsAndHashCode
-public class CurrentUserDTO {
-    private UserId userId;
+public class EditUserCommand {
+    private String id;
     private String username;
     private String email;
+    private String password;
+    private String confirmationPassword;
 }
