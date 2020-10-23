@@ -161,6 +161,27 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     public Collection<Question> findByUserId(UserId userId){
         Collection<Question> questions = new ArrayList<>();
 
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
+                            "       FROM tblQuestion Q " +
+                            "INNER JOIN tblUser U on Q.tblUser_id = U.id " +
+                            "WHERE U.id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+
+            questions = getQuestions(statement.executeQuery());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         return questions;
     }

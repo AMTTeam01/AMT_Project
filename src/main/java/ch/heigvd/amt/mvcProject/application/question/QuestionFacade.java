@@ -165,15 +165,7 @@ public class QuestionFacade {
     }
 
     public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
-        //TODO : change for getting only user questions
-        Collection<Question> allQuestions = questionRepository.findAll();
-        Collection<Question> userQuestions = new ArrayList<>();
-
-        for(Question question : allQuestions){
-            if(question.getUserId().equals(query.userId))
-                userQuestions.add(question);
-        }
-
+        Collection<Question> userQuestions = questionRepository.findByUserId(query.userId);
         return getQuestionsDTO(userQuestions);
     }
 

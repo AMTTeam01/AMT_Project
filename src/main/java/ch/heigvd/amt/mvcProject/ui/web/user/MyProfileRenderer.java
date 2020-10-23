@@ -53,7 +53,6 @@ public class MyProfileRenderer extends HttpServlet {
         QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
 
         QuestionsDTO questionsDTO = questionFacade.getQuestionsByUserId(query);
-        //QuestionsDTO questionsDTO = questionFacade.getAllQuestions();
         request.setAttribute("questions", questionsDTO);
 
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
