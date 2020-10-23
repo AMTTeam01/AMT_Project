@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.application;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
@@ -25,6 +26,7 @@ public class ServiceRegistry {
     @Inject @Named("JdbcUserRepository")
     IUserRepository userRepository;
     private AuthenticationFacade authenticationFacade;
+    private UserFacade userFacade;
 
     // Questions
     @Inject @Named("JdbcQuestionRepository")
@@ -42,7 +44,8 @@ public class ServiceRegistry {
     @PostConstruct
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
-        questionFacade = new QuestionFacade(questionRepository, userRepository);
+        userFacade = new UserFacade(userRepository);
+        questionFacade = new QuestionFacade(questionRepository, userFacade);
         answerFacade = new AnswerFacade(answerRepository);
     }
 
@@ -52,6 +55,10 @@ public class ServiceRegistry {
 
     public QuestionFacade getQuestionFacade() {
         return questionFacade;
+    }
+
+    public UserFacade getUserFacade(){
+        return userFacade;
     }
 
     public AnswerFacade getAnswerFacade(){

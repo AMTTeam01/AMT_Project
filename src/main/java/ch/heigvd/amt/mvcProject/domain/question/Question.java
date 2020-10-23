@@ -23,9 +23,9 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private String description;
 
-    private int vote;
-
     private Date creationDate;
+
+    private UserId userId;
 
     private String username;
 
@@ -64,8 +64,12 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
+            if (userId == null) {
+                throw new IllegalArgumentException("UserId is mandatory");
+            }
+
             if (username == null || username.isEmpty()) {
-                throw new IllegalArgumentException("username is mandatory");
+                throw new IllegalArgumentException("Username is mandatory");
             }
 
             if(answers == null){

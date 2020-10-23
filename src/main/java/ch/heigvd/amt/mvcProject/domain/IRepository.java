@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface IRepository<ENTITY extends IEntity, ID extends Id> {
     void save(ENTITY entity);
+    void edit(ENTITY newEntity);
     void remove(ID id);
     Optional<ENTITY> findById(ID id);
     Collection<ENTITY> findAll();

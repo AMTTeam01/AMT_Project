@@ -3,14 +3,20 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
+import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
-import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -30,7 +36,15 @@ public class QuestionFacadeTestIT {
 
     private final static String WARNAME = "arquillian-managed.war";
 
-    private User user;
+    private CurrentUserDTO currentUserDTO;
+
+    private final static String USERNAME = "questionFacade";
+    private final static String EMAIL = USERNAME + "@heig.ch";
+    private final static String PWD = "1234";
+
+    private AuthenticationFacade authenticationFacade;
+    private UserFacade userFacade;
+    private QuestionFacade questionFacade;
 
 
     @Deployment(testable = true)
@@ -46,77 +60,157 @@ public class QuestionFacadeTestIT {
 
 
     @Before
-    public void init() throws RegistrationFailedException {
-        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+    public void init() throws RegistrationFailedException, LoginFailedException {
+        authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
-        user = User.builder()
-                .email((Math.random() * 100) + "@heig")
-                .clearTextPassword("1234")
-                .username(String.valueOf(Math.random() * 100))
-                .build();
+        questionFacade = serviceRegistry.getQuestionFacade();
+
+        userFacade = serviceRegistry.getUserFacade();
 
         RegisterCommand registerCommand = RegisterCommand.builder()
-                .email(user.getEmail())
-                .confirmationClearTxtPassword("1234")
-                .clearTxtPassword("1234")
-                .username(user.getUsername())
+                .email(EMAIL)
+                .confirmationClearTxtPassword(PWD)
+                .clearTxtPassword(PWD)
+                .username(USERNAME)
                 .build();
 
         authenticationFacade.register(registerCommand);
 
+        LoginCommand loginCommand = LoginCommand.builder()
+                .clearTxtPassword(PWD)
+                .username(USERNAME)
+                .build();
+
+        currentUserDTO = authenticationFacade.login(loginCommand);
+
     }
 
+    @After
+    public void cleanUp() {
 
-    @Test
-    public void A_GetQuestionWhenEmptyReturnEmptyList() {
-
-
-        QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
-
-        assertEquals(0, questionFacade.getQuestions(null).getQuestions().size());
+        userFacade.removeUser(currentUserDTO.getUserId());
     }
 
     @Test
-    public void B_addQuestionShouldWork() throws QuestionFailedException {
-        QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
+    public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException {
+
+        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
                 .creationDate(new Date())
-                .username(user.getUsername())
+                .userId(currentUserDTO.getUserId())
                 .build();
 
-        questionFacade.addQuestion(command);
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions(null);
+        QuestionsDTO view = questionFacade.getQuestions();
         assertNotNull(view);
-        assertEquals(1, view.getQuestions().size());
+
+
+        assertEquals(sizeBefore + 1, view.getQuestions().size());
         assertEquals(command.getTitle(), view.getQuestions().get(0).getTitle());
+
+        questionFacade.removeQuestion(question.getId());
     }
 
 
     @Test
-    public void C_getQuestionByIdShouldWork() throws QuestionFailedException {
-        QuestionFacade questionFacade = serviceRegistry.getQuestionFacade();
+    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
                 .creationDate(new Date())
-                .username(user.getUsername())
+                .userId(currentUserDTO.getUserId())
                 .build();
 
-        questionFacade.addQuestion(command);
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions(null);
-        QuestionId id = view.getQuestions().get(0).getId();
-        QuestionQuery query = QuestionQuery.builder()
-                .questionId(id)
+        QuestionsDTO.QuestionDTO questionInRepo = questionFacade
+                .getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertNotNull(questionInRepo);
+
+        questionFacade.removeQuestion(question.getId());
+    }
+
+    @Test
+    public void addQuestion_ShouldThrowError_IfUserDoesntExist() {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(new UserId())
                 .build();
 
-        QuestionsDTO.QuestionDTO viewID = questionFacade.getQuestionById(query);
-        assertEquals(id, viewID.getId());
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.addQuestion(command);
+        });
+    }
+
+    @Test
+    public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException, UserFailedException {
+
+        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.removeQuestion(question.getId());
+
+        QuestionsDTO view = questionFacade.getQuestions();
+        assertNotNull(view);
+
+
+        assertEquals(sizeBefore, view.getQuestions().size());
+    }
+
+    @Test
+    public void delete_ShouldThrownError_IfQuestionIdDoesntExist() {
+
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.removeQuestion(new QuestionId());
+        });
+
+    }
+
+    @Test
+    public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed()
+            throws QuestionFailedException, UserFailedException {
+
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(command.getDescription(), question.getDescription());
+        assertEquals(command.getTitle(), question.getTitle());
+        assertEquals(command.getUserId(), question.getUserId());
+        assertEquals(command.getCreationDate(), question.getCreationDate());
+
+        questionFacade.removeQuestion(question.getId());
+
+    }
+
+    @Test
+    public void getQuestionById_ShouldThrownError_IfQuestionIdDoesntExist() {
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.getQuestion(QuestionQuery.builder().questionId(new QuestionId()).build());
+        });
     }
 
 }

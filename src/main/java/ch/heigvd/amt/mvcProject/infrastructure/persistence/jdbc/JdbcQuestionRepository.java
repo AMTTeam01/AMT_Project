@@ -6,12 +6,17 @@ import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
+import jdk.jshell.spi.ExecutionControl;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 
 import java.util.*;
@@ -43,11 +48,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id)" +
-                            "VALUES (?, ?, ?, ?," +
-                            "        (" +
-                            "            SELECT id" +
-                            "            FROM tblUser" +
-                            "            WHERE userName = ?))"
+                            "VALUES (?, ?, ?, ?, ?)"
             );
 
             Timestamp creationDate = new Timestamp(question.getCreationDate().getTime());
@@ -56,12 +57,18 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
             statement.setTimestamp(4, creationDate);
-            statement.setString(5, question.getUsername());
+            statement.setString(5, question.getUserId().asString());
 
             statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    @Override
+    public void edit(Question newEntity) {
+        // TODO : gérer l'édition de la question
+        throw new NotImplementedException("edit(Question newEntity) from " + getClass().getName() + " not implemented");
     }
 
     @Override
@@ -91,7 +98,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.userName" +
+                            "       U.id AS 'user_id'," +
+                            "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "JOIN tblUser U on Q.tblUser_id = U.id " +
                             "WHERE Q.id = ?",
@@ -112,6 +120,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                         .description(rs.getString("description"))
                         .title(rs.getString("title"))
                         .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                        .userId(new UserId(rs.getString("user_id")))
                         .username(rs.getString("userName"))
                         .build();
 
@@ -202,7 +211,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.userName" +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "INNER JOIN tblUser U on Q.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -232,7 +242,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             Question foundQuestion = Question.builder()
                     .id(new QuestionId(rs.getString("question_id")))
-                    .creationDate(new Date(rs.getDate("creationDate").getTime()))
+                    .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                    .userId(new UserId(rs.getString("user_id")))
                     .username(rs.getString("userName"))
                     .description(rs.getString("description"))
                     .title(rs.getString("title"))
