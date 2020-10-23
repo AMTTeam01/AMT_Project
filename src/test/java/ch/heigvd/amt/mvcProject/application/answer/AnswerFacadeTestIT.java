@@ -10,6 +10,9 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.Registration
 import ch.heigvd.amt.mvcProject.application.question.*;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -23,6 +26,7 @@ import javax.inject.Inject;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 @RunWith(Arquillian.class)
 public class AnswerFacadeTestIT {
@@ -103,7 +107,8 @@ public class AnswerFacadeTestIT {
     }
 
     @Test
-    public void itShouldAddAAnswer() throws AnswerFailedException, QuestionFailedException, UserFailedException {
+    public void addAnswer_ShouldAddAAnswerToTheQuestion_WhenCalled()
+            throws AnswerFailedException, QuestionFailedException, UserFailedException {
 
         int sizeBefore = newQuestion.getAnswersDTO().getAnswers().size();
 
@@ -124,6 +129,71 @@ public class AnswerFacadeTestIT {
         assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore, 1);
 
         answerFacade.removeAnswer(newAnswer.getId());
+    }
+
+    @Test
+    public void andAnswer_ShouldThrowError_IfQuestionIdNotInRepo() {
+        AnswerCommand command = AnswerCommand.builder()
+                .questionId(new QuestionId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        assertThrows(QuestionFailedException.class, () ->
+                answerFacade.addAnswer(command)
+        );
+    }
+
+    @Test
+    public void andAnswer_ShouldThrowError_IfUserIdNotInRepo() {
+        AnswerCommand command = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(new UserId())
+                .build();
+
+        assertThrows(UserFailedException.class, () ->
+                answerFacade.addAnswer(command)
+        );
+    }
+
+    @Test
+    public void getAnswers_ShouldReturnExpectingAnswer_WhenQuestionIdIsPassed() {
+
+    }
+
+    @Test
+    public void removeAnswer_ShouldRemoveInTheRepo_WhenCalled()
+            throws UserFailedException, AnswerFailedException, QuestionFailedException {
+
+        AnswerQuery query = AnswerQuery.builder().questionId(newQuestion.getId()).build();
+
+        int sizeBefore = answerFacade.getAnswers(query).getAnswers().size();
+
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO answerDTO = answerFacade.addAnswer(answerCommand);
+
+        answerFacade.removeAnswer(answerDTO.getId());
+
+        AnswersDTO view = answerFacade.getAnswers(query);
+
+        assertEquals(sizeBefore,view.getAnswers().size());
+
+    }
+
+    @Test
+    public void removeAnswer_ShouldThrowError_IfAnswerIdNotInRepo() {
+        assertThrows(AnswerFailedException.class,
+                () -> answerFacade.removeAnswer(new AnswerId())
+        );
     }
 
 

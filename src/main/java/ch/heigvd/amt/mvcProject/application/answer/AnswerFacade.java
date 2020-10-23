@@ -41,12 +41,12 @@ public class AnswerFacade {
      * @throws AnswerFailedException
      */
     public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command)
-            throws AnswerFailedException, UserFailedException, QuestionFailedException {
+            throws UserFailedException, QuestionFailedException, AnswerFailedException {
 
         UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
         if (existingUser.getUsers().size() == 0)
-            new UserFailedException("The user hasn't been found");
+            throw new UserFailedException("The user hasn't been found");
 
         QuestionsDTO.QuestionDTO existingQuestion = questionFacade.getQuestion(QuestionQuery.builder()
                 .questionId(command.getQuestionId())
@@ -80,18 +80,18 @@ public class AnswerFacade {
         }
     }
 
-    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException {
+    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException {
 
         Collection<Answer> answers = new ArrayList<>();
         if (query == null) {
             throw new AnswerFailedException("Query is null");
         } else {
 
-            if (query.questionId != null) {
+            if (query.getQuestionId() != null) {
 
-                answers = answerRepository.findByQuestionId(query.getQuestionId()).orElseThrow(
-                        () -> new AnswerFailedException("Answers for the given question not found")
-                );
+                questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
+
+                answers = answerRepository.findByQuestionId(query.getQuestionId()).orElse(new ArrayList<>());
             } else {
                 throw new AnswerFailedException("Query invalid");
             }

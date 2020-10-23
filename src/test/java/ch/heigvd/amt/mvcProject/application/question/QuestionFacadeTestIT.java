@@ -161,7 +161,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void delete_ShouldRemoveQuestion_WhenCalled()
+    public void removeQuestion_ShouldRemoveQuestion_WhenCalled()
             throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         int sizeBefore = questionFacade.getQuestions().getQuestions().size();
@@ -193,7 +193,7 @@ public class QuestionFacadeTestIT {
         assertNotNull(view);
         assertEquals(sizeBefore, view.getQuestions().size());
 
-        assertThrows(AnswerFailedException.class, () -> {
+        assertThrows(QuestionFailedException.class, () -> {
             answerFacade.getAnswers(AnswerQuery.builder().questionId(questionId).build());
         });
     }
