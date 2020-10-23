@@ -8,6 +8,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedExce
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.application.question.*;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -37,6 +38,9 @@ public class AnswerFacadeTestIT {
 
     private QuestionFacade questionFacade;
 
+    private UserFacade userFacade;
+
+
     private final static String USERNAME = "answerFacade";
     private final static String EMAIL = USERNAME + "@heig.ch";
     private final static String PWD = "1234";
@@ -59,6 +63,10 @@ public class AnswerFacadeTestIT {
 
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
+        questionFacade = serviceRegistry.getQuestionFacade();
+
+        userFacade = serviceRegistry.getUserFacade();
+
         RegisterCommand registerCommand = RegisterCommand.builder()
                 .username(USERNAME)
                 .clearTxtPassword(PWD)
@@ -74,8 +82,6 @@ public class AnswerFacadeTestIT {
                 .build();
 
         currentUserDTO = authenticationFacade.login(loginCommand);
-
-        questionFacade = serviceRegistry.getQuestionFacade();
 
         QuestionCommand questionCommand = QuestionCommand.builder()
                 .userId(currentUserDTO.getUserId())

@@ -60,6 +60,7 @@ public class AnswerFacade {
                     .username(submittedAnswer.getUsername())
                     .description(submittedAnswer.getDescription())
                     .creationDate(submittedAnswer.getCreationDate())
+                    .id(submittedAnswer.getId())
                     .build();
 
             return newAnswer;
