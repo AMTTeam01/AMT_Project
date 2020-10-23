@@ -39,7 +39,15 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblAnswer WHERE tblQuestion_id = ? ORDER BY creationDate ASC",
+                    "SELECT A.id as 'answer_id', " +
+                            "       description, " +
+                            "       creationDate, " +
+                            "       tblQuestion_id, " +
+                            "       U.id as 'user_id', " +
+                            "       userName " +
+                            "FROM tblAnswer A " +
+                            "         INNER JOIN tblUser U on A.tblUser_id = U.id " +
+                            "WHERE A.tblQuestion_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -48,7 +56,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
 
                 //reset pointer position
                 rs.beforeFirst();
