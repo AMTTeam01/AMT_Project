@@ -114,7 +114,12 @@ public class AnswerFacade {
      *
      * @param id the id of the answer to delete
      */
-    public void removeAnswer(AnswerId id) {
+    public void removeAnswer(AnswerId id) throws AnswerFailedException {
+        answerRepository.findById(id).orElseThrow(
+                () -> new AnswerFailedException("Answer not found")
+        );
+
+
         answerRepository.remove(id);
     }
 
