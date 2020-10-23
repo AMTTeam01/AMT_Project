@@ -160,7 +160,33 @@ public class AnswerFacadeTestIT {
     }
 
     @Test
-    public void getAnswers_ShouldReturnExpectingAnswer_WhenQuestionIdIsPassed() {
+    public void getAnswers_ShouldReturnExpectingAnswer_WhenQuestionIdIsPassed()
+            throws AnswerFailedException, UserFailedException, QuestionFailedException {
+        AnswerCommand answerCommand1 = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test 1")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO a1 = answerFacade.addAnswer(answerCommand1);
+
+        AnswerCommand answerCommand2 = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test 2")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO a2 = answerFacade.addAnswer(answerCommand2);
+
+        AnswersDTO answersDTO = answerFacade.getAnswers(AnswerQuery.builder().questionId(newQuestion.getId()).build());
+
+
+        assertEquals(2, answersDTO.getAnswers().size());
+
+        answerFacade.removeAnswer(a1.getId());
+        answerFacade.removeAnswer(a2.getId());
 
     }
 
@@ -169,8 +195,6 @@ public class AnswerFacadeTestIT {
             throws UserFailedException, AnswerFailedException, QuestionFailedException {
 
         AnswerQuery query = AnswerQuery.builder().questionId(newQuestion.getId()).build();
-
-        int sizeBefore = answerFacade.getAnswers(query).getAnswers().size();
 
         AnswerCommand answerCommand = AnswerCommand.builder()
                 .questionId(newQuestion.getId())
@@ -185,7 +209,7 @@ public class AnswerFacadeTestIT {
 
         AnswersDTO view = answerFacade.getAnswers(query);
 
-        assertEquals(sizeBefore,view.getAnswers().size());
+        assertEquals(0,view.getAnswers().size());
 
     }
 
