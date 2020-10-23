@@ -125,8 +125,16 @@ public class QuestionFacade {
             throw new QuestionFailedException("Query is null");
         } else {
 
-            if (query.getQuestionId() != null) {
+            if (query.getQuestionId() != null && !query.isWithDetail()) {
                 Question question = questionRepository.findById(query.getQuestionId())
+                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+
+                questionFound = getQuestion(question, null);
+
+
+            } else if (query.getQuestionId() != null && query.isWithDetail()) {
+
+                Question question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                         .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
                 Collection<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
@@ -135,7 +143,6 @@ public class QuestionFacade {
                 }
 
                 questionFound = getQuestion(question, answersDTO);
-
 
             } else {
                 throw new QuestionFailedException("Query invalid");
@@ -182,6 +189,9 @@ public class QuestionFacade {
      * @return the DTO corresponding to the parameter
      */
     private QuestionsDTO.QuestionDTO getQuestion(Question question, Collection<AnswersDTO.AnswerDTO> answers) {
+        if (answers == null)
+            answers = new ArrayList<>();
+
         return QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
