@@ -18,5 +18,6 @@ public class AnswerCommand {
     private String description;
     private Date creationDate;
     private QuestionId questionId;
+    private UserId userId;
     private String username;
 }

@@ -26,6 +26,7 @@ public class AnswerFacade {
                     .description(command.getDescription())
                     .creationDate(command.getCreationDate())
                     .questionId(command.getQuestionId())
+                    .userId(command.getUserId())
                     .username(command.getUsername())
                     .build();
 
