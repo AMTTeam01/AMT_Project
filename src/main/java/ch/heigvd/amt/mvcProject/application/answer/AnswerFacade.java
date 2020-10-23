@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
@@ -9,6 +10,11 @@ import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class AnswerFacade {
@@ -62,6 +68,35 @@ public class AnswerFacade {
         }
     }
 
+    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException {
+
+        Collection<Answer> answers = new ArrayList<>();
+        if (query == null) {
+            throw new AnswerFailedException("Query is null");
+        } else {
+
+            if (query.questionId != null) {
+
+                answers= answerRepository.findByQuestionId(query.getQuestionId()).orElseThrow(
+                        ()-> new AnswerFailedException("Answers for the given question not found")
+                );
+            } else {
+                throw new AnswerFailedException("Query invalid");
+            }
+        }
+
+        List<AnswersDTO.AnswerDTO> answersDTO = answers.stream().map(
+                answer -> AnswersDTO.AnswerDTO.builder()
+                .username(answer.getUsername())
+                .description(answer.getDescription())
+                .creationDate(answer.getCreationDate())
+                .id(answer.getId())
+                .build()
+        ).collect(Collectors.toList());
+
+        return AnswersDTO.builder().answers(answersDTO).build();
+    }
+
     /**
      * Ask to the DB to delete a answer
      *
@@ -70,4 +105,5 @@ public class AnswerFacade {
     public void deleteAnswer(AnswerId id) {
         answerRepository.remove(id);
     }
+
 }
