@@ -35,7 +35,7 @@ public class QuestionRenderer extends HttpServlet {
 
         //check if question ID exists. If not, come back to browsing
         try {
-            questionDTO = questionFacade.getQuestionById(query);
+            questionDTO = questionFacade.getQuestion(query);
             request.setAttribute("question", questionDTO);
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
         } catch (QuestionFailedException e) {
