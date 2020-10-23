@@ -102,7 +102,7 @@ public class AnswerFacade {
      *
      * @param id the id of the answer to delete
      */
-    public void deleteAnswer(AnswerId id) {
+    public void removeAnswer(AnswerId id) {
         answerRepository.remove(id);
     }
 

@@ -1,8 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
@@ -11,8 +9,6 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterComm
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.application.question.*;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
-import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -121,7 +117,7 @@ public class AnswerFacadeTestIT {
 
         assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore, 1);
 
-        answerFacade.deleteAnswer(newAnswer.getId());
+        answerFacade.removeAnswer(newAnswer.getId());
     }
 
 
