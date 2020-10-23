@@ -21,11 +21,11 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private String description;
 
-    private int vote;
-
     private Date creationDate;
 
-    private UserId authorId;
+    private UserId userId;
+
+    private String username;
 
     @Override
     public Question deepClone() {
@@ -56,11 +56,15 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
-            if (authorId == null ) {
-                throw new IllegalArgumentException("AuthorId is mandatory");
+            if (userId == null) {
+                throw new IllegalArgumentException("UserId is mandatory");
             }
 
-            return new Question(id, title, description, vote, creationDate, authorId);
+            if (username == null || username.isEmpty()) {
+                throw new IllegalArgumentException("Username is mandatory");
+            }
+
+            return new Question(id, title, description, creationDate, userId, username);
         }
     }
 

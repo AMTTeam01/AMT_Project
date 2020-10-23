@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterComm
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 public class AuthenticationFacade {
 
