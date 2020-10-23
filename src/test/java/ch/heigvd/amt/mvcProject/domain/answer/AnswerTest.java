@@ -38,7 +38,6 @@ public class AnswerTest {
         Answer a1 = Answer.builder()
                 .creationDate(new Date())
                 .description("Test")
-                .id(new AnswerId())
                 .questionId(question.getId())
                 .username(user.getUsername())
                 .userId(user.getId())
