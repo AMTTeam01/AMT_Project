@@ -8,6 +8,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
@@ -42,6 +43,7 @@ public class QuestionFacadeTestIT {
     private final static String PWD = "1234";
 
     private AuthenticationFacade authenticationFacade;
+    private UserFacade userFacade;
     private QuestionFacade questionFacade;
 
 
@@ -62,6 +64,8 @@ public class QuestionFacadeTestIT {
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
         questionFacade = serviceRegistry.getQuestionFacade();
+
+        userFacade = serviceRegistry.getUserFacade();
 
         RegisterCommand registerCommand = RegisterCommand.builder()
                 .email(EMAIL)
@@ -84,7 +88,7 @@ public class QuestionFacadeTestIT {
     @After
     public void cleanUp() {
 
-        authenticationFacade.delete(currentUserDTO.getUserId());
+        userFacade.removeUser(currentUserDTO.getUserId());
     }
 
     @Test
@@ -108,7 +112,7 @@ public class QuestionFacadeTestIT {
         assertEquals(sizeBefore + 1, view.getQuestions().size());
         assertEquals(command.getTitle(), view.getQuestions().get(0).getTitle());
 
-        questionFacade.delete(question.getId());
+        questionFacade.removeQuestion(question.getId());
     }
 
 
@@ -133,7 +137,7 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO viewID = questionFacade.getQuestionById(query);
         assertEquals(id, viewID.getId());
 
-        questionFacade.delete(question.getId());
+        questionFacade.removeQuestion(question.getId());
     }
 
     @Test
@@ -163,7 +167,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        questionFacade.delete(question.getId());
+        questionFacade.removeQuestion(question.getId());
 
         QuestionsDTO view = questionFacade.getQuestions(null);
         assertNotNull(view);
@@ -173,10 +177,10 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void delete_ShouldThrownError_IfQuestionIdDoesntExist(){
+    public void delete_ShouldThrownError_IfQuestionIdDoesntExist() {
 
         assertThrows(QuestionFailedException.class, () -> {
-            questionFacade.delete(new QuestionId());
+            questionFacade.removeQuestion(new QuestionId());
         });
 
     }
@@ -201,12 +205,12 @@ public class QuestionFacadeTestIT {
         assertEquals(command.getUserId(), question.getUserId());
         assertEquals(command.getCreationDate(), question.getCreationDate());
 
-        questionFacade.delete(question.getId());
+        questionFacade.removeQuestion(question.getId());
 
     }
 
     @Test
-    public void getQuestionById_ShouldThrownError_IfQuestionIdDoesntExist(){
+    public void getQuestionById_ShouldThrownError_IfQuestionIdDoesntExist() {
         assertThrows(QuestionFailedException.class, () -> {
             questionFacade.getQuestionById(new QuestionQuery(new QuestionId()));
         });

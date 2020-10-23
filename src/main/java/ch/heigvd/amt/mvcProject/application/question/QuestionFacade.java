@@ -100,7 +100,7 @@ public class QuestionFacade {
         return currentQuestionDTO;
     }
 
-    public void delete(QuestionId id) throws QuestionFailedException {
+    public void removeQuestion(QuestionId id) throws QuestionFailedException {
         questionRepository.findById(id)
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
