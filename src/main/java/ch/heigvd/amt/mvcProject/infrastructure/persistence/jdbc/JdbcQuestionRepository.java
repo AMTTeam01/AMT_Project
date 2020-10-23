@@ -6,7 +6,6 @@ import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
-import jdk.jshell.spi.ExecutionControl;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
