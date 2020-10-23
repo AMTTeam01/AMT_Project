@@ -94,7 +94,7 @@ public class QuestionFacadeTestIT {
     @Test
     public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException {
 
-        int sizeBefore = questionFacade.getQuestions(null).getQuestions().size();
+        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -105,7 +105,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions(null);
+        QuestionsDTO view = questionFacade.getQuestions();
         assertNotNull(view);
 
 
@@ -128,14 +128,10 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions(null);
-        QuestionId id = view.getQuestions().get(0).getId();
-        QuestionQuery query = QuestionQuery.builder()
-                .questionId(id)
-                .build();
+        QuestionsDTO.QuestionDTO questionInRepo = questionFacade
+                .getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        QuestionsDTO.QuestionDTO viewID = questionFacade.getQuestionById(query);
-        assertEquals(id, viewID.getId());
+        assertNotNull(questionInRepo);
 
         questionFacade.removeQuestion(question.getId());
     }
@@ -156,7 +152,8 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException, UserFailedException {
-        int sizeBefore = questionFacade.getQuestions(null).getQuestions().size();
+
+        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -169,7 +166,7 @@ public class QuestionFacadeTestIT {
 
         questionFacade.removeQuestion(question.getId());
 
-        QuestionsDTO view = questionFacade.getQuestions(null);
+        QuestionsDTO view = questionFacade.getQuestions();
         assertNotNull(view);
 
 
@@ -198,7 +195,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        questionFacade.getQuestionById(new QuestionQuery(question.getId()));
+        questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(command.getDescription(), question.getDescription());
         assertEquals(command.getTitle(), question.getTitle());
@@ -212,7 +209,7 @@ public class QuestionFacadeTestIT {
     @Test
     public void getQuestionById_ShouldThrownError_IfQuestionIdDoesntExist() {
         assertThrows(QuestionFailedException.class, () -> {
-            questionFacade.getQuestionById(new QuestionQuery(new QuestionId()));
+            questionFacade.getQuestion(QuestionQuery.builder().questionId(new QuestionId()).build());
         });
     }
 

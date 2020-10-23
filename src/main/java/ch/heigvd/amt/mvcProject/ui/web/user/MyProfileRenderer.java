@@ -48,7 +48,7 @@ public class MyProfileRenderer extends HttpServlet {
         request.setAttribute("user", currentUser);
 
         //TODO : Query to user specific questions
-        QuestionsDTO questionsDTO = questionFacade.getQuestions(null);
+        QuestionsDTO questionsDTO = questionFacade.getQuestions();
         request.setAttribute("questions", questionsDTO);
 
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);

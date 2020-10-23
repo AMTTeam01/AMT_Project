@@ -7,9 +7,8 @@ import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
-import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
-import ch.heigvd.amt.mvcProject.domain.user.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,11 +66,84 @@ public class QuestionFacade {
         }
     }
 
-    public QuestionsDTO getQuestions(QuestionQuery query) {
+    /**
+     * Retrieve all question in the repo
+     * @return all questions as DTO
+     */
+    public QuestionsDTO getQuestions() {
         Collection<Question> allQuestions = questionRepository.findAll();
 
-        List<QuestionsDTO.QuestionDTO> allQuestionsDTO =
-                allQuestions.stream().map(
+        return getQuestionsDTO(allQuestions);
+    }
+
+    /**
+     * Retrieve questions asked by the query
+     * @param query Query passed
+     * @return return the result asked by the query as DTO
+     * @throws QuestionFailedException
+     */
+    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException {
+        Collection<Question> questionsFound = new ArrayList<>();
+
+        if (query == null) {
+            throw new QuestionFailedException("Query is null");
+        } else {
+
+            if (query.getQuestionId() != null) {
+                Question question = questionRepository.findById(query.getQuestionId())
+                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+
+                questionsFound.add(question);
+
+            } else {
+                throw new QuestionFailedException("Query invalid");
+
+            }
+        }
+
+        return getQuestionsDTO(questionsFound);
+    }
+
+    /**
+     * Return a single Question asked by query
+     * @param query Query passed
+     * @return the single question asked
+     * @throws QuestionFailedException
+     */
+    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException {
+
+        QuestionsDTO.QuestionDTO questionFound;
+
+        if (query == null) {
+            throw new QuestionFailedException("Query is null");
+        } else {
+
+            if (query.getQuestionId() != null) {
+                Question question = questionRepository.findById(query.getQuestionId())
+                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+
+                questionFound = QuestionsDTO.QuestionDTO.builder()
+                        .title(question.getTitle())
+                        .description(question.getDescription())
+                        .id(question.getId())
+                        .build();
+            } else {
+                throw new QuestionFailedException("Query invalid");
+
+            }
+        }
+
+        return questionFound;
+    }
+
+    /**
+     * Transform a collection of Question into DTO
+     * @param questionsFound collection of questions
+     * @return Questions DTO
+     */
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound) {
+        List<QuestionsDTO.QuestionDTO> QuestionsDTOFound =
+                questionsFound.stream().map(
                         question -> QuestionsDTO.QuestionDTO.builder()
                                 .title(question.getTitle())
                                 .description(question.getDescription())
@@ -81,25 +153,14 @@ public class QuestionFacade {
                                 .creationDate(question.getCreationDate())
                                 .build()).collect(Collectors.toList());
 
-        return QuestionsDTO.builder().questions(allQuestionsDTO).build();
+        return QuestionsDTO.builder().questions(QuestionsDTOFound).build();
     }
 
-    public QuestionsDTO.QuestionDTO getQuestionById(QuestionQuery query) throws QuestionFailedException {
-        Question question = questionRepository.findById(query.getQuestionId())
-                .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-        QuestionsDTO.QuestionDTO currentQuestionDTO = QuestionsDTO.QuestionDTO.builder()
-                .title(question.getTitle())
-                .description(question.getDescription())
-                .id(question.getId())
-                .username(question.getUsername())
-                .userId(question.getUserId())
-                .creationDate(question.getCreationDate())
-                .build();
-
-        return currentQuestionDTO;
-    }
-
+    /**
+     * Remove a question
+     * @param id the id of the question to be removed
+     * @throws QuestionFailedException
+     */
     public void removeQuestion(QuestionId id) throws QuestionFailedException {
         questionRepository.findById(id)
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
