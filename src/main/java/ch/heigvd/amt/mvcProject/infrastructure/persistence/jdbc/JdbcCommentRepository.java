@@ -1,12 +1,12 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
-import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.comment.CommentId;
 import ch.heigvd.amt.mvcProject.domain.comment.ICommentRepository;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
@@ -154,6 +154,12 @@ public class JdbcCommentRepository implements ICommentRepository {
             throwables.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void edit(Comment newEntity) {
+        // TODO : gérer l'édition de la question
+        throw new NotImplementedException("edit(Comment newEntity) from " + getClass().getName() + " not implemented");
     }
 
     @Override
