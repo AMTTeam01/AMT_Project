@@ -4,6 +4,7 @@ import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentCommand;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
@@ -61,7 +62,7 @@ public class CommentHandler extends HttpServlet {
         try {
             commentFacade.addComment(commentCommand);
             resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + questionId);
-        } catch (UserFailedException e) {
+        } catch (UserFailedException | CommentFailedException e) {
             e.printStackTrace();
         }
 

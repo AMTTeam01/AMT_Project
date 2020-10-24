@@ -92,7 +92,6 @@ public class AnswerFacade {
             throws AnswerFailedException, QuestionFailedException, CommentFailedException {
 
         Collection<Answer> answers;
-        Collection<Comment> comments;
 
         if (query == null) {
             throw new AnswerFailedException("Query is null");

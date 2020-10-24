@@ -99,7 +99,7 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "       C.description  AS 'comment_description',  " +
                             "       C.creationDate AS 'comment_creationDate',  " +
                             "       U.userName,  " +
-                            "       U.id AS 'user_id' "+
+                            "       U.id AS 'user_id' " +
                             "FROM tblComment C  " +
                             "         INNER JOIN tblAnswer A on C.tblAnswer_id = A.id  " +
                             "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
@@ -170,6 +170,7 @@ public class JdbcCommentRepository implements ICommentRepository {
         throw new NotImplementedException("edit(Comment newEntity) from " + getClass().getName() + " not implemented");
     }
 
+
     @Override
     public void remove(CommentId id) {
         try {
@@ -214,17 +215,7 @@ public class JdbcCommentRepository implements ICommentRepository {
             if (rs.next()) {
                 rs.first();
 
-                Comment foundComment = Comment.builder()
-                        .userId(new UserId(rs.getString("user_id")))
-                        .id(new CommentId(rs.getString("comment_id")))
-                        .answerId(new AnswerId(rs.getString("answer_id")))
-                        .questionId(new QuestionId(rs.getString("question_id")))
-                        .username(rs.getString("userName"))
-                        .description(rs.getString("description"))
-                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                        .build();
-
-                optionalComment = Optional.of(foundComment);
+                optionalComment = Optional.of(getCommentAsModel(rs));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -257,22 +248,32 @@ public class JdbcCommentRepository implements ICommentRepository {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                Comment foundComment = Comment.builder()
-                        .userId(new UserId(rs.getString("user_id")))
-                        .id(new CommentId(rs.getString("comment_id")))
-                        .answerId(new AnswerId(rs.getString("answer_id")))
-                        .questionId(new QuestionId(rs.getString("question_id")))
-                        .username(rs.getString("userName"))
-                        .description(rs.getString("description"))
-                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                        .build();
 
-                comments.add(foundComment);
+                comments.add(getCommentAsModel(rs));
             }
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return comments;
+    }
+
+    private Comment getCommentAsModel(ResultSet rs) throws SQLException {
+        Comment.CommentBuilder commentBuilder = Comment.builder()
+                .userId(new UserId(rs.getString("user_id")))
+                .id(new CommentId(rs.getString("comment_id")))
+                .username(rs.getString("userName"))
+                .description(rs.getString("description"))
+                .creationDate(new Date(rs.getTimestamp("creationDate").getTime()));
+
+        if (rs.getString("question_id") != null) {
+            commentBuilder.questionId(new QuestionId(rs.getString("question_id")));
+        }
+
+        if (rs.getString("answer_id") != null) {
+            commentBuilder.answerId(new AnswerId(rs.getString("answer_id")));
+
+        }
+        return commentBuilder.build();
     }
 }

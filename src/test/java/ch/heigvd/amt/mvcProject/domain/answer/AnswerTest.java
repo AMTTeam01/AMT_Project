@@ -57,6 +57,7 @@ public class AnswerTest {
                 .description("Test")
                 .questionId(question.getId())
                 .username(user.getUsername())
+                .userId(user.getId())
                 .build();
 
         Comment c = Comment.builder()

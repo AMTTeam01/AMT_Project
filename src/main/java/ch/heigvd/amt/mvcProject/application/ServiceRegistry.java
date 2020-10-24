@@ -8,10 +8,8 @@ import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.comment.ICommentRepository;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
-import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcQuestionRepository;
-import ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc.JdbcUserRepository;
+
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;

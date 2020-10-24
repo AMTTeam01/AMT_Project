@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.comment;
 
+import ch.heigvd.amt.mvcProject.domain.comment.CommentId;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class CommentsDTO {
     @Getter
     @EqualsAndHashCode
     public static class CommentDTO{
+        private CommentId id;
         private String description;
         private Date creationDate;
         private String username;

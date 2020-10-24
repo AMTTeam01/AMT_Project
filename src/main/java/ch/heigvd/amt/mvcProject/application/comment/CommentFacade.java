@@ -1,15 +1,12 @@
 package ch.heigvd.amt.mvcProject.application.comment;
 
-import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
-import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
-import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.comment.CommentId;
 import ch.heigvd.amt.mvcProject.domain.comment.ICommentRepository;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +26,13 @@ public class CommentFacade {
         this.userFacade = userFacade;
     }
 
-    public void addComment(CommentCommand command) throws UserFailedException {
+    public CommentsDTO.CommentDTO addComment(CommentCommand command) throws UserFailedException,
+            CommentFailedException {
+
+        if(command.getAnswerId() != null && command.getQuestionId() != null){
+            throw new CommentFailedException("Command invalid, answerId and questionId can't be mentioned at the " +
+                    "same time");
+        }
 
         UsersDTO existingUser = userFacade.getUsers(
                 UserQuery.builder()
@@ -51,6 +54,15 @@ public class CommentFacade {
                 .build();
 
         commentRepository.save(submittedComment);
+
+        CommentsDTO.CommentDTO commentDTO = CommentsDTO.CommentDTO.builder()
+                .id(submittedComment.getId())
+                .username(submittedComment.getUsername())
+                .description(submittedComment.getDescription())
+                .creationDate(submittedComment.getCreationDate())
+                .build();
+
+        return commentDTO;
     }
 
     public CommentsDTO getComments() {
@@ -99,6 +111,14 @@ public class CommentFacade {
                 .description(comment.getDescription())
                 .username(comment.getUsername())
                 .build();
+    }
+
+    public void removeComment(CommentId id) throws CommentFailedException {
+        commentRepository.findById(id).orElseThrow(
+                () -> new CommentFailedException("Comment not found")
+        );
+
+        commentRepository.remove(id);
     }
 
 }
