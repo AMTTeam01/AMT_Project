@@ -35,6 +35,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+        //TODO : commit on user tags or change to prepared ones
         //format tags : split by commas, to lower case, remove all spaces
         List<String> tags = Arrays.asList(req.getParameter("txt_tags")
                 .toLowerCase()
@@ -48,7 +49,6 @@ public class NewQuestionRequestHandler extends HttpServlet {
                 .description(req.getParameter("txt_description"))
                 .creationDate(new Date())
                 .userId(currentUserDTO.getUserId())
-                .vote(0)
                 .tags(tags)
                 .build();
 
