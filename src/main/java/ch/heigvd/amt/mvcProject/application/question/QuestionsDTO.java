@@ -1,8 +1,10 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,8 +22,11 @@ public class QuestionsDTO {
         private QuestionId id;
         private String title;
         private int votes;
+        private String username;
+        private UserId userId;
         private List<String> tags;
         private String description;
+        private Date creationDate;
     }
 
     @Singular

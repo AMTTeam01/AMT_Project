@@ -1,14 +1,12 @@
 package ch.heigvd.amt.mvcProject.application.authentication;
 
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 public class AuthenticationFacade {
 

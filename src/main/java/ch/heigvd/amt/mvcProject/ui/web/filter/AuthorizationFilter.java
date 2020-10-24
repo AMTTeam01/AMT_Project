@@ -1,6 +1,6 @@
 package ch.heigvd.amt.mvcProject.ui.web.filter;
 
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -30,9 +30,9 @@ public class AuthorizationFilter implements Filter {
             return;
         }
 
-        CurrentUserDTO userDTO = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
+        CurrentUserDTO currentUserDTO = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
 
-        if (userDTO == null) {
+        if (currentUserDTO == null) {
             String targetUrl = request.getRequestURI();
 
             if (request.getQueryString() != null) {

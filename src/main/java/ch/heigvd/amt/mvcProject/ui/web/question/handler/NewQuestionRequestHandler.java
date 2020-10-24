@@ -1,12 +1,11 @@
 package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -34,7 +33,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         // TODO : gérer les tags
 
@@ -46,7 +45,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
                 .title(req.getParameter("txt_title"))
                 .description(req.getParameter("txt_description"))
                 .creationDate(new Date())
-                .authorId(currentUserDTO.getUserId())
+                .userId(currentUserDTO.getUserId())
                 .vote(0)
                 .tags(tags_tmp)
                 .build();
@@ -54,7 +53,8 @@ public class NewQuestionRequestHandler extends HttpServlet {
         try {
             questionFacade.addQuestion(command);
             resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
-        } catch (QuestionFailedException e) {
+
+        } catch (QuestionFailedException | UserFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
         }

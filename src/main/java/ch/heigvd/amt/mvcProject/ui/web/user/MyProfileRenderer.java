@@ -1,7 +1,7 @@
 package ch.heigvd.amt.mvcProject.ui.web.user;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.authentication.login.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 
@@ -40,11 +40,15 @@ public class MyProfileRenderer extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Object errors = request.getSession().getAttribute("errors");
+        request.setAttribute("errors", errors);
+        request.getSession().removeAttribute("errors");
+
         CurrentUserDTO currentUser = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
         request.setAttribute("user", currentUser);
 
         //TODO : Query to user specific questions
-        QuestionsDTO questionsDTO = questionFacade.getQuestions(null);
+        QuestionsDTO questionsDTO = questionFacade.getQuestions();
         request.setAttribute("questions", questionsDTO);
 
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
