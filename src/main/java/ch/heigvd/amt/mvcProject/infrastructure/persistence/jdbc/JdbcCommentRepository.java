@@ -47,9 +47,9 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "       C.creationDate AS 'comment_creationDate',  " +
                             "       U.userName  ," +
                             "       U.id as 'user_id'  " +
-                            "FROM tblComment C  " +
-                            "         INNER JOIN tblQuestion Q on C.tblQuestion_id = Q.id  " +
-                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
+                            "FROM tblQuestion Q  " +
+                            "         LEFT JOIN tblComment C on C.tblQuestion_id = Q.id  " +
+                            "         LEFT JOIN tblUser U on C.tblUser_id = U.id " +
                             "WHERE Q.id = ?" +
                             "ORDER BY C.creationDate ASC ",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -62,22 +62,27 @@ public class JdbcCommentRepository implements ICommentRepository {
 
             ArrayList<Comment> comments = new ArrayList<>();
 
-            while (rs.next()) {
-                Comment comment = Comment.builder()
-                        .creationDate(new Date(rs.getTimestamp("comment_creationDate").getTime()))
-                        .description(rs.getString("comment_description"))
-                        .questionId(questionId)
-                        .username(rs.getString("userName"))
-                        .userId(new UserId(rs.getString("user_id")))
-                        .id(new CommentId(rs.getString("comment_id")))
-                        .build();
+            if (rs.next()) {
+                if (rs.getString("comment_id") != null) {
+                    rs.beforeFirst();
+                    while (rs.next()) {
+                        Comment comment = Comment.builder()
+                                .creationDate(new Date(rs.getTimestamp("comment_creationDate").getTime()))
+                                .description(rs.getString("comment_description"))
+                                .questionId(questionId)
+                                .username(rs.getString("userName"))
+                                .userId(new UserId(rs.getString("user_id")))
+                                .id(new CommentId(rs.getString("comment_id")))
+                                .build();
 
-                comments.add(comment);
+                        comments.add(comment);
+                    }
+                }
+
+                rs.close();
+
+                optionalComments = Optional.of(comments);
             }
-
-            rs.close();
-
-            optionalComments = Optional.of(comments);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -100,9 +105,9 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "       C.creationDate AS 'comment_creationDate',  " +
                             "       U.userName,  " +
                             "       U.id AS 'user_id' " +
-                            "FROM tblComment C  " +
-                            "         INNER JOIN tblAnswer A on C.tblAnswer_id = A.id  " +
-                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
+                            "FROM tblAnswer A  " +
+                            "         LEFT JOIN tblComment C on C.tblAnswer_id = A.id  " +
+                            "         LEFT JOIN tblUser U on C.tblUser_id = U.id " +
                             "WHERE A.id = ? " +
                             "ORDER BY C.creationDate ASC",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -115,21 +120,27 @@ public class JdbcCommentRepository implements ICommentRepository {
 
             ArrayList<Comment> comments = new ArrayList<>();
 
+            if (rs.next()) {
 
-            while (rs.next()) {
-                Comment comment = Comment.builder()
-                        .creationDate(new Date(rs.getTimestamp("comment_creationDate").getTime()))
-                        .description(rs.getString("comment_description"))
-                        .answerId(answerId)
-                        .username(rs.getString("userName"))
-                        .userId(new UserId(rs.getString("user_id")))
-                        .id(new CommentId(rs.getString("comment_id")))
-                        .build();
+                if (rs.getString("comment_id") != null) {
+                    rs.beforeFirst();
 
-                comments.add(comment);
+                    while (rs.next()) {
+                        Comment comment = Comment.builder()
+                                .creationDate(new Date(rs.getTimestamp("comment_creationDate").getTime()))
+                                .description(rs.getString("comment_description"))
+                                .answerId(answerId)
+                                .username(rs.getString("userName"))
+                                .userId(new UserId(rs.getString("user_id")))
+                                .id(new CommentId(rs.getString("comment_id")))
+                                .build();
+
+                        comments.add(comment);
+                    }
+                }
+
+                optionalComments = Optional.of(comments);
             }
-
-            optionalComments = Optional.of(comments);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -199,9 +210,9 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "       Q.id as 'question_id', " +
                             "       A.id as 'answer_id' " +
                             "from tblComment C " +
-                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
                             "         LEFT JOIN tblQuestion Q on C.tblQuestion_id = Q.id " +
                             "         LEFT JOIN tblAnswer A on C.tblAnswer_id = A.id " +
+                            "         INNER JOIN tblUser U on C.tblUser_id = U.id "+
                             "WHERE C.id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
@@ -238,9 +249,9 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "       Q.id as 'question_id', " +
                             "       A.id as 'answer_id' " +
                             "from tblComment C " +
-                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
                             "         LEFT JOIN tblQuestion Q on C.tblQuestion_id = Q.id " +
-                            "         LEFT JOIN tblAnswer A on C.tblAnswer_id = A.id ",
+                            "         LEFT JOIN tblAnswer A on C.tblAnswer_id = A.id " +
+                            "         INNER JOIN tblUser U on C.tblUser_id = U.id ",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );

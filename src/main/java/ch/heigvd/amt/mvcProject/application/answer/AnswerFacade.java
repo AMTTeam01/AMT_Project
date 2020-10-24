@@ -117,6 +117,10 @@ public class AnswerFacade {
                                 .build());
                     } catch (CommentFailedException e) {
                         e.printStackTrace();
+                    } catch (AnswerFailedException e) {
+                        e.printStackTrace();
+                    } catch (QuestionFailedException e) {
+                        e.printStackTrace();
                     }
                     return AnswersDTO.AnswerDTO.builder()
                             .username(answer.getUsername())

@@ -124,7 +124,7 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException,
-            CommentFailedException {
+            CommentFailedException, AnswerFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -206,7 +206,7 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed()
-            throws QuestionFailedException, UserFailedException, CommentFailedException {
+            throws QuestionFailedException, UserFailedException, CommentFailedException, AnswerFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")

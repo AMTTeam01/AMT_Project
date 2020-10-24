@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
@@ -124,7 +125,7 @@ public class QuestionFacade {
      * @throws QuestionFailedException
      */
     public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query)
-            throws QuestionFailedException, CommentFailedException {
+            throws QuestionFailedException, CommentFailedException, AnswerFailedException {
 
         QuestionsDTO.QuestionDTO questionFound;
         Question question;
@@ -231,6 +232,10 @@ public class QuestionFacade {
                                 commentFacade.getComments(CommentQuery.builder().answerId(answer.getId()).build())
                                         .getComments();
                     } catch (CommentFailedException e) {
+                        e.printStackTrace();
+                    } catch (AnswerFailedException e) {
+                        e.printStackTrace();
+                    } catch (QuestionFailedException e) {
                         e.printStackTrace();
                     }
 

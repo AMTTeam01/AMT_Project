@@ -14,7 +14,8 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -126,7 +127,7 @@ public class CommentFacadeTestIT {
 
     @Test
     public void addComment_ShouldAddACommentInRepo_WhenAAnswerIdIsInTheQuery()
-            throws UserFailedException, CommentFailedException {
+            throws UserFailedException, CommentFailedException, QuestionFailedException, AnswerFailedException {
 
         CommentCommand command = CommentCommand.builder()
                 .answerId(answer.getId())
@@ -146,7 +147,7 @@ public class CommentFacadeTestIT {
 
     @Test
     public void addComment_ShouldAddACommentInRepo_WhenAQuestionIdIsInTheQuery()
-            throws UserFailedException, CommentFailedException {
+            throws UserFailedException, CommentFailedException, QuestionFailedException, AnswerFailedException {
 
         CommentCommand command = CommentCommand.builder()
                 .questionId(question.getId())
@@ -163,7 +164,7 @@ public class CommentFacadeTestIT {
         commentFacade.removeComment(comment.getId());
     }
 
-    public void addComment_ShouldThrowAError_WhenAQuestionIdAndAnswerIdAreInTheQuery(){
+    public void addComment_ShouldThrowAError_WhenAQuestionIdAndAnswerIdAreInTheQuery() {
 
         CommentCommand command = CommentCommand.builder()
                 .questionId(question.getId())
@@ -196,11 +197,72 @@ public class CommentFacadeTestIT {
     }
 
 
-/*    @Test
-    void getComments() {
+    @Test
+    public void getComments_ShouldReturnExpectingComment_WhenQuestionIdIsPassed()
+            throws UserFailedException, CommentFailedException, QuestionFailedException, AnswerFailedException {
+        CommentCommand command = CommentCommand.builder()
+                .questionId(question.getId())
+                .userId(currentUserDTO.getUserId())
+                .createDate(new Date())
+                .description("Test comment")
+                .build();
+
+        CommentsDTO.CommentDTO c1 = commentFacade.addComment(command);
+
+        CommentsDTO commentsDTO = commentFacade.getComments(CommentQuery.builder()
+                .questionId(question.getId())
+                .build());
+
+        assertEquals(1, commentsDTO.getComments().size());
+
+        assertEquals(c1.getId(), commentsDTO.getComments().get(0).getId());
+
+        commentFacade.removeComment(c1.getId());
+    }
+
+
+    @Test
+    public void getComments_ShouldReturnExpectingComment_WhenAnswerIdIsPassed()
+            throws UserFailedException, CommentFailedException, QuestionFailedException, AnswerFailedException {
+
+        CommentCommand command = CommentCommand.builder()
+                .answerId(answer.getId())
+                .userId(currentUserDTO.getUserId())
+                .createDate(new Date())
+                .description("Test comment")
+                .build();
+
+
+        CommentsDTO.CommentDTO c1 = commentFacade.addComment(command);
+
+        CommentsDTO commentsDTO = commentFacade.getComments(CommentQuery.builder()
+                .answerId(answer.getId())
+                .build());
+
+        assertEquals(1, commentsDTO.getComments().size());
+
+        assertEquals(c1.getId(), commentsDTO.getComments().get(0).getId());
+
+        commentFacade.removeComment(c1.getId());
     }
 
     @Test
+    public void getComments_ShouldThrowError_IfAnswerIdIsNotInRepo() {
+
+        assertThrows(AnswerFailedException.class,
+                () -> commentFacade.getComments(CommentQuery.builder().answerId(new AnswerId()).build())
+        );
+    }
+
+    @Test
+    public void getComments_ShouldThrowError_IfQuestionIdIsNotInRepo() {
+
+        assertThrows(QuestionFailedException.class,
+                () -> commentFacade.getComments(CommentQuery.builder().questionId(new QuestionId()).build())
+        );
+    }
+
+/*    @Test
     void testGetComments() {
     }*/
 }

@@ -183,7 +183,6 @@ public class AnswerFacadeTestIT {
 
         AnswersDTO answersDTO = answerFacade.getAnswers(AnswerQuery.builder().questionId(newQuestion.getId()).build());
 
-
         assertEquals(2, answersDTO.getAnswers().size());
 
         answerFacade.removeAnswer(a1.getId());

@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.comment;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
@@ -29,7 +31,7 @@ public class CommentFacade {
     public CommentsDTO.CommentDTO addComment(CommentCommand command) throws UserFailedException,
             CommentFailedException {
 
-        if(command.getAnswerId() != null && command.getQuestionId() != null){
+        if (command.getAnswerId() != null && command.getQuestionId() != null) {
             throw new CommentFailedException("Command invalid, answerId and questionId can't be mentioned at the " +
                     "same time");
         }
@@ -71,7 +73,8 @@ public class CommentFacade {
         return getCommentsAsDTO(allComments);
     }
 
-    public CommentsDTO getComments(CommentQuery query) throws CommentFailedException {
+    public CommentsDTO getComments(CommentQuery query)
+            throws CommentFailedException, QuestionFailedException, AnswerFailedException {
         Collection<Comment> commentsFound = new ArrayList<>();
 
         if (query == null) {
@@ -79,14 +82,13 @@ public class CommentFacade {
         } else {
             if (query.getQuestionId() != null && query.getAnswerId() == null) {
                 commentsFound = commentRepository.findByQuestionId(query.getQuestionId())
-                        .orElseThrow(() -> new CommentFailedException(
+                        .orElseThrow(() -> new QuestionFailedException(
                                 "The comments associate with the id question " + query.getQuestionId()
-                                        .asString() + " hasn't be " +
-                                        "found"));
+                                        .asString() + " hasn't be found"));
 
             } else if (query.getAnswerId() != null) {
                 commentsFound = commentRepository.findByAnswerId(query.getAnswerId())
-                        .orElseThrow(() -> new CommentFailedException(
+                        .orElseThrow(() -> new AnswerFailedException(
                                 "The comments associate with the id answer " + query.getAnswerId()
                                         .asString() + " hasn't be found"));
             } else {
@@ -110,6 +112,7 @@ public class CommentFacade {
                 .creationDate(comment.getCreationDate())
                 .description(comment.getDescription())
                 .username(comment.getUsername())
+                .id(comment.getId())
                 .build();
     }
 
