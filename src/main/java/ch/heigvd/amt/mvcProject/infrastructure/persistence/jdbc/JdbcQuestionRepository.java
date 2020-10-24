@@ -1,8 +1,11 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
 
@@ -14,11 +17,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 
-import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -111,22 +113,84 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
                 rs.first();
 
-                DateFormat df = DateFormat.getInstance();
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                Question foundQuestion = Question.builder()
-                        .id(new QuestionId(rs.getString("question_id")))
-                        .description(rs.getString("description"))
-                        .title(rs.getString("title"))
-                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                        .userId(new UserId(rs.getString("user_id")))
-                        .username(rs.getString("userName"))
-                        .build();
+                Question foundQuestion = getQuestion(rs);
 
                 optionalQuestion = Optional.of(foundQuestion);
             }
         } catch (SQLException throwable) {
             throwable.printStackTrace();
+        }
+
+        return optionalQuestion;
+    }
+
+    @Override
+    public Optional<Question> findByIdWithAllDetails(QuestionId id) {
+        // TODO : gérer les tags toujours
+
+        Optional<Question> optionalQuestion = Optional.empty();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT Q.id           as 'question_id', " +
+                            "       title, " +
+                            "       Q.description  as 'question_description', " +
+                            "       Q.creationDate as 'question_creationDate', " +
+                            "       UQ.userName    as 'question_username', " +
+                            "       UQ.id          as 'question_user_id', "+
+                            "       A.id           as 'answer_id', " +
+                            "       A.description  as 'answer_description', " +
+                            "       A.creationDate as 'answer_creationDate', " +
+                            "       UA.username    as 'answer_username', " +
+                            "       UA.id          as 'answer_user_id' " +
+                            "FROM tblQuestion Q " +
+                            "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
+                            "         LEFT JOIN tblUser UA on A.tblUser_id = UA.id " +
+                            "         LEFT JOIN tblUser UQ ON Q.tblUser_id = UQ.id " +
+                            "WHERE Q.id = ? " +
+                            "ORDER BY A.creationDate ASC",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, id.asString());
+
+            ResultSet rs = statement.executeQuery();
+
+            Question foundQuestion = null;
+
+            while (rs.next()) {
+
+                if (foundQuestion == null) {
+
+                    foundQuestion = Question.builder()
+                            .id(new QuestionId(rs.getString("question_id")))
+                            .description(rs.getString("question_description"))
+                            .title(rs.getString("title"))
+                            .creationDate(new Date(rs.getTimestamp("question_creationDate").getTime()))
+                            .username(rs.getString("question_username"))
+                            .userId(new UserId(rs.getString("question_user_id")))
+                            .build();
+                }
+
+                String username = rs.getString("answer_username");
+
+                if (username != null) {
+                    foundQuestion.addAnswer(Answer.builder()
+                            .id(new AnswerId(rs.getString("answer_id")))
+                            .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
+                            .description(rs.getString("answer_description"))
+                            .questionId(new QuestionId(rs.getString("question_id")))
+                            .userId(new UserId(rs.getString("answer_user_id")))
+                            .username(username)
+                            .build());
+                }
+
+            }
+            optionalQuestion = Optional.of(foundQuestion);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
 
         return optionalQuestion;
@@ -221,6 +285,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         return questions;
     }
 
+
     /**
      * Get all users corresponding to the given result set
      *
@@ -233,14 +298,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         while (rs.next()) {
 
-            Question foundQuestion = Question.builder()
-                    .id(new QuestionId(rs.getString("question_id")))
-                    .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                    .userId(new UserId(rs.getString("user_id")))
-                    .username(rs.getString("userName"))
-                    .description(rs.getString("description"))
-                    .title(rs.getString("title"))
-                    .build();
+            Question foundQuestion = getQuestion(rs);
 
             questions.add(foundQuestion);
         }
@@ -249,4 +307,23 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         return questions;
     }
+
+    /**
+     * Return a single question pointed by rs
+     * @param rs result set
+     * @return the question pointed by rs
+     * @throws SQLException
+     */
+    private Question getQuestion(ResultSet rs) throws SQLException {
+        return Question.builder()
+                .id(new QuestionId(rs.getString("question_id")))
+                .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                .userId(new UserId(rs.getString("user_id")))
+                .username(rs.getString("userName"))
+                .description(rs.getString("description"))
+                .title(rs.getString("title"))
+                .build();
+    }
+
+
 }

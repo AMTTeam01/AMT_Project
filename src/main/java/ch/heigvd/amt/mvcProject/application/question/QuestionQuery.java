@@ -14,4 +14,6 @@ public class QuestionQuery {
     QuestionId questionId;
     UserId userId;
     String title;
+
+    boolean withDetail;
 }
