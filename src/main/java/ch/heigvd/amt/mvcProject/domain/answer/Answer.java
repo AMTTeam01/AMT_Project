@@ -27,7 +27,7 @@ public class Answer implements IEntity<Answer, AnswerId> {
 
     private String username;
 
-    private ArrayList<Comment> comments;
+    private List<Comment> comments;
 
 
     @Override

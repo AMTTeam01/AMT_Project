@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.domain.question;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,6 +31,8 @@ public class Question implements IEntity<Question, QuestionId> {
     private String username;
 
     private List<Answer> answers;
+
+    private List<Comment> comments;
 
     public void addAnswer(Answer answer){
         answers.add(answer);
@@ -72,7 +75,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 answers = new ArrayList<>();
             }
 
-            return new Question(id, title, description, vote, creationDate, username, answers);
+            if(comments == null){
+                comments = new ArrayList<>();
+            }
+
+            return new Question(id, title, description, vote, creationDate, username, answers, comments);
         }
     }
 
