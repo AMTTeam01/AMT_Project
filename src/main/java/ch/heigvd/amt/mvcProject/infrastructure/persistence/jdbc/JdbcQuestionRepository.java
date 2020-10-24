@@ -270,12 +270,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "INNER JOIN tblUser U on Q.tblUser_id = U.id " +
-                            "WHERE Q.title LIKE CONCAT('%', ?, '%')",
+                            "WHERE Q.title LIKE ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
 
-            statement.setString(1, search);
+            statement.setString(1,  "%" + search + "%");
 
             questions = getQuestions(statement.executeQuery());
         } catch (SQLException throwable) {
