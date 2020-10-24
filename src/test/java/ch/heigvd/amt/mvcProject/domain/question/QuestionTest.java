@@ -19,10 +19,8 @@ import java.util.Date;
 @ExtendWith(MockitoExtension.class)
 public class QuestionTest {
 
-
      @Mock
      User user;
-
 
      @BeforeEach
      private void prepareUser(){
