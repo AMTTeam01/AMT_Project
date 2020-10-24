@@ -1,29 +1,4 @@
-Feature('sign up & login');
-
-function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
-
-function makeEmail(){
-    return makeid(4).concat("@").concat(makeid(4))
-}
-
-class User {
-     constructor(username,email,password,wrongPassword){
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.wrongPassword = wrongPassword;
-    }
-}
-
-let user1 = new User(makeid(8),makeEmail(),'123','1234')
+Feature('login and register')
 
 Scenario('test registration and login process', (I) => {
 
