@@ -39,11 +39,14 @@
                     <label for="txt_question_comment">Your comment</label>
                     <textarea class="form-control" id="txt_question_comment" name="txt_question_comment" rows="3" placeholder="Your comment"
                               required></textarea>
-                    <button id="bnt_submit_question_comment" name="bnt_submit_question_comment" class="btn btn-primary btn-classic-filled mt-2 float-right"
+                    <div class="d-flex flex-row-reverse">
+                    <button id="bnt_submit_question_comment" name="bnt_submit_question_comment" class="btn btn-primary btn-classic-filled mt-2"
                             type="submit">Comment
                     </button>
+                    </div>
                 </form>
             </div>
+            <hr class="solid">
             <div>
                 <c:import url="fragments/answer.jsp"/>
             </div>
