@@ -18,7 +18,8 @@
                 </div>
                 <div id="comment-container-${answer.id}" class="m-2 comment-container" style="display: none">
                     <form method="POST" action="${pageContext.request.contextPath}/comment_question.do">
-                        <input type="hidden" id="comment_question_id" name="comment_question_id" value="${question.id.asString()}">
+                        <input type="hidden" id="comment_answer_id" name="comment_answer_id" value="${answer.id.asString()}">
+                        <input type="hidden" id="comment_question_id" name="comment_question_id" value="${requestScope.question.id.asString()}">
                         <label for="txt_question_comment">Your comment</label>
                         <textarea class="form-control" id="txt_question_comment" name="txt_question_comment" rows="3" placeholder="Your comment"
                                   required></textarea>

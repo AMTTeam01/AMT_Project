@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentCommand;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
@@ -42,10 +43,17 @@ public class CommentHandler extends HttpServlet {
         // Question id
         String questionId = req.getParameter("comment_question_id");
 
+        // answer id
+        AnswerId answerId = req.getParameter("comment_answer_id") == null ? null : new AnswerId(
+                req.getParameter("comment_answer_id"));
+
+
         CommentCommand commentCommand = CommentCommand.builder()
                 .createDate(new Date())
                 .userId(currentUserDTO.getUserId())
-                .questionId(new QuestionId(questionId))
+                // If null, it mean the comment is for a question else a answer comment
+                .questionId(answerId == null ? new QuestionId(questionId) : null)
+                .answerId(answerId)
                 .description(req.getParameter("txt_question_comment"))
                 .build();
 
