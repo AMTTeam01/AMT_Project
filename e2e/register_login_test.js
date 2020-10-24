@@ -60,6 +60,15 @@ Scenario('test registration and login process', (I) => {
     I.click('Sign up')
     I.waitForText('Username is already used')
 
+    //trying to register again, with another username, same email
+    I.amOnPage('/register')
+    I.fillField('#txt_username', makeid(5))
+    I.fillField('#txt_email',user1.email)
+    I.fillField('#txt_password',secret(user1.password))
+    I.fillField('#txt_cpassword',secret(user1.password))
+    I.click('Sign up')
+    I.waitForText('Email is already used')
+
     //login
     I.amOnPage('/login')
 
