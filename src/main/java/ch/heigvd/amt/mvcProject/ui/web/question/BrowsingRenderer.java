@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.ui.web.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -38,7 +39,11 @@ public class BrowsingRenderer extends HttpServlet {
             questionsDTO = questionFacade.getAllQuestions();
         } else {
             QuestionQuery query = QuestionQuery.builder().title(search).build();
-            questionsDTO = questionFacade.getQuestionsByTitleContaining(query);
+            try {
+                questionsDTO = questionFacade.getQuestions(query);
+            } catch (QuestionFailedException e) {
+                e.printStackTrace();
+            }
         }
 
         request.setAttribute("questions", questionsDTO);

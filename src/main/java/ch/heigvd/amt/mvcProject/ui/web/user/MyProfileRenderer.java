@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.ui.web.user;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -52,7 +53,12 @@ public class MyProfileRenderer extends HttpServlet {
         
         QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
 
-        QuestionsDTO questionsDTO = questionFacade.getQuestionsByUserId(query);
+        QuestionsDTO questionsDTO = null;
+        try {
+            questionsDTO = questionFacade.getQuestions(query);
+        } catch (QuestionFailedException e) {
+            e.printStackTrace();
+        }
         request.setAttribute("questions", questionsDTO);
 
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);

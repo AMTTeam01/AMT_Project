@@ -81,30 +81,6 @@ public class QuestionFacade {
         return getQuestionsDTO(allQuestions, null);
     }
 
-    /**
-     * Retrieve questions asked by the query
-     *
-     * @param query Query passed
-     * @return return the result asked by the query as DTO
-     * @throws QuestionFailedException
-     */
-    public QuestionsDTO getAllQuestions(QuestionQuery query) throws QuestionFailedException {
-        Collection<Question> questionsFound = new ArrayList<>();
-
-
-            if (query.getQuestionId() != null) {
-                Question question = questionRepository.findById(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-                questionsFound.add(question);
-
-            } else {
-                throw new QuestionFailedException("Query invalid");
-
-            }
-
-        return getQuestionsDTO(questionsFound, null);
-    }
 
     /**
      * Return a single Question asked by query
@@ -150,23 +126,20 @@ public class QuestionFacade {
     }
 
     /**
-     * Get a question with a query that contains an UserID
+     * Get a bunch of questions with a query
      * @param query query
      * @return questions found
      */
-    public QuestionsDTO getQuestionsByUserId(QuestionQuery query) {
-        Collection<Question> userQuestions = questionRepository.findByUserId(query.userId);
-        return getQuestionsDTO(userQuestions,null);
-    }
-
-    /**
-     * Get a question with a query that contains a string in title
-     * @param query query
-     * @return questions found
-     */
-    public QuestionsDTO getQuestionsByTitleContaining(QuestionQuery query){
-        Collection<Question> questions = questionRepository.findByTitleContaining(query.title);
-        return getQuestionsDTO(questions,null);
+    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException{
+        if(query.title == null && query.userId == null){
+            throw new QuestionFailedException("getQuestions query invalid");
+        } else {
+            if(query.userId != null){
+                return getQuestionsDTO(questionRepository.findByUserId(query.userId),null);
+            } else  {
+                return getQuestionsDTO(questionRepository.findByTitleContaining(query.title),null);
+            }
+        }
     }
 
     /**
