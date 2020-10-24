@@ -27,11 +27,18 @@ public class AuthenticationFacade {
      *  - password =/= confirmation of password
      */
     public void register(RegisterCommand cmd) throws RegistrationFailedException {
-        User existingUser = userRepository.findByUsername(cmd.getUsername())
+        User existingUsername = userRepository.findByUsername(cmd.getUsername())
                 .orElse(null);
 
-        if(existingUser != null){
+        User existingEmail = userRepository.findByEmail(cmd.getEmail())
+                .orElse(null);
+
+        if(existingUsername != null){
             throw new RegistrationFailedException("Username is already used");
+        }
+
+        if(existingEmail != null){
+            throw new RegistrationFailedException("Email is already used");
         }
 
         if(!cmd.getClearTxtPassword().equals(cmd.getConfirmationClearTxtPassword())){

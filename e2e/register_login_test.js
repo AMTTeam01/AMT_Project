@@ -1,6 +1,5 @@
 Feature('sign up & login');
 
-//TODO : Change for data managment with faker library
 function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -9,41 +8,55 @@ function makeid(length) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
- }
-var username = makeid(5);
+}
+
+function makeEmail(){
+    return makeid(4).concat("@").concat(makeid(4))
+}
+
+class User {
+     constructor(username,email,password,wrongPassword){
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.wrongPassword = wrongPassword;
+    }
+}
+
+let user1 = new User(makeid(8),makeEmail(),'123','1234')
 
 Scenario('test registration and login process', (I) => {
 
     //login not found account
     I.amOnPage('/login')
-    I.fillField('#txt_username', username)
-    I.fillField('#txt_password',secret('123456'))
+    I.fillField('#txt_username', user1.username)
+    I.fillField('#txt_password',secret(user1.password))
     I.click('Login')
     I.waitForText('The user hasn\'t been found')
 
     //not matching passwords
     I.amOnPage('/register')
-    I.fillField('#txt_username', username)
-    I.fillField('#txt_email','123@123')
-    I.fillField('#txt_password',secret('12345'))
-    I.fillField('#txt_cpassword',secret('123456'))
+    I.fillField('#txt_username', user1.username)
+    I.fillField('#txt_email',user1.email)
+    I.fillField('#txt_password',secret(user1.password))
+    I.fillField('#txt_cpassword',secret(user1.wrongPassword))
     I.click('Sign up')
     I.waitForText('The password and the confirmation of the password aren\'t the same')
 
     //matching passwords
-    I.fillField('#txt_username', username)
-    I.fillField('#txt_email','123@123')
-    I.fillField('#txt_password',secret('12345'))
-    I.fillField('#txt_cpassword',secret('12345'))
+    I.fillField('#txt_username', user1.username)
+    I.fillField('#txt_email',user1.email)
+    I.fillField('#txt_password',secret(user1.password))
+    I.fillField('#txt_cpassword',secret(user1.password))
     I.click('Sign up')
     I.dontSeeInCurrentUrl('/register')
 
     //trying to register again
     I.amOnPage('/register')
-    I.fillField('#txt_username', username)
-    I.fillField('#txt_email','123@123')
-    I.fillField('#txt_password',secret('12345'))
-    I.fillField('#txt_cpassword',secret('123456'))
+    I.fillField('#txt_username', user1.username)
+    I.fillField('#txt_email',user1.email)
+    I.fillField('#txt_password',secret(user1.password))
+    I.fillField('#txt_cpassword',secret(user1.password))
     I.click('Sign up')
     I.waitForText('Username is already used')
 
@@ -51,14 +64,14 @@ Scenario('test registration and login process', (I) => {
     I.amOnPage('/login')
 
     //wrong login
-    I.fillField('#txt_username', username)
-    I.fillField('#txt_password',secret('123456'))
+    I.fillField('#txt_username', user1.username)
+    I.fillField('#txt_password',secret(user1.wrongPassword))
     I.click('Login')
     I.waitForText('Check of credentials failed')
 
     //right login
-    I.fillField('#txt_username', username)
-    I.fillField('#txt_password',secret('12345'))
+    I.fillField('#txt_username', user1.username)
+    I.fillField('#txt_password',secret(user1.password))
     I.click('Login')
     I.dontSeeInCurrentUrl('/login')
 });
