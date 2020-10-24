@@ -25,24 +25,30 @@ import javax.inject.Named;
 public class ServiceRegistry {
 
     // Users
-    @Inject @Named("JdbcUserRepository")
+    @Inject
+    @Named("JdbcUserRepository")
     IUserRepository userRepository;
     private AuthenticationFacade authenticationFacade;
     private UserFacade userFacade;
 
     // Questions
-    @Inject @Named("JdbcQuestionRepository")
+    @Inject
+    @Named("JdbcQuestionRepository")
     IQuestionRepository questionRepository;
     private QuestionFacade questionFacade;
 
     // Answer
-    @Inject @Named("JdbcAnswerRepository")
+    @Inject
+    @Named("JdbcAnswerRepository")
     IAnswerRepository answerRepository;
     private AnswerFacade answerFacade;
 
-    @Inject @Named("JdbcCommentRepository")
+    // Comment
+    @Inject
+    @Named("JdbcCommentRepository")
     ICommentRepository commentRepository;
     private CommentFacade commentFacade;
+
 
     public ServiceRegistry() {
     }
@@ -51,7 +57,7 @@ public class ServiceRegistry {
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
         userFacade = new UserFacade(userRepository);
-        commentFacade = new CommentFacade(commentRepository);
+        commentFacade = new CommentFacade(commentRepository, userFacade);
         questionFacade = new QuestionFacade(questionRepository, userFacade, commentFacade);
         answerFacade = new AnswerFacade(answerRepository, userFacade, questionFacade, commentFacade);
     }
@@ -64,11 +70,11 @@ public class ServiceRegistry {
         return questionFacade;
     }
 
-    public UserFacade getUserFacade(){
+    public UserFacade getUserFacade() {
         return userFacade;
     }
 
-    public AnswerFacade getAnswerFacade(){
+    public AnswerFacade getAnswerFacade() {
         return answerFacade;
     }
 

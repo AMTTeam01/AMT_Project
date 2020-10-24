@@ -9,7 +9,6 @@
 <script src="../../assets/js/Utils.js"></script>
 
 <div class="container-fluid body-with-navbar col-8">
-    <input type="hidden" id="hidden_id" name="hidden_id" value="${question.id.asString()}">
     <h1>${question.title}</h1>
     <div class="row">
         <%@include file="fragments/vote.jsp" %>
@@ -25,9 +24,11 @@
                 Comment
             </button>
             <div id="comment-container" class="m-2 comment-container" style="display: none">
-                <form method="POST" action="${pageContext.request.contextPath}/comment.do">
+                <form method="POST" action="${pageContext.request.contextPath}/comment_question.do">
+                    <input type="hidden" id="comment_question_id" name="comment_question_id" value="${question.id.asString()}">
                     <label for="txt_question_comment">Your comment</label>
-                    <textarea class="form-control" id="txt_question_comment" rows="3" placeholder="Your comment" required></textarea>
+                    <textarea class="form-control" id="txt_question_comment" name="txt_question_comment" rows="3" placeholder="Your comment"
+                              required></textarea>
                     <button id="bnt_submit_question_comment" name="bnt_submit_question_comment" class="btn btn-primary btn-classic-filled mt-2 float-right"
                             type="submit">Comment
                     </button>
@@ -40,6 +41,7 @@
             <div class="m-2">
                 <form method="POST" action="${pageContext.request.contextPath}/answer.do">
                     <label for="txt_answer">Your answer</label>
+                    <input type="hidden" id="answer_question_id" name="answer_question_id" value="${question.id.asString()}">
                     <textarea class="form-control" id="txt_answer" name="txt_answer" rows="3" placeholder="Your answer" required></textarea>
                     <button id="bnt_submit_answer" name="bnt_submit_answer" class="btn btn-primary btn-classic-filled mt-2 float-right" type="submit">Answer
                     </button>

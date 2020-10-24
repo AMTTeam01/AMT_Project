@@ -39,25 +39,26 @@ public class AnswerHandler extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         req.getSession().removeAttribute("errors");
 
-        // retrieve the username in the cookie
+        // retrieve the username
         CurrentUserDTO currentUserDTO = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
+
+        String questionId = req.getParameter("answer_question_id");
 
 
         AnswerCommand answerCommand = AnswerCommand.builder()
                 .creationDate(new Date())
                 .description(req.getParameter("txt_answer"))
-                .questionId(new QuestionId(req.getParameter("hidden_id")))
+                .questionId(new QuestionId(questionId))
                 .userId(currentUserDTO.getUserId())
                 .build();
 
-
         try {
             answerFacade.addAnswer(answerCommand);
-            resp.sendRedirect( getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id"));
+            resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + questionId);
         } catch (AnswerFailedException | UserFailedException | QuestionFailedException | CommentFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }

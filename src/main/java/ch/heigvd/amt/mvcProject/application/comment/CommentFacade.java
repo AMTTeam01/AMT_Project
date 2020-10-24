@@ -1,6 +1,12 @@
 package ch.heigvd.amt.mvcProject.application.comment;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.application.user.UserFacade;
+import ch.heigvd.amt.mvcProject.application.user.UserQuery;
+import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.comment.ICommentRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
@@ -15,16 +21,31 @@ public class CommentFacade {
 
     private ICommentRepository commentRepository;
 
-    public CommentFacade(ICommentRepository commentRepository) {
+    private UserFacade userFacade;
+
+    public CommentFacade(ICommentRepository commentRepository,
+                         UserFacade userFacade) {
         this.commentRepository = commentRepository;
+        this.userFacade = userFacade;
     }
 
-    public void addComment(CommentCommand command) {
+    public void addComment(CommentCommand command) throws UserFailedException {
+
+        UsersDTO existingUser = userFacade.getUsers(
+                UserQuery.builder()
+                        .userId(command.getUserId())
+                        .build()
+        );
+
+        if (existingUser.getUsers().size() == 0)
+            throw new UserFailedException("The user hasn't been found");
+
 
         Comment submittedComment = Comment.builder()
                 .description(command.getDescription())
                 .creationDate(command.getCreateDate())
                 .userId(command.getUserId())
+                .username(existingUser.getUsers().get(0).getUsername())
                 .answerId(command.getAnswerId())
                 .questionId(command.getQuestionId())
                 .build();

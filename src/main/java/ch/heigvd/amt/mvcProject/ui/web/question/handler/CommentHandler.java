@@ -1,9 +1,12 @@
 package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentCommand;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -14,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-@WebServlet(name = "CommentHandler", urlPatterns = "/comment.do")
+@WebServlet(name = "CommentHandler", urlPatterns = "/comment_question.do")
 public class CommentHandler extends HttpServlet {
 
     @Inject
@@ -29,16 +32,30 @@ public class CommentHandler extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         req.getSession().removeAttribute("errors");
 
+        // retrieve the username
+        CurrentUserDTO currentUserDTO = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
+
+        // Question id
+        String questionId = req.getParameter("comment_question_id");
+
         CommentCommand commentCommand = CommentCommand.builder()
                 .createDate(new Date())
-                .description(req.getParameter("txt_comment"))
+                .userId(currentUserDTO.getUserId())
+                .questionId(new QuestionId(questionId))
+                .description(req.getParameter("txt_question_comment"))
                 .build();
 
-        commentFacade.addComment(commentCommand);
-        resp.sendRedirect( getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id"));
+
+        try {
+            commentFacade.addComment(commentCommand);
+            resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + questionId);
+        } catch (UserFailedException e) {
+            e.printStackTrace();
+        }
+
     }
 }

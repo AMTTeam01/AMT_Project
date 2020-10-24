@@ -39,7 +39,7 @@ public class Comment implements IEntity<Comment, CommentId> {
 
     public static class CommentBuilder {
 
-        public Comment builder() {
+        public Comment build() {
 
             if (id == null) {
                 id = new CommentId();
@@ -56,7 +56,6 @@ public class Comment implements IEntity<Comment, CommentId> {
             if (questionId == null && answerId == null) {
                 throw new IllegalArgumentException("questionId or answerId is mandatory");
             }
-
 
             if (userId == null) {
                 throw new IllegalArgumentException("UserId or answerId is mandatory");
