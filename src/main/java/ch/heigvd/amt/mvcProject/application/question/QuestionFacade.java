@@ -224,12 +224,25 @@ public class QuestionFacade {
      */
     private Collection<AnswersDTO.AnswerDTO> getAnswers(Question question) {
         return question.getAnswers().stream().map(
-                answer -> AnswersDTO.AnswerDTO.builder()
-                        .id(answer.getId())
-                        .creationDate(answer.getCreationDate())
-                        .description(answer.getDescription())
-                        .username(answer.getUsername())
-                        .build()
+                answer -> {
+                    Collection<CommentsDTO.CommentDTO> commentsDTO = new ArrayList<>();
+                    try {
+                        commentsDTO =
+                                commentFacade.getComments(CommentQuery.builder().answerId(answer.getId()).build())
+                                        .getComments();
+                    } catch (CommentFailedException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    return AnswersDTO.AnswerDTO.builder()
+                            .id(answer.getId())
+                            .creationDate(answer.getCreationDate())
+                            .description(answer.getDescription())
+                            .username(answer.getUsername())
+                            .comments(CommentsDTO.builder().comments(commentsDTO).build())
+                            .build();
+                }
         ).collect(Collectors.toList());
     }
 

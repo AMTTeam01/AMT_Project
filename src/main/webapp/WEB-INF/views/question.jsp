@@ -27,10 +27,10 @@
         </c:forEach>
     </div>
     <div id="add_question_comment_container">
-        <button name="btn_comment" id="btn_comment" href="#" class="btn btn-primary btn-classic-filled" onclick="toggleVisibility('comment-container')">
+        <button name="btn_comment" id="btn_comment" href="#" class="btn btn-primary btn-classic-filled" onclick="toggleVisibility('add-comment-container')">
             Comment
         </button>
-        <div id="comment-container" class="m-2 comment-container" style="display: none">
+        <div id="add-comment-container" class="m-2" style="display: none">
             <form method="POST" action="${pageContext.request.contextPath}/comment_question.do">
                 <input type="hidden" id="comment_question_id" name="comment_question_id" value="${question.id.asString()}">
                 <label for="txt_question_comment">Your comment</label>

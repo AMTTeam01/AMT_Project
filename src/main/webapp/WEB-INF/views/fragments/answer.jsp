@@ -14,9 +14,9 @@
                 <div class="answer_footer d-flex flex-row-reverse">
                     <span class="p-2">Creation Date : <fmt:formatDate value="${answer.creationDate}" pattern="dd.MM.yyyy HH:mm"/> </span>
                     <span class="p-2">Author ${answer.username}</span>
-                    <a href="javascript:void(0)" class="p-2 btn-link" onclick="toggleVisibility('comment-container-${answer.id}' )">Add comment</a>
+                    <a href="javascript:void(0)" class="p-2 btn-link" onclick="toggleVisibility('add-comment-container-${answer.id}' )">Add comment</a>
                 </div>
-                <div id="comment-container-${answer.id}" class="m-2 comment-container" style="display: none">
+                <div id="add-comment-container-${answer.id}" class="m-2" style="display: none">
                     <form method="POST" action="${pageContext.request.contextPath}/comment_question.do">
                         <input type="hidden" id="comment_answer_id" name="comment_answer_id" value="${answer.id.asString()}">
                         <input type="hidden" id="comment_question_id" name="comment_question_id" value="${requestScope.question.id.asString()}">
@@ -29,6 +29,16 @@
                             </button>
                         </div>
                     </form>
+                </div>
+                <div id="answer_comment_container">
+                    <c:forEach var="comment" items="${answer.comments.comments}">
+                        <fmt:formatDate value="${comment.creationDate}" pattern="dd.MM.yyyy HH:mm" var="strDate"/>
+                        <jsp:include page="comments.jsp">
+                            <jsp:param name="description" value="${comment.description}"/>
+                            <jsp:param name="username" value="${comment.username}"/>
+                            <jsp:param name="creationDate" value="${strDate}"/>
+                        </jsp:include>
+                    </c:forEach>
                 </div>
             </div>
         </div>

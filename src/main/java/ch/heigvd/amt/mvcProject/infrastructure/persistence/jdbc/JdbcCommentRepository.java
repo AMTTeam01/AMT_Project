@@ -50,7 +50,8 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "FROM tblComment C  " +
                             "         INNER JOIN tblQuestion Q on C.tblQuestion_id = Q.id  " +
                             "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
-                            "WHERE Q.id = ?",
+                            "WHERE Q.id = ?" +
+                            "ORDER BY C.creationDate ASC ",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -97,11 +98,13 @@ public class JdbcCommentRepository implements ICommentRepository {
                     "SELECT C.id           AS 'comment_id',  " +
                             "       C.description  AS 'comment_description',  " +
                             "       C.creationDate AS 'comment_creationDate',  " +
-                            "       U.userName  " +
+                            "       U.userName,  " +
+                            "       U.id AS 'user_id' "+
                             "FROM tblComment C  " +
-                            "         INNER JOIN tblAnswer A on C.tblQuestion_id = A.id  " +
+                            "         INNER JOIN tblAnswer A on C.tblAnswer_id = A.id  " +
                             "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
-                            "WHERE A.id = ? ",
+                            "WHERE A.id = ? " +
+                            "ORDER BY C.creationDate ASC",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -111,6 +114,7 @@ public class JdbcCommentRepository implements ICommentRepository {
             ResultSet rs = statement.executeQuery();
 
             ArrayList<Comment> comments = new ArrayList<>();
+
 
             while (rs.next()) {
                 Comment comment = Comment.builder()
@@ -124,9 +128,13 @@ public class JdbcCommentRepository implements ICommentRepository {
 
                 comments.add(comment);
             }
+
+            optionalComments = Optional.of(comments);
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
         return optionalComments;
     }
 
