@@ -26,7 +26,7 @@ public class AuthenticationFacade {
      *  - username is already used
      *  - password =/= confirmation of password
      */
-    public void register(RegisterCommand cmd) throws RegistrationFailedException {
+    public User register(RegisterCommand cmd) throws RegistrationFailedException {
         User existingUser = userRepository.findByUsername(cmd.getUsername())
                 .orElse(null);
 
@@ -46,6 +46,8 @@ public class AuthenticationFacade {
                 .build();
 
             userRepository.save(newUser);
+
+            return newUser;
         }catch(Exception e){
             throw new RegistrationFailedException(e.getMessage());
         }

@@ -160,12 +160,44 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void upvote(UserId userId, QuestionId questionId) {
-        addVote(userId, questionId, 1);
+        int voteValue = 0;
+
+        if (hasAlreadyVoted(userId, questionId))
+            voteValue = getVoteValue(userId, questionId);
+
+        switch (voteValue) {
+            case 1:
+            case -1:
+                voteValue = 0;
+                break;
+
+            case 0:
+                voteValue = 1;
+                break;
+        }
+
+        addVote(userId, questionId, voteValue);
     }
 
     @Override
     public void downvote(UserId userId, QuestionId questionId) {
-        addVote(userId, questionId, 0);
+        int voteValue = 0;
+
+        if (hasAlreadyVoted(userId, questionId))
+            voteValue = getVoteValue(userId, questionId);
+
+        switch (voteValue) {
+            case 1:
+            case -1:
+                voteValue = 0;
+                break;
+
+            case 0:
+                voteValue = -1;
+                break;
+        }
+
+        addVote(userId, questionId, voteValue);
     }
 
     @Override
@@ -195,6 +227,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         return totalVotes;
     }
 
+    /**
+     * Adds a vote to a question
+     * @param userId     : user that voted
+     * @param questionId : question to add the vote to
+     * @param positive   : vote value (-1, 0 or 1)
+     */
     public void addVote(UserId userId, QuestionId questionId, int positive) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
@@ -214,6 +252,57 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    private boolean hasAlreadyVoted(UserId userId, QuestionId questionId) {
+
+        boolean result = false;
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblUser_vote_tblQuestion " +
+                            "WHERE tblUser_id = ? AND tblQuestion_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, questionId.asString());
+
+            ResultSet rs = statement.executeQuery();
+            result = rs.next();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private int getVoteValue(UserId userId, QuestionId questionId) {
+
+        int voteValue = 0;
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblUser_vote_tblQuestion " +
+                            "WHERE tblUser_id = ? AND tblQuestion_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, questionId.asString());
+
+            ResultSet rs = statement.executeQuery();
+
+            while(rs.next()) {
+                voteValue = rs.getInt(3);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return voteValue;
     }
 
     /**
