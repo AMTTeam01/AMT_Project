@@ -33,7 +33,7 @@ public class BrowsingRenderer extends HttpServlet {
             throws ServletException, IOException {
 
         QuestionsDTO questionsDTO = null;
-        String search = request.getParameter("tags");
+        String search = request.getParameter("txt_search");
 
         if(search == null || search.isEmpty()) {
             questionsDTO = questionFacade.getAllQuestions();
