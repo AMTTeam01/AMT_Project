@@ -97,7 +97,11 @@ public class UserFacade {
      */
     public CurrentUserDTO editUser(EditUserCommand command) throws EditFailedException {
 
-        UserId userId = new UserId(command.getId());
+        UserId userId = null;
+        if (command.getId() != null)
+            userId = new UserId(command.getId());
+        else
+            throw new EditFailedException("command.id is null");
 
         User existingUser = userRepository.findById(userId).orElse(null);
 

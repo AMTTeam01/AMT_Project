@@ -1,7 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.authentication;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
@@ -15,7 +14,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
@@ -38,7 +36,7 @@ public class AuthenticationFacadeTestIT {
     }
 
     @Before
-    public void init() throws RegistrationFailedException {
+    public void initBeforeEach() throws RegistrationFailedException {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
         RegisterCommand registerCommand = RegisterCommand
@@ -62,7 +60,7 @@ public class AuthenticationFacadeTestIT {
     }
 
     @After
-    public void clean() {
+    public void cleanAfterEach() {
         UserFacade userFacade = serviceRegistry.getUserFacade();
 
         // Get all users
@@ -75,7 +73,6 @@ public class AuthenticationFacadeTestIT {
     }
 
     @Test
-    @Order(1)
     public void itShouldRegisterANewUser() throws RegistrationFailedException, LoginFailedException {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
@@ -100,8 +97,7 @@ public class AuthenticationFacadeTestIT {
     }
 
     @Test
-    @Order(2)
-    public void itShouldntRegisterAUserIfPresent() throws RegistrationFailedException {
+    public void itShouldntRegisterAUserIfPresent() {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
         RegisterCommand registerCommand = RegisterCommand
@@ -112,15 +108,12 @@ public class AuthenticationFacadeTestIT {
                 .email("patrick@gmail.com")
                 .build();
 
-        authenticationFacade.register(registerCommand);
-
         assertThrows(RegistrationFailedException.class, () -> {
             authenticationFacade.register(registerCommand);
         });
     }
 
     @Test
-    @Order(3)
     public void itShouldLoginAUserIfPresent() throws LoginFailedException {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
@@ -134,7 +127,6 @@ public class AuthenticationFacadeTestIT {
     }
 
     @Test
-    @Order(4)
     public void itShouldThrowIfUserIsntPresent(){
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
@@ -150,7 +142,6 @@ public class AuthenticationFacadeTestIT {
     }
 
     @Test
-    @Order(5)
     public void itShouldThrowIfUserIsPresentButPasswordIncorrect() {
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
@@ -166,7 +157,6 @@ public class AuthenticationFacadeTestIT {
     }
 
     @Test
-    @Order(6)
     public void itShouldThrowIfPasswordAndConfirmationPasswordArentTheSame(){
         AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
 
