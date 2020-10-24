@@ -20,6 +20,16 @@
     <div class="row">
         <div class="col"></div>
         <div class="col-10">
+            <div id="question_comments_container">
+                <c:forEach var="comment" items="${question.commentsDTO.comments}">
+                    <fmt:formatDate value="${comment.creationDate}" pattern="dd.MM.yyyy HH:mm" var="strDate"/>
+                    <jsp:include page="fragments/comments.jsp">
+                        <jsp:param name="description" value="${comment.description}"/>
+                        <jsp:param name="username" value="${comment.username}"/>
+                        <jsp:param name="creationDate" value="${strDate}"/>
+                    </jsp:include>
+                </c:forEach>
+            </div>
             <button name="btn_comment" id="btn_comment" href="#" class="btn btn-primary btn-classic-filled" onclick="toggleVisibility('comment-container')">
                 Comment
             </button>
