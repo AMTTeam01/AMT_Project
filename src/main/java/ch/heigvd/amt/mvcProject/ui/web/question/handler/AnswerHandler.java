@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
@@ -57,7 +58,7 @@ public class AnswerHandler extends HttpServlet {
         try {
             answerFacade.addAnswer(answerCommand);
             resp.sendRedirect( getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id"));
-        } catch (AnswerFailedException | UserFailedException | QuestionFailedException e) {
+        } catch (AnswerFailedException | UserFailedException | QuestionFailedException | CommentFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }
 

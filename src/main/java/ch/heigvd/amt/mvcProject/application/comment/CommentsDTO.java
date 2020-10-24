@@ -19,8 +19,9 @@ public class CommentsDTO {
     public static class CommentDTO{
         private String description;
         private Date creationDate;
+        private String username;
     }
 
     @Singular
-    private List<CommentsDTO> comments;
+    private List<CommentDTO> comments;
 }

@@ -12,6 +12,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
@@ -127,7 +128,8 @@ public class QuestionFacadeTestIT {
 
 
     @Test
-    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException {
+    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException,
+            CommentFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -162,7 +164,7 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void removeQuestion_ShouldRemoveQuestion_WhenCalled()
-            throws QuestionFailedException, UserFailedException, AnswerFailedException {
+            throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
 
         int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
@@ -209,7 +211,7 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed()
-            throws QuestionFailedException, UserFailedException {
+            throws QuestionFailedException, UserFailedException, CommentFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
