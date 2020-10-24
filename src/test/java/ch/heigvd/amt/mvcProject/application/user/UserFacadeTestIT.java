@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 import static org.junit.Assert.*;
-/*
+
 @RunWith(Arquillian.class)
 public class UserFacadeTestIT {
 
@@ -213,4 +213,3 @@ public class UserFacadeTestIT {
         assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
     }
 }
-*/

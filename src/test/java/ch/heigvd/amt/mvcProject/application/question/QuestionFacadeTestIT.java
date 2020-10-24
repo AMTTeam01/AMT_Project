@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-/*
+
 @RunWith(Arquillian.class)
 // TODO remove each insertion in DB => FixMethodOrder can't be removed
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -94,7 +94,7 @@ public class QuestionFacadeTestIT {
     @Test
     public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException {
 
-        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -105,7 +105,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions();
+        QuestionsDTO view = questionFacade.getAllQuestions();
         assertNotNull(view);
 
 
@@ -153,7 +153,7 @@ public class QuestionFacadeTestIT {
     @Test
     public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException, UserFailedException {
 
-        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -166,7 +166,7 @@ public class QuestionFacadeTestIT {
 
         questionFacade.removeQuestion(question.getId());
 
-        QuestionsDTO view = questionFacade.getQuestions();
+        QuestionsDTO view = questionFacade.getAllQuestions();
         assertNotNull(view);
 
 
@@ -214,4 +214,3 @@ public class QuestionFacadeTestIT {
     }
 
 }
-*/

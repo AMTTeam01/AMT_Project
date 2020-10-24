@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 import static org.junit.Assert.*;
-/*
+
 @RunWith(Arquillian.class)
 public class AuthenticationFacadeTestIT {
 
@@ -173,4 +173,4 @@ public class AuthenticationFacadeTestIT {
         });
     }
 
-}*/
+}
