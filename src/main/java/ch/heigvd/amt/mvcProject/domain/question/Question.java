@@ -1,12 +1,14 @@
 package ch.heigvd.amt.mvcProject.domain.question;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +28,12 @@ public class Question implements IEntity<Question, QuestionId> {
     private UserId userId;
 
     private String username;
+
+    private List<Answer> answers;
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
 
     @Override
     public Question deepClone() {
@@ -48,11 +56,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("Title is mandatory");
             }
 
-            if (description == null || description.isEmpty()){
+            if (description == null || description.isEmpty()) {
                 throw new IllegalArgumentException("Description is mandatory");
             }
 
-            if (creationDate == null ){
+            if (creationDate == null) {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
@@ -64,7 +72,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("Username is mandatory");
             }
 
-            return new Question(id, title, description, creationDate, userId, username);
+            if (answers == null) {
+                answers = new ArrayList<>();
+            }
+
+            return new Question(id, title, description, creationDate, userId, username, answers);
         }
     }
 

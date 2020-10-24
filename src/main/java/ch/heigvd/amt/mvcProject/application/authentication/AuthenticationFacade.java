@@ -76,4 +76,8 @@ public class AuthenticationFacade {
 
         return currentUser;
     }
+
+    public void delete(UserId id){
+        userRepository.remove(id);
+    }
 }
