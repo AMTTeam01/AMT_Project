@@ -58,7 +58,6 @@ public class QuestionFacadeTestIT {
     @Inject
     ServiceRegistry serviceRegistry;
 
-
     @Before
     public void init() throws RegistrationFailedException, LoginFailedException {
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
@@ -213,4 +212,21 @@ public class QuestionFacadeTestIT {
         });
     }
 
+    @Test
+    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(1, upvotedQuestion.getVotes());
+    }
 }

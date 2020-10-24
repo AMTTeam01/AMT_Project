@@ -183,10 +183,11 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblQuestion` (
   `tblUser_id` VARCHAR(256) NOT NULL,
   `tblQuestion_id` VARCHAR(256) NOT NULL,
   `positiv` TINYINT NOT NULL,
-  PRIMARY KEY (`tblUser_id`, `tblQuestion_id`),
-  INDEX `fk_tblUser_has_tblQuestion_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
+  PRIMARY KEY (`tblUser_id`, `tblQuestion_id`))
+  /*INDEX `fk_tblUser_has_tblQuestion_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
   INDEX `fk_tblUser_has_tblQuestion_tblUser1_idx` (`tblUser_id` ASC) VISIBLE,
-  CONSTRAINT `fk_tblUser_has_tblQuestion_tblUser1`
+  CONSTRAINTS FAILS FOR SOME REASONS, WORKS IN TERMINAL ON MYSQL...*/
+  /*CONSTRAINT `fk_tblUser_has_tblQuestion_tblUser1`
     FOREIGN KEY (`tblUser_id`)
     REFERENCES `help2000`.`tblUser` (`id`)
     ON DELETE NO ACTION
@@ -195,7 +196,7 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblQuestion` (
     FOREIGN KEY (`tblQuestion_id`)
     REFERENCES `help2000`.`tblQuestion` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION)*/
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;

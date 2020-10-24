@@ -145,6 +145,7 @@ public class QuestionFacade {
                 questionFound = QuestionsDTO.QuestionDTO.builder()
                         .title(question.getTitle())
                         .description(question.getDescription())
+                        .votes(questionRepository.getVotes(question.getId()))
                         .id(question.getId())
                         .build();
             } else {
