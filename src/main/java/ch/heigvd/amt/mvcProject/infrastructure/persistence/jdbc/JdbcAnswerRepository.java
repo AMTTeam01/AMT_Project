@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
@@ -38,7 +39,15 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblAnswer WHERE tblQuestion_id = ? ORDER BY creationDate ASC",
+                    "SELECT A.id as 'answer_id', " +
+                            "       description, " +
+                            "       creationDate, " +
+                            "       tblQuestion_id, " +
+                            "       U.id as 'user_id', " +
+                            "       userName " +
+                            "FROM tblAnswer A " +
+                            "         INNER JOIN tblUser U on A.tblUser_id = U.id " +
+                            "WHERE A.tblQuestion_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -47,7 +56,13 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
             ResultSet rs = statement.executeQuery();
 
-            optionalAnswers = Optional.of(getAnswers(rs));
+            if (rs.next()) {
+
+                //reset pointer position
+                rs.beforeFirst();
+
+                optionalAnswers = Optional.of(getAnswers(rs));
+            }
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -61,10 +76,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "INSERT INTO tblAnswer(id, description, creationDate, tblQuestion_id, tblUser_id)" +
-                            "values (?, ?, ?, ?," +
-                            "        (SELECT id" +
-                            "         FROM tblUser" +
-                            "         where userName = ?))"
+                            "values (?, ?, ?, ?,?)"
             );
 
             Timestamp creationDate = new Timestamp(answer.getCreationDate().getTime());
@@ -73,7 +85,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
             statement.setString(2, answer.getDescription());
             statement.setTimestamp(3, creationDate);
             statement.setString(4, answer.getQuestionId().asString());
-            statement.setString(5, answer.getUsername());
+            statement.setString(5, answer.getUserId().asString());
 
 
             statement.execute();
@@ -83,12 +95,17 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     }
 
     @Override
+    public void edit(Answer newEntity) {
+        // TODO : gérer l'édition de la question
+        throw new NotImplementedException("edit(Answer newEntity) from " + getClass().getName() + " not implemented");
+    }
+
+    @Override
     public void remove(AnswerId id) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "DELETE FROM tblAnswer WHERE id = ?"
             );
-
             statement.setString(1, id.asString());
             statement.execute();
         } catch (SQLException throwables) {
@@ -103,7 +120,15 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblAnswer WHERE id = ?",
+                    "SELECT A.id as 'answer_id', " +
+                            "       description, " +
+                            "       creationDate, " +
+                            "       tblQuestion_id, " +
+                            "       U.id as 'user_id', " +
+                            "       userName " +
+                            "FROM tblAnswer A " +
+                            "         INNER JOIN tblUser U on A.tblUser_id = U.id " +
+                            "WHERE A.id = ?",
                     // the cursor moves in forward or backward directions.
                     // the modifications done in the database are reflected in the ResultSet.
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -119,12 +144,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
                 rs.first();
 
-                Answer foundAnswer = Answer.builder()
-                        .id(new AnswerId(rs.getString("id")))
-                        .description(rs.getString("description"))
-                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                        .questionId(new QuestionId(rs.getString("tblQuestion_id")))
-                        .build();
+                Answer foundAnswer = getAnswer(rs);
 
                 optionalAnswer = Optional.of(foundAnswer);
             }
@@ -140,12 +160,14 @@ public class JdbcAnswerRepository implements IAnswerRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT userName," +
-                            "       A.id as 'answerId'," +
+                    "SELECT A.id as 'answer_id', " +
                             "       description, " +
-                            "       creationDate " +
+                            "       creationDate, " +
+                            "       tblQuestion_id, " +
+                            "       U.id as 'user_id', " +
+                            "       userName " +
                             "FROM tblAnswer A " +
-                            "         INNER JOIN tblUser U on A.tblUser_id = U.id",
+                            "         INNER JOIN tblUser U on A.tblUser_id = U.id ",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );
@@ -162,19 +184,23 @@ public class JdbcAnswerRepository implements IAnswerRepository {
         ArrayList<Answer> answers = new ArrayList<>();
 
         while (rs.next()) {
-            Answer foundAnswer = Answer.builder()
-                    .id(new AnswerId(rs.getString("id")))
-                    .description(rs.getString("description"))
-                    .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                    .questionId(new QuestionId(rs.getString("tblQuestion_id")))
-                    .username(rs.getString("username"))
-                    .build();
-
+            Answer foundAnswer = getAnswer(rs);
             answers.add(foundAnswer);
         }
 
         rs.close();
 
         return answers;
+    }
+
+    private Answer getAnswer(ResultSet rs) throws SQLException {
+        return Answer.builder()
+                .id(new AnswerId(rs.getString("answer_id")))
+                .description(rs.getString("description"))
+                .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                .questionId(new QuestionId(rs.getString("tblQuestion_id")))
+                .username(rs.getString("userName"))
+                .userId(new UserId(rs.getString("user_id")))
+                .build();
     }
 }

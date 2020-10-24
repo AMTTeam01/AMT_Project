@@ -5,7 +5,10 @@ import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.inject.Inject;
@@ -39,28 +42,22 @@ public class AnswerHandler extends HttpServlet {
 
         req.getSession().removeAttribute("errors");
 
-        // retreive the username in the cookie
-        String username = null;
-        Cookie[] cookies = req.getCookies();
+        // retrieve the username in the cookie
+        CurrentUserDTO currentUserDTO = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
 
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("username")) {
-                username = cookie.getValue();
-            }
-        }
 
         AnswerCommand answerCommand = AnswerCommand.builder()
                 .creationDate(new Date())
                 .description(req.getParameter("txt_answer"))
                 .questionId(new QuestionId(req.getParameter("hidden_id")))
-                .username(username)
+                .userId(currentUserDTO.getUserId())
                 .build();
 
 
         try {
             answerFacade.addAnswer(answerCommand);
             resp.sendRedirect( getServletContext().getContextPath() + "/question?id=" + req.getParameter("hidden_id"));
-        } catch (AnswerFailedException e) {
+        } catch (AnswerFailedException | UserFailedException | QuestionFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }
 

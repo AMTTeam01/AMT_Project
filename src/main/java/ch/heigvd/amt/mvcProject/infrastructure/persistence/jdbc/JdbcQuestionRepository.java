@@ -5,16 +5,19 @@ import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
+import ch.heigvd.amt.mvcProject.infrastructure.persistence.exceptions.NotImplementedException;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.sql.DataSource;
-import java.sql.*;
-import java.text.DateFormat;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
-import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -43,11 +46,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "INSERT INTO tblQuestion(id, title, description, creationDate, tblUser_id)" +
-                            "VALUES (?, ?, ?, ?," +
-                            "        (" +
-                            "            SELECT id" +
-                            "            FROM tblUser" +
-                            "            WHERE userName = ?))"
+                            "VALUES (?, ?, ?, ?, ?)"
             );
 
             Timestamp creationDate = new Timestamp(question.getCreationDate().getTime());
@@ -56,12 +55,18 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             statement.setString(2, question.getTitle());
             statement.setString(3, question.getDescription());
             statement.setTimestamp(4, creationDate);
-            statement.setString(5, question.getUsername());
+            statement.setString(5, question.getUserId().asString());
 
             statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    @Override
+    public void edit(Question newEntity) {
+        // TODO : gérer l'édition de la question
+        throw new NotImplementedException("edit(Question newEntity) from " + getClass().getName() + " not implemented");
     }
 
     @Override
@@ -91,7 +96,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.userName" +
+                            "       U.id AS 'user_id'," +
+                            "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "JOIN tblUser U on Q.tblUser_id = U.id " +
                             "WHERE Q.id = ?",
@@ -107,13 +113,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
                 rs.first();
 
-                Question foundQuestion = Question.builder()
-                        .id(new QuestionId(rs.getString("question_id")))
-                        .description(rs.getString("description"))
-                        .title(rs.getString("title"))
-                        .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
-                        .username(rs.getString("userName"))
-                        .build();
+                Question foundQuestion = getQuestion(rs);
 
                 optionalQuestion = Optional.of(foundQuestion);
             }
@@ -137,10 +137,12 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.description  as 'question_description', " +
                             "       Q.creationDate as 'question_creationDate', " +
                             "       UQ.userName    as 'question_username', " +
+                            "       UQ.id          as 'question_user_id', "+
                             "       A.id           as 'answer_id', " +
                             "       A.description  as 'answer_description', " +
                             "       A.creationDate as 'answer_creationDate', " +
-                            "       UA.username    as 'answer_username' " +
+                            "       UA.username    as 'answer_username', " +
+                            "       UA.id          as 'answer_user_id' " +
                             "FROM tblQuestion Q " +
                             "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
                             "         LEFT JOIN tblUser UA on A.tblUser_id = UA.id " +
@@ -159,7 +161,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             while (rs.next()) {
 
-                if (foundQuestion == null){
+                if (foundQuestion == null) {
 
                     foundQuestion = Question.builder()
                             .id(new QuestionId(rs.getString("question_id")))
@@ -167,17 +169,19 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .title(rs.getString("title"))
                             .creationDate(new Date(rs.getTimestamp("question_creationDate").getTime()))
                             .username(rs.getString("question_username"))
+                            .userId(new UserId(rs.getString("question_user_id")))
                             .build();
                 }
 
                 String username = rs.getString("answer_username");
 
-                if(username != null){
+                if (username != null) {
                     foundQuestion.addAnswer(Answer.builder()
+                            .id(new AnswerId(rs.getString("answer_id")))
                             .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
                             .description(rs.getString("answer_description"))
-                            .id(new AnswerId(rs.getString("answer_id")))
                             .questionId(new QuestionId(rs.getString("question_id")))
+                            .userId(new UserId(rs.getString("answer_user_id")))
                             .username(username)
                             .build());
                 }
@@ -202,7 +206,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.userName" +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
                             "       FROM tblQuestion Q " +
                             "INNER JOIN tblUser U on Q.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -230,13 +235,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         while (rs.next()) {
 
-            Question foundQuestion = Question.builder()
-                    .id(new QuestionId(rs.getString("question_id")))
-                    .creationDate(new Date(rs.getDate("creationDate").getTime()))
-                    .username(rs.getString("userName"))
-                    .description(rs.getString("description"))
-                    .title(rs.getString("title"))
-                    .build();
+            Question foundQuestion = getQuestion(rs);
 
             questions.add(foundQuestion);
         }
@@ -244,6 +243,23 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         rs.close();
 
         return questions;
+    }
+
+    /**
+     * Return a single question pointed by rs
+     * @param rs result set
+     * @return the question pointed by rs
+     * @throws SQLException
+     */
+    private Question getQuestion(ResultSet rs) throws SQLException {
+        return Question.builder()
+                .id(new QuestionId(rs.getString("question_id")))
+                .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
+                .userId(new UserId(rs.getString("user_id")))
+                .username(rs.getString("userName"))
+                .description(rs.getString("description"))
+                .title(rs.getString("title"))
+                .build();
     }
 
 

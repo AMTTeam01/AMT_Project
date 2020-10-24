@@ -31,16 +31,17 @@ public class QuestionRenderer extends HttpServlet {
         answerFacade = serviceRegistry.getAnswerFacade();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         //build a question command with attribute id in URL
         QuestionId id = new QuestionId(request.getParameter("id"));
-        QuestionQuery query = QuestionQuery.builder().questionId(id).build();
+        QuestionQuery query = QuestionQuery.builder().questionId(id).withDetail(true).build();
         QuestionsDTO.QuestionDTO questionDTO = null;
 
         //check if question ID exists. If not, come back to browsing
         try {
-            questionDTO = questionFacade.getQuestionByIdWithDetails(query);
+            questionDTO = questionFacade.getQuestion(query);
             request.setAttribute("question", questionDTO);
 
 

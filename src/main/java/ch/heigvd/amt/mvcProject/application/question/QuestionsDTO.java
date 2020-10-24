@@ -3,8 +3,10 @@ package ch.heigvd.amt.mvcProject.application.question;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,9 +25,11 @@ public class QuestionsDTO {
         private String title;
         private int ranking;
         private String username;
+        private UserId userId;
         private List<String> tags;
         private String description;
-        private List<AnswersDTO.AnswerDTO> answers;
+        private Date creationDate;
+        private AnswersDTO answersDTO;
     }
 
     @Singular

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<c:forEach var="answer" items="${requestScope.question.answers}">
+<c:forEach var="answer" items="${requestScope.question.answersDTO.answers}">
 <div class="container-fluid m-5">
     <div class="row" id="answer_block">
         <div class="col-1" id="answer_vote">
