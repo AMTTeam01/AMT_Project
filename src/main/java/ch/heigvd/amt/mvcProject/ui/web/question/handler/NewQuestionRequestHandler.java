@@ -35,7 +35,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        // TODO : gérer les tags
+        // TODO : gerer les tags
 
         List<String> tags_tmp = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3"));
 

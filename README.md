@@ -67,3 +67,7 @@ src/
 
 ## Downloading the package
 The package can be downloaded from the organisation's packages, since the organisation is private you need to ask for privileges to one of the administrators. Then you can run this command with docker to get the container : `docker pull ghcr.io/amtteamheig/amt_project:latest`
+
+## Rules for voting
+
+When voting on a question or a comment, the user can vote on his/her own question but only once (that applies to all questions : 1 vote per user). Votes can go into negative.

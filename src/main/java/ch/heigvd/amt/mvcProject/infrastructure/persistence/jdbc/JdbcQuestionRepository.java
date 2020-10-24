@@ -39,7 +39,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     @Override
     public void save(Question question) {
 
-        // TODO : gérer l'ajout des tags
+        // TODO : gerer l'ajout des tags
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
@@ -63,7 +63,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void edit(Question newEntity) {
-        // TODO : gérer l'édition de la question
+        // TODO : gerer l'édition de la question
         throw new NotImplementedException("edit(Question newEntity) from " + getClass().getName() + " not implemented");
     }
 
@@ -84,7 +84,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     @Override
     public Optional<Question> findById(QuestionId id) {
 
-        // TODO : gérer les tags toujours
+        // TODO : gerer les tags toujours
 
         Optional<Question> optionalQuestion = Optional.empty();
 

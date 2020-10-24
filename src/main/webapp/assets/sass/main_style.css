@@ -193,6 +193,28 @@ body {
   background-color: #cc5c00;
 }
 
+.my_profile {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.my_profile .txt-username,
+.my_profile .txt-email {
+  text-align: center;
+}
+.my_profile .txt-username {
+  font-size: 34px;
+  font-weight: bold;
+  color: #FF7300;
+}
+.my_profile .my-questions .title {
+  color: #FF7300;
+  font-size: 20px;
+}
+.my_profile .fragment-profile {
+  padding: 20px;
+  background-color: #46444e;
+}
+
 /* Attention, l'étoile signifie qu'il n'y a pas besoin de spécifier
 l'espace de nom précédant la variable sinon on devrait écrire base.$main-color */
 
