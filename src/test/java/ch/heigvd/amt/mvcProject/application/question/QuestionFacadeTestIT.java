@@ -2,6 +2,10 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
@@ -10,6 +14,9 @@ import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterComm
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -45,6 +52,7 @@ public class QuestionFacadeTestIT {
     private AuthenticationFacade authenticationFacade;
     private UserFacade userFacade;
     private QuestionFacade questionFacade;
+    private AnswerFacade answerFacade;
 
 
     @Deployment(testable = true)
@@ -66,6 +74,8 @@ public class QuestionFacadeTestIT {
         questionFacade = serviceRegistry.getQuestionFacade();
 
         userFacade = serviceRegistry.getUserFacade();
+
+        answerFacade = serviceRegistry.getAnswerFacade();
 
         RegisterCommand registerCommand = RegisterCommand.builder()
                 .email(EMAIL)
@@ -151,7 +161,8 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void delete_ShouldRemoveQuestion_WhenCalled() throws QuestionFailedException, UserFailedException {
+    public void removeQuestion_ShouldRemoveQuestion_WhenCalled()
+            throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
@@ -162,15 +173,29 @@ public class QuestionFacadeTestIT {
                 .userId(currentUserDTO.getUserId())
                 .build();
 
+
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .userId(currentUserDTO.getUserId())
+                .creationDate(new Date())
+                .description("Bla")
+                .questionId(question.getId())
+                .build();
+
+        answerFacade.addAnswer(answerCommand);
+
+        QuestionId questionId = question.getId();
 
         questionFacade.removeQuestion(question.getId());
 
         QuestionsDTO view = questionFacade.getQuestions();
         assertNotNull(view);
-
-
         assertEquals(sizeBefore, view.getQuestions().size());
+
+        assertThrows(QuestionFailedException.class, () -> {
+            answerFacade.getAnswers(AnswerQuery.builder().questionId(questionId).build());
+        });
     }
 
     @Test

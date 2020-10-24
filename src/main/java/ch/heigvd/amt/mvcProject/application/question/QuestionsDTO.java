@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.*;
@@ -27,6 +29,7 @@ public class QuestionsDTO {
         private List<String> tags;
         private String description;
         private Date creationDate;
+        private AnswersDTO answersDTO;
     }
 
     @Singular
