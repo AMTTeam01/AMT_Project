@@ -146,6 +146,16 @@ body {
   margin-top: 20px;
 }
 
+.btn-link {
+  text-decoration: none;
+  color: white;
+}
+.btn-link:hover {
+  text-decoration: none;
+  color: #FF7300;
+  transition: all 0.5s;
+}
+
 .navbar {
   background-color: white;
 }

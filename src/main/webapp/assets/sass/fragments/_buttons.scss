@@ -46,3 +46,13 @@
 .btn-register {
   margin-top: 20px;
 }
+
+.btn-link{
+  text-decoration: none;
+  color: $color-white;
+  &:hover{
+    text-decoration: none;
+    color: $main-color;
+    transition: all .5s;
+  }
+}
