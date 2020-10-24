@@ -33,7 +33,7 @@ public class Comment implements IEntity<Comment, CommentId> {
     @Override
     public Comment deepClone() {
         return this.toBuilder()
-                .id(new CommentId())
+                .id(new CommentId(id.asString()))
                 .build();
     }
 
