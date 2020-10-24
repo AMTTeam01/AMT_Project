@@ -83,7 +83,7 @@ public class Question implements IEntity<Question, QuestionId> {
                 comments = new ArrayList<>();
             }
 
-            return new Question(id, title, description, vote, creationDate, username, answers, comments);
+            return new Question(id, title, description, creationDate, userId,username, answers, comments);
         }
     }
 

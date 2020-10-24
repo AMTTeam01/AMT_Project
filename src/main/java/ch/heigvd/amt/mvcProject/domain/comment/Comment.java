@@ -22,6 +22,10 @@ public class Comment implements IEntity<Comment, CommentId> {
 
     private Date creationDate;
 
+    private QuestionId questionId;
+
+    private AnswerId answerId;
+
     private UserId userId;
 
     private String username;
@@ -49,6 +53,11 @@ public class Comment implements IEntity<Comment, CommentId> {
                 throw new IllegalArgumentException("CreationDate is mandatory");
             }
 
+            if (questionId == null && answerId == null) {
+                throw new IllegalArgumentException("questionId or answerId is mandatory");
+            }
+
+
             if (userId == null) {
                 throw new IllegalArgumentException("UserId or answerId is mandatory");
             }
@@ -57,7 +66,7 @@ public class Comment implements IEntity<Comment, CommentId> {
             }
 
 
-            return new Comment(id, description, creationDate, userId,username);
+            return new Comment(id, description, creationDate, questionId, answerId, userId,username);
         }
     }
 }

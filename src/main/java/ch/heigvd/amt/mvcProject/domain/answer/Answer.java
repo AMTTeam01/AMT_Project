@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
@@ -73,7 +74,7 @@ public class Answer implements IEntity<Answer, AnswerId> {
                 comments = new ArrayList<>();
             }
 
-            return new Answer(id, description, creationDate, questionId, username, comments);
+            return new Answer(id, description, creationDate, questionId, userId,username, comments);
         }
     }
 }
