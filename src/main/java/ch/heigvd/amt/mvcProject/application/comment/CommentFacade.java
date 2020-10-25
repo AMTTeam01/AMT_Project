@@ -80,13 +80,13 @@ public class CommentFacade {
         if (query == null) {
             throw new CommentFailedException("Query is null");
         } else {
-            if (query.getQuestionId() != null && query.getAnswerId() == null) {
+            if (query.getQuestionId() != null && query.getAnswerId() == null && query.getCommentId() == null) {
                 commentsFound = commentRepository.findByQuestionId(query.getQuestionId())
                         .orElseThrow(() -> new QuestionFailedException(
                                 "The comments associate with the id question " + query.getQuestionId()
                                         .asString() + " hasn't be found"));
 
-            } else if (query.getAnswerId() != null) {
+            } else if (query.getAnswerId() != null && query.getCommentId() == null) {
                 commentsFound = commentRepository.findByAnswerId(query.getAnswerId())
                         .orElseThrow(() -> new AnswerFailedException(
                                 "The comments associate with the id answer " + query.getAnswerId()
@@ -97,6 +97,24 @@ public class CommentFacade {
         }
 
         return getCommentsAsDTO(commentsFound);
+    }
+
+    public CommentsDTO.CommentDTO getComment(CommentQuery query) throws CommentFailedException {
+        Comment commentFound;
+
+        if (query == null) {
+            throw new CommentFailedException("Query is null");
+        } else {
+            if (query.getCommentId() != null && query.getAnswerId() == null & query.getQuestionId() == null) {
+                commentFound =
+                        commentRepository.findById(query.getCommentId())
+                                .orElseThrow(() -> new CommentFailedException("Comment not found"));
+            } else {
+                throw new CommentFailedException("Query invalid");
+            }
+        }
+
+        return getCommentAsDTO(commentFound);
     }
 
     private CommentsDTO getCommentsAsDTO(Collection<Comment> comments) {

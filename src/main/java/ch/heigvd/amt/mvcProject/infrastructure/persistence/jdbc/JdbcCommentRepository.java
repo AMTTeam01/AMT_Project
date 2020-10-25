@@ -251,7 +251,8 @@ public class JdbcCommentRepository implements ICommentRepository {
                             "from tblComment C " +
                             "         LEFT JOIN tblQuestion Q on C.tblQuestion_id = Q.id " +
                             "         LEFT JOIN tblAnswer A on C.tblAnswer_id = A.id " +
-                            "         INNER JOIN tblUser U on C.tblUser_id = U.id ",
+                            "         INNER JOIN tblUser U on C.tblUser_id = U.id " +
+                            "ORDER BY C.creationDate ASC ",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );

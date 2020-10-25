@@ -15,6 +15,8 @@ import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.comment.CommentId;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -262,7 +264,65 @@ public class CommentFacadeTestIT {
         );
     }
 
-/*    @Test
-    void testGetComments() {
-    }*/
+    @Test
+    public void getComments_ShouldReturnAllComment_WhenNoParamWasPassed()
+            throws UserFailedException, CommentFailedException {
+
+        CommentCommand commandAnswer = CommentCommand.builder()
+                .answerId(answer.getId())
+                .userId(currentUserDTO.getUserId())
+                .createDate(new Date())
+                .description("Test comment")
+                .build();
+
+        CommentsDTO.CommentDTO answerComment = commentFacade.addComment(commandAnswer);
+
+        CommentCommand commandQuestion = CommentCommand.builder()
+                .questionId(question.getId())
+                .userId(currentUserDTO.getUserId())
+                .createDate(new Date())
+                .description("Test comment")
+                .build();
+
+        CommentsDTO.CommentDTO questionComment = commentFacade.addComment(commandQuestion);
+
+        CommentsDTO view = commentFacade.getComments();
+
+        assertEquals(2, view.getComments().size());
+
+        assertEquals(answerComment.getId().asString(), view.getComments().get(1).getId().asString());
+        assertEquals(questionComment.getId().asString(), view.getComments().get(0).getId().asString());
+
+
+        commentFacade.removeComment(answerComment.getId());
+        commentFacade.removeComment(questionComment.getId());
+    }
+
+    @Test
+    public void removeComment_ShouldRemoveTheCommentInTheRepo_WhenAValidIdPassed()
+            throws UserFailedException, CommentFailedException {
+        CommentCommand command = CommentCommand.builder()
+                .answerId(answer.getId())
+                .userId(currentUserDTO.getUserId())
+                .createDate(new Date())
+                .description("Test comment")
+                .build();
+
+        CommentsDTO.CommentDTO comment = commentFacade.addComment(command);
+
+        commentFacade.removeComment(comment.getId());
+
+        CommentsDTO view = commentFacade.getComments();
+
+        assertEquals(0, view.getComments().size());
+
+        assertThrows(CommentFailedException.class,
+                () -> commentFacade.getComment(CommentQuery.builder().commentId(comment.getId()).build()));
+    }
+
+    @Test
+    public void removeComment_ShouldThrowAError_IfTheIdInstInTheRepo() {
+        assertThrows(CommentFailedException.class,
+                () -> commentFacade.removeComment(new CommentId()));
+    }
 }
