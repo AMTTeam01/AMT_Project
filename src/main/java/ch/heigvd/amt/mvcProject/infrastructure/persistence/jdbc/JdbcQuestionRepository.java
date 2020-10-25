@@ -39,7 +39,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void save(Question question) {
-
+        System.out.println("SAVING : " + question.getId().asString());
         // TODO : gerer l'ajout des tags
 
         try {
@@ -70,13 +70,22 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void remove(QuestionId id) {
+        System.out.println("REMOVING QUESTION : " + id.asString());
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "DELETE FROM tblQuestion WHERE id = ?"
             );
 
+            // Could do ON CASCADE but didn't work with jdbc...
+            PreparedStatement votesStatement = dataSource.getConnection().prepareStatement(
+                    "DELETE FROM tblUser_vote_tblQuestion WHERE tblQuestion_id = ?"
+            );
+
             statement.setString(1, id.asString());
+            votesStatement.setString(1, id.asString());
+
             statement.execute();
+            votesStatement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -225,8 +234,9 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     public void upvote(UserId userId, QuestionId questionId) {
         int voteValue = 0;
 
-        if (hasAlreadyVoted(userId, questionId))
+        if (hasAlreadyVoted(userId, questionId)) {
             voteValue = getVoteValue(userId, questionId);
+        }
 
         switch (voteValue) {
             case 1:
@@ -246,8 +256,9 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     public void downvote(UserId userId, QuestionId questionId) {
         int voteValue = 0;
 
-        if (hasAlreadyVoted(userId, questionId))
+        if (hasAlreadyVoted(userId, questionId)) {
             voteValue = getVoteValue(userId, questionId);
+        }
 
         switch (voteValue) {
             case 1:
