@@ -35,7 +35,7 @@ public class QuestionFacade {
         UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
         if (existingUser.getUsers().size() == 0)
-            new QuestionFailedException("The user hasn't been found");
+            throw new QuestionFailedException("The user hasn't been found");
 
         try {
 
@@ -75,40 +75,12 @@ public class QuestionFacade {
      *
      * @return all questions as DTO
      */
-    public QuestionsDTO getQuestions() {
+    public QuestionsDTO getAllQuestions() {
         Collection<Question> allQuestions = questionRepository.findAll();
 
         return getQuestionsDTO(allQuestions, null);
     }
 
-    /**
-     * Retrieve questions asked by the query
-     *
-     * @param query Query passed
-     * @return return the result asked by the query as DTO
-     * @throws QuestionFailedException
-     */
-    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException {
-        Collection<Question> questionsFound = new ArrayList<>();
-
-        if (query == null) {
-            throw new QuestionFailedException("Query is null");
-        } else {
-
-            if (query.getQuestionId() != null) {
-                Question question = questionRepository.findById(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-                questionsFound.add(question);
-
-            } else {
-                throw new QuestionFailedException("Query invalid");
-
-            }
-        }
-
-        return getQuestionsDTO(questionsFound, null);
-    }
 
     /**
      * Return a single Question asked by query
@@ -151,6 +123,23 @@ public class QuestionFacade {
         }
 
         return questionFound;
+    }
+
+    /**
+     * Get a bunch of questions with a query
+     * @param query query
+     * @return questions found
+     */
+    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException{
+        if(query.title == null && query.userId == null){
+            throw new QuestionFailedException("getQuestions query invalid");
+        } else {
+            if(query.userId != null){
+                return getQuestionsDTO(questionRepository.findByUserId(query.userId),null);
+            } else  {
+                return getQuestionsDTO(questionRepository.findByTitleContaining(query.title),null);
+            }
+        }
     }
 
     /**

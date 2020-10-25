@@ -78,8 +78,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             statement.setString(1, id.asString());
             statement.execute();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
     }
 
@@ -117,8 +117,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
                 optionalQuestion = Optional.of(foundQuestion);
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
 
         return optionalQuestion;
@@ -215,8 +215,71 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             );
 
             questions = getQuestions(statement.executeQuery());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
+
+        return questions;
+    }
+
+    /**
+     * find all questions asked by an user
+     * @param userId user
+     * @return questions found
+     */
+    @Override
+    public Collection<Question> findByUserId(UserId userId){
+        Collection<Question> questions = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
+                            "       FROM tblQuestion Q " +
+                            "INNER JOIN tblUser U on Q.tblUser_id = U.id " +
+                            "WHERE U.id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+
+            questions = getQuestions(statement.executeQuery());
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
+
+        return questions;
+    }
+
+    @Override
+    public Collection<Question> findByTitleContaining(String search) {
+        Collection<Question> questions = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
+                            "       FROM tblQuestion Q " +
+                            "INNER JOIN tblUser U on Q.tblUser_id = U.id " +
+                            "WHERE Q.title LIKE ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1,  "%" + search + "%");
+
+            questions = getQuestions(statement.executeQuery());
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
 
         return questions;

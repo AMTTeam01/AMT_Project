@@ -8,6 +8,7 @@
         <form method="POST" action="${pageContext.request.contextPath}/new_question.do">
             <input id="txt_title" name="txt_title" class="form-control classic-form" placeholder="Insert your question" required />
             <textarea id="txt_description" name="txt_description" class="form-control classic-form bigger-text-area" placeholder="Insert your description" required></textarea>
+            <input id="txt_tags" name="txt_tags" class="form-control classic-form" placeholder="Insert your tags (separated by commas)"/>
             <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-primary btn-classic-filled btn-full" value="Submit" />
         </form>
     </div>
