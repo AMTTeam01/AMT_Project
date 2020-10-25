@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-@WebServlet(name = "CommentHandler", urlPatterns = "/comment_question.do")
+@WebServlet(name = "CommentHandler", urlPatterns = "/comment.do")
 public class CommentHandler extends HttpServlet {
 
     @Inject
@@ -52,7 +52,7 @@ public class CommentHandler extends HttpServlet {
         CommentCommand commentCommand = CommentCommand.builder()
                 .createDate(new Date())
                 .userId(currentUserDTO.getUserId())
-                // If null, it mean the comment is for a question else a answer comment
+                // If null, it mean the comment is for a question, otherwise a answer comment
                 .questionId(answerId == null ? new QuestionId(questionId) : null)
                 .answerId(answerId)
                 .description(req.getParameter("txt_question_comment"))

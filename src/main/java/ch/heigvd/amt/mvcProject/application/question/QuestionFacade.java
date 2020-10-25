@@ -250,5 +250,4 @@ public class QuestionFacade {
                 }
         ).collect(Collectors.toList());
     }
-
 }

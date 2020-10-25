@@ -17,7 +17,7 @@
                     <a href="javascript:void(0)" class="p-2 btn-link" onclick="toggleVisibility('add-comment-container-${answer.id}' )">Add comment</a>
                 </div>
                 <div id="add-comment-container-${answer.id}" class="m-2" style="display: none">
-                    <form method="POST" action="${pageContext.request.contextPath}/comment_question.do">
+                    <form method="POST" action="${pageContext.request.contextPath}/comment.do">
                         <input type="hidden" id="comment_answer_id" name="comment_answer_id" value="${answer.id.asString()}">
                         <input type="hidden" id="comment_question_id" name="comment_question_id" value="${requestScope.question.id.asString()}">
                         <label for="txt_question_comment">Your comment</label>

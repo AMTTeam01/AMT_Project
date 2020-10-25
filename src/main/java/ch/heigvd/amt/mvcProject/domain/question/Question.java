@@ -32,8 +32,10 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private List<Answer> answers;
 
-    private List<Comment> comments;
-
+    /**
+     * Add a answer in the question
+     * @param answer Answer that will be added
+     */
     public void addAnswer(Answer answer){
         answers.add(answer);
     }
@@ -79,11 +81,7 @@ public class Question implements IEntity<Question, QuestionId> {
                 answers = new ArrayList<>();
             }
 
-            if(comments == null){
-                comments = new ArrayList<>();
-            }
-
-            return new Question(id, title, description, creationDate, userId,username, answers, comments);
+            return new Question(id, title, description, creationDate, userId,username, answers);
         }
     }
 

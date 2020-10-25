@@ -40,10 +40,6 @@ public class Answer implements IEntity<Answer, AnswerId> {
                 .build();
     }
 
-    public void addComment(Comment comment){
-        comments.add(comment);
-    }
-
     public static class AnswerBuilder {
         public Answer build() {
             if (id == null) {

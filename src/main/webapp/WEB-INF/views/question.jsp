@@ -31,7 +31,7 @@
             Comment
         </button>
         <div id="add-comment-container" class="m-2" style="display: none">
-            <form method="POST" action="${pageContext.request.contextPath}/comment_question.do">
+            <form method="POST" action="${pageContext.request.contextPath}/comment.do">
                 <input type="hidden" id="comment_question_id" name="comment_question_id" value="${question.id.asString()}">
                 <label for="txt_question_comment">Your comment</label>
                 <textarea class="form-control" id="txt_question_comment" name="txt_question_comment" rows="3" placeholder="Your comment"

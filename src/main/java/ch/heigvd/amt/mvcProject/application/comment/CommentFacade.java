@@ -28,6 +28,13 @@ public class CommentFacade {
         this.userFacade = userFacade;
     }
 
+    /**
+     * Add a comment in the repository
+     * @param command contain comment attribute that need to be store
+     * @return The comment inserted as DTO
+     * @throws UserFailedException
+     * @throws CommentFailedException
+     */
     public CommentsDTO.CommentDTO addComment(CommentCommand command) throws UserFailedException,
             CommentFailedException {
 
@@ -44,7 +51,6 @@ public class CommentFacade {
 
         if (existingUser.getUsers().size() == 0)
             throw new UserFailedException("The user hasn't been found");
-
 
         Comment submittedComment = Comment.builder()
                 .description(command.getDescription())
@@ -67,12 +73,24 @@ public class CommentFacade {
         return commentDTO;
     }
 
+    /**
+     * Retrieve all comments in the repo
+     * @return All comments in the repo as DTO
+     */
     public CommentsDTO getComments() {
         Collection<Comment> allComments = commentRepository.findAll();
 
         return getCommentsAsDTO(allComments);
     }
 
+    /**
+     * Retrieve all comments in the repo requested by the query
+     * @param query filter the result
+     * @return Comment requested as DTO
+     * @throws CommentFailedException
+     * @throws QuestionFailedException
+     * @throws AnswerFailedException
+     */
     public CommentsDTO getComments(CommentQuery query)
             throws CommentFailedException, QuestionFailedException, AnswerFailedException {
         Collection<Comment> commentsFound = new ArrayList<>();
@@ -99,6 +117,12 @@ public class CommentFacade {
         return getCommentsAsDTO(commentsFound);
     }
 
+    /**
+     * Return a single Comment requested by the query
+     * @param query filter the result
+     * @return return the comment requested as DTO
+     * @throws CommentFailedException
+     */
     public CommentsDTO.CommentDTO getComment(CommentQuery query) throws CommentFailedException {
         Comment commentFound;
 
@@ -117,6 +141,11 @@ public class CommentFacade {
         return getCommentAsDTO(commentFound);
     }
 
+    /**
+     * Transform the given comments into DTO
+     * @param comments Comments in parameters as DTO
+     * @return
+     */
     private CommentsDTO getCommentsAsDTO(Collection<Comment> comments) {
         List<CommentsDTO.CommentDTO> commentDTOList = comments.stream().map(
                 comment -> getCommentAsDTO(comment)
@@ -125,6 +154,11 @@ public class CommentFacade {
         return CommentsDTO.builder().comments(commentDTOList).build();
     }
 
+    /**
+     * Transform a single comment into DTO
+     * @param comment Comments in parameters as DTO
+     * @return
+     */
     private CommentsDTO.CommentDTO getCommentAsDTO(Comment comment) {
         return CommentsDTO.CommentDTO.builder()
                 .creationDate(comment.getCreationDate())
@@ -134,6 +168,11 @@ public class CommentFacade {
                 .build();
     }
 
+    /**
+     * Remove a comment in the repo
+     * @param id the comment id that need to be removed
+     * @throws CommentFailedException
+     */
     public void removeComment(CommentId id) throws CommentFailedException {
         commentRepository.findById(id).orElseThrow(
                 () -> new CommentFailedException("Comment not found")

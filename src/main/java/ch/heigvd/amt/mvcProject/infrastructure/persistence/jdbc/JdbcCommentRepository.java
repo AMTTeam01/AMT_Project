@@ -41,6 +41,7 @@ public class JdbcCommentRepository implements ICommentRepository {
         Optional<ArrayList<Comment>> optionalComments = Optional.empty();
 
         try {
+            // Left join to distinguish between a questionId not valid and a question without comments
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT C.id           AS 'comment_id',  " +
                             "       C.description  AS 'comment_description',  " +
@@ -99,6 +100,7 @@ public class JdbcCommentRepository implements ICommentRepository {
 
 
         try {
+            // Left join to distinguish between a AnswerId not valid and a question without comments
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT C.id           AS 'comment_id',  " +
                             "       C.description  AS 'comment_description',  " +
@@ -201,6 +203,7 @@ public class JdbcCommentRepository implements ICommentRepository {
         Optional<Comment> optionalComment = Optional.empty();
 
         try {
+            // Left join to distinguish between a AnswerId or a QuestionId not valid and result without comments
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT C.id as 'comment_id', " +
                             "       C.creationDate, " +
@@ -240,6 +243,7 @@ public class JdbcCommentRepository implements ICommentRepository {
         Collection<Comment> comments = new ArrayList<>();
 
         try {
+            // Left join to distinguish between a AnswerId or a QuestionId not valid and result without comments
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT C.id as 'comment_id', " +
                             "       C.creationDate, " +
@@ -270,6 +274,12 @@ public class JdbcCommentRepository implements ICommentRepository {
         return comments;
     }
 
+    /**
+     * Transform result from the repo into model obejct
+     * @param rs pointer from repo
+     * @return a Comment build with repo data
+     * @throws SQLException
+     */
     private Comment getCommentAsModel(ResultSet rs) throws SQLException {
         Comment.CommentBuilder commentBuilder = Comment.builder()
                 .userId(new UserId(rs.getString("user_id")))

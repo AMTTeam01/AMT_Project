@@ -88,6 +88,14 @@ public class AnswerFacade {
         }
     }
 
+    /**
+     * Return AnswersDTO for the given query
+     * @param query query to filter result
+     * @return AnswersDTO requested
+     * @throws AnswerFailedException
+     * @throws QuestionFailedException
+     * @throws CommentFailedException
+     */
     public AnswersDTO getAnswers(AnswerQuery query)
             throws AnswerFailedException, QuestionFailedException, CommentFailedException {
 

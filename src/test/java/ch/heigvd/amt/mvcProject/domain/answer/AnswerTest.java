@@ -50,27 +50,4 @@ public class AnswerTest {
         assertFalse(a1 == a2);
     }
 
-    @Test
-    public void addComment_ShouldAddCommentInTheCommentsArray_WhenCalled(){
-        Answer a = Answer.builder()
-                .creationDate(new Date())
-                .description("Test")
-                .questionId(question.getId())
-                .username(user.getUsername())
-                .userId(user.getId())
-                .build();
-
-        Comment c = Comment.builder()
-                .creationDate(new Date())
-                .answerId(a.getId())
-                .description("Comments")
-                .username(user.getUsername())
-                .userId(user.getId())
-                .build();
-
-        a.addComment(c);
-
-        assertEquals(1, a.getComments().size());
-    }
-
 }

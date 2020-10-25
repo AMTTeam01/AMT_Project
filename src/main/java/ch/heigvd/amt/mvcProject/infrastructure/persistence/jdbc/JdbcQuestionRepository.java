@@ -131,6 +131,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         Optional<Question> optionalQuestion = Optional.empty();
 
         try {
+            // LEFT JOIN, because we can the question information even if the question hasn't answers
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT Q.id           as 'question_id', " +
                             "       title, " +
@@ -161,6 +162,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             while (rs.next()) {
 
+                // If we haven't creat que Question object, create if
                 if (foundQuestion == null) {
 
                     foundQuestion = Question.builder()
@@ -173,16 +175,17 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .build();
                 }
 
-                String username = rs.getString("answer_username");
 
-                if (username != null) {
+
+                // If the question has a answer, added
+                if (rs.getString("answer_id") != null) {
                     foundQuestion.addAnswer(Answer.builder()
                             .id(new AnswerId(rs.getString("answer_id")))
                             .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
                             .description(rs.getString("answer_description"))
                             .questionId(new QuestionId(rs.getString("question_id")))
                             .userId(new UserId(rs.getString("answer_user_id")))
-                            .username(username)
+                            .username(rs.getString("answer_username"))
                             .build());
                 }
 
