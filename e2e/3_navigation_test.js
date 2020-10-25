@@ -2,7 +2,8 @@ Feature('Navigation')
 
 Scenario('navigation tests', (I) => {
 
-    I.login()
+    //login user 1 generated in setup
+    I.login(1)
 
     //home -> browsing
     I.amOnPage('/')

@@ -15,7 +15,8 @@ exports.config = {
     }
   },
   include: {
-    I: './steps_file.js'
+    I: './steps_file.js',
+    utils: './utils.js'
   },
   bootstrap: null,
   mocha: {},
@@ -27,5 +28,5 @@ exports.config = {
     screenshotOnFail: {
       enabled: true
     }
-  }
+  },
 }

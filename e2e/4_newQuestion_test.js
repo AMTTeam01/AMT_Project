@@ -5,8 +5,8 @@ Scenario('adding question', (I) => {
     let questionTitle = 'What is Lorem Ipsum?'
     let questionDescription = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
 
-    I.register()
-    I.login()
+    //login user 1 generated in setup
+    I.login(1)
 
     //add question
     I.amOnPage('/new_question')
