@@ -14,7 +14,7 @@
                 <div class="answer_footer d-flex flex-row-reverse">
                     <span class="p-2">Creation Date : <fmt:formatDate value="${answer.creationDate}" pattern="dd.MM.yyyy HH:mm"/> </span>
                     <span class="p-2">Author ${answer.username}</span>
-                    <a href="javascript:void(0)" class="p-2 btn-link" onclick="toggleVisibility('add-comment-container-${answer.id}' )">Add comment</a>
+                    <btn href="javascript:void(0)" class="p-2 btn-link" onclick="toggleVisibility('add-comment-container-${answer.id}' )">Add comment</btn>
                 </div>
                 <div id="add-comment-container-${answer.id}" class="m-2" style="display: none">
                     <form method="POST" action="${pageContext.request.contextPath}/comment.do">

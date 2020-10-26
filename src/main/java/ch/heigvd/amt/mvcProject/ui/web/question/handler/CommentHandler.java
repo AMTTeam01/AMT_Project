@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 @WebServlet(name = "CommentHandler", urlPatterns = "/comment.do")
 public class CommentHandler extends HttpServlet {
@@ -63,7 +64,7 @@ public class CommentHandler extends HttpServlet {
             commentFacade.addComment(commentCommand);
             resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + questionId);
         } catch (UserFailedException | CommentFailedException e) {
-            e.printStackTrace();
+            req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }
 
     }

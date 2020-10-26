@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.ui.web.question;
 
+import ch.heigvd.amt.mvcProject.application.BusinessException;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
@@ -47,7 +48,7 @@ public class QuestionRenderer extends HttpServlet {
 
 
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
-        } catch (QuestionFailedException | CommentFailedException | AnswerFailedException e) {
+        } catch (BusinessException e) {
             e.printStackTrace();
             response.sendRedirect("/error");
         }

@@ -67,7 +67,6 @@ public class QuestionFacade {
                     .username(submittedQuestion.getUsername())
                     .creationDate(submittedQuestion.getCreationDate())
                     .userId(submittedQuestion.getUserId())
-                    .answersDTO(AnswersDTO.builder().answers(new ArrayList<>()).build())
                     .build();
 
             return newQuestion;

@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
+import ch.heigvd.amt.mvcProject.application.BusinessException;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
@@ -59,7 +60,7 @@ public class AnswerHandler extends HttpServlet {
         try {
             answerFacade.addAnswer(answerCommand);
             resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + questionId);
-        } catch (AnswerFailedException | UserFailedException | QuestionFailedException | CommentFailedException e) {
+        } catch (BusinessException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }
 
