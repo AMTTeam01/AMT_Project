@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
+import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
@@ -76,7 +77,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                     "DELETE FROM tblQuestion WHERE id = ?"
             );
 
-            // Could do ON CASCADE but didn't work with jdbc...
+            // Removing all votes related to the question
+            // rem: could be done with ON CASCADE but didn't work with jdbc...
             PreparedStatement votesStatement = dataSource.getConnection().prepareStatement(
                     "DELETE FROM tblUser_vote_tblQuestion WHERE tblQuestion_id = ?"
             );
@@ -149,7 +151,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       A.id           as 'answer_id', " +
                             "       A.description  as 'answer_description', " +
                             "       A.creationDate as 'answer_creationDate', " +
-                            "       UA.username    as 'answer_username', " +
                             "       UA.id          as 'answer_user_id' " +
                             "FROM tblQuestion Q " +
                             "         LEFT JOIN tblAnswer A ON Q.id = A.tblQuestion_id " +
@@ -176,7 +177,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .description(rs.getString("question_description"))
                             .title(rs.getString("title"))
                             .creationDate(new Date(rs.getTimestamp("question_creationDate").getTime()))
-                            .username(rs.getString("question_username"))
                             .userId(new UserId(rs.getString("question_user_id")))
                             .build();
                 }
@@ -214,8 +214,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             "       Q.creationDate," +
                             "       Q.description," +
                             "       Q.title," +
-                            "       U.id as 'user_id'," +
-                            "       U.userName " +
+                            "       U.id as 'user_id' " +
                             "       FROM tblQuestion Q " +
                             "INNER JOIN tblUser U on Q.tblUser_id = U.id",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -412,7 +411,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                 .id(new QuestionId(rs.getString("question_id")))
                 .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                 .userId(new UserId(rs.getString("user_id")))
-                .username(rs.getString("userName"))
                 .description(rs.getString("description"))
                 .title(rs.getString("title"))
                 .build();
