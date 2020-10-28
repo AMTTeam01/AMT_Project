@@ -27,8 +27,6 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private UserId userId;
 
-    private String username;
-
     private List<Answer> answers;
 
     public void addAnswer(Answer answer) {
@@ -68,15 +66,11 @@ public class Question implements IEntity<Question, QuestionId> {
                 throw new IllegalArgumentException("UserId is mandatory");
             }
 
-            if (username == null || username.isEmpty()) {
-                throw new IllegalArgumentException("Username is mandatory");
-            }
-
             if (answers == null) {
                 answers = new ArrayList<>();
             }
 
-            return new Question(id, title, description, creationDate, userId, username, answers);
+            return new Question(id, title, description, creationDate, userId, answers);
         }
     }
 

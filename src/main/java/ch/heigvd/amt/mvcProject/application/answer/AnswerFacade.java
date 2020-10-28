@@ -80,7 +80,7 @@ public class AnswerFacade {
         }
     }
 
-    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException {
+    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException, UserFailedException {
 
         Collection<Answer> answers = new ArrayList<>();
         if (query == null) {

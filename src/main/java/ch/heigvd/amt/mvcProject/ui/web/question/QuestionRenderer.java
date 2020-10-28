@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.question.*;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.inject.Inject;
@@ -44,9 +45,8 @@ public class QuestionRenderer extends HttpServlet {
             questionDTO = questionFacade.getQuestion(query);
             request.setAttribute("question", questionDTO);
 
-
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
-        } catch (QuestionFailedException e) {
+        } catch (QuestionFailedException | UserFailedException e) {
             e.printStackTrace();
             response.sendRedirect("/error");
         }

@@ -9,8 +9,6 @@ import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
-import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
-import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,40 +25,49 @@ public class QuestionFacade {
 
     private UserFacade userFacade;
 
-
     public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade) {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
     }
 
+    /**
+     * Add a question to the repository
+     * @param command : question with only relevant data
+     * @return added question
+     * @throws UserFailedException
+     * @throws QuestionFailedException
+     */
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command)
             throws UserFailedException, QuestionFailedException {
-        UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
-        if (existingUser.getUsers().size() == 0)
-            new QuestionFailedException("The user hasn't been found");
+        checkIfUserExists(command.getUserId());
 
         try {
-
-            UsersDTO.UserDTO user = existingUser.getUsers().get(0);
-
+            // Create submitted question
             Question submittedQuestion = Question.builder()
                     .title(command.getTitle())
                     .description(command.getDescription())
-                    .userId(user.getId())
-                    .username(user.getUsername())
+                    .userId(command.getUserId())
                     .creationDate(command.getCreationDate())
                     .build();
 
+            // Save to repository
             questionRepository.save(submittedQuestion);
 
+            // Get author for the questionDTO
+            UsersDTO.UserDTO user = userFacade.getUsers(
+                    UserQuery.builder().userId(command.getUserId()).build()
+            ).getUsers().get(0);
+
+            // Get the answers for the questionDTO
             Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
 
+            // create questionDTO of the submitted quesiton
             QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
                     .description(submittedQuestion.getDescription())
                     .id(submittedQuestion.getId())
                     .title(submittedQuestion.getTitle())
-                    .username(submittedQuestion.getUsername())
+                    .username(user.getUsername())
                     .votes(0)
                     .creationDate(submittedQuestion.getCreationDate())
                     .userId(submittedQuestion.getUserId())
@@ -74,102 +81,82 @@ public class QuestionFacade {
         }
     }
 
-    public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException {
-        try {
-            questionRepository.upvote(userId, questionId);
-        } catch(Exception e){
-            throw new QuestionFailedException(e.getMessage());
-        }
-    }
-
-    public void downvote(UserId userId, QuestionId questionId) throws QuestionFailedException {
-        try {
-            questionRepository.downvote(userId, questionId);
-        } catch(Exception e){
-            throw new QuestionFailedException(e.getMessage());
-        }
+    /**
+     * Upvotes a question, if already upvoted it will remove the upvote
+     * @param userId : user that is upvoting
+     * @param questionId : question being upvoted
+     * @throws QuestionFailedException
+     * @throws UserFailedException
+     */
+    public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
+        checkIfUserExists(userId);
+        questionRepository.upvote(userId, questionId);
     }
 
     /**
-     * Retrieve all question in the repo
-     *
+     * Downvotes a question, if already downvoted it will remove the downvote
+     * @param userId : user that is upvoting
+     * @param questionId : question being upvoted
+     * @throws QuestionFailedException
+     * @throws UserFailedException
+     */
+    public void downvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
+        checkIfUserExists(userId);
+        questionRepository.downvote(userId, questionId);
+    }
+
+    /**
+     * Retrieve all question in the repository
      * @return all questions as DTO
      */
-    public QuestionsDTO getQuestions() {
-        Collection<Question> allQuestions = questionRepository.findAll();
-
-        return getQuestionsDTO(allQuestions, null);
+    public QuestionsDTO getQuestions() throws UserFailedException {
+        return getQuestionsDTO(questionRepository.findAll(), null);
     }
 
     /**
      * Retrieve questions asked by the query
-     *
      * @param query Query passed
      * @return return the result asked by the query as DTO
      * @throws QuestionFailedException
      */
-    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException {
+    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException, UserFailedException {
         Collection<Question> questionsFound = new ArrayList<>();
 
-        if (query == null) {
+        if (query == null)
             throw new QuestionFailedException("Query is null");
-        } else {
 
-            if (query.getQuestionId() != null) {
-                Question question = questionRepository.findById(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+        if(query.getQuestionId() == null)
+            throw new QuestionFailedException("Query invalid");
 
-                questionsFound.add(question);
+        Question question = questionRepository.findById(query.getQuestionId())
+                .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+        questionsFound.add(question);
 
-            } else {
-                throw new QuestionFailedException("Query invalid");
-
-            }
-        }
-
-        return getQuestionsDTO(questionsFound, null);
+        return getQuestionsDTO(questionsFound, query);
     }
 
     /**
      * Return a single Question asked by query
-     *
      * @param query Query passed
      * @return the single question asked
      * @throws QuestionFailedException
      */
-    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException {
+    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException {
 
-        QuestionsDTO.QuestionDTO questionFound;
+        if (query == null || query.getQuestionId() == null)
+            throw new QuestionFailedException("Query is null or invalid");
 
-        if (query == null) {
-            throw new QuestionFailedException("Query is null");
+        Question question;
+
+        if(query.isWithDetail()) {
+            question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
+                    .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         } else {
-
-            if (query.getQuestionId() != null && !query.isWithDetail()) {
-                Question question = questionRepository.findById(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-                questionFound = getQuestion(question, null);
-
-            } else if (query.getQuestionId() != null && query.isWithDetail()) {
-
-                Question question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-                Collection<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
-                if (query.isWithDetail()) {
-                    answersDTO = getAnswers(question);
-                }
-
-                questionFound = getQuestion(question, answersDTO);
-
-            } else {
-                throw new QuestionFailedException("Query invalid");
-
-            }
+            question = questionRepository.findById(query.getQuestionId())
+                    .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         }
 
-        return questionFound;
+        return getQuestion(question, query);
     }
 
     /**
@@ -178,11 +165,13 @@ public class QuestionFacade {
      * @param questionsFound collection of questions
      * @return Questions DTO
      */
-    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound,
-                                         Collection<AnswersDTO.AnswerDTO> answers) {
-        List<QuestionsDTO.QuestionDTO> QuestionsDTOFound =
-                questionsFound.stream().map(
-                        question -> getQuestion(question, answers)).collect(Collectors.toList());
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound, QuestionQuery query) throws UserFailedException {
+        List<QuestionsDTO.QuestionDTO> QuestionsDTOFound = new ArrayList<>();
+
+        for (Question question : questionsFound) {
+            QuestionsDTO.QuestionDTO questionDTO = getQuestion(question, query);
+            QuestionsDTOFound.add(questionDTO);
+        }
 
         return QuestionsDTO.builder().questions(QuestionsDTOFound).build();
     }
@@ -204,21 +193,29 @@ public class QuestionFacade {
      * Return the DTO of the question in the parameter
      *
      * @param question question to transform
-     * @param answers  list of answer to the question
      * @return the DTO corresponding to the parameter
      */
-    private QuestionsDTO.QuestionDTO getQuestion(Question question, Collection<AnswersDTO.AnswerDTO> answers) {
-        if (answers == null)
-            answers = new ArrayList<>();
+    private QuestionsDTO.QuestionDTO getQuestion(Question question, QuestionQuery query) throws UserFailedException {
+
+        // Get question's answers
+        List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
+        if (query != null && query.isWithDetail()) {
+            answersDTO = getAnswers(question);
+        }
+
+        // Get question user details
+        UsersDTO.UserDTO user = userFacade.getUsers(
+                UserQuery.builder().userId(question.getUserId()).build()
+        ).getUsers().get(0);
 
         return QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
                 .userId(question.getUserId())
-                .username(question.getUsername())
+                .username(user.getUsername())
                 .creationDate(question.getCreationDate())
-                .answersDTO(AnswersDTO.builder().answers(answers).build())
+                .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
                 .build();
     }
 
@@ -228,7 +225,7 @@ public class QuestionFacade {
      * @param question Which question want the ansers
      * @return a collection of answer DTO associate to the question
      */
-    private Collection<AnswersDTO.AnswerDTO> getAnswers(Question question) {
+    private List<AnswersDTO.AnswerDTO> getAnswers(Question question) {
         return question.getAnswers().stream().map(
                 answer -> AnswersDTO.AnswerDTO.builder()
                         .id(answer.getId())
@@ -237,5 +234,19 @@ public class QuestionFacade {
                         .username(answer.getUsername())
                         .build()
         ).collect(Collectors.toList());
+    }
+
+    /**
+     * Checks if the given user id is linked to an actual user
+     * @param userId : id of the user we want to search
+     * @throws QuestionFailedException
+     * @throws UserFailedException
+     */
+    private void checkIfUserExists(UserId userId) throws QuestionFailedException, UserFailedException {
+        UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(userId).build());
+
+        if (existingUser.getUsers().size() == 0)
+            throw new QuestionFailedException("The user hasn't been found");
+
     }
 }
