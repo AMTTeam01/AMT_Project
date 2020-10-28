@@ -28,11 +28,6 @@ import java.util.Optional;
 @Named("JdbcQuestionRepository")
 public class JdbcQuestionRepository implements IQuestionRepository {
 
-    private static final int UPVOTE   =  1;
-    private static final int NOVOTE   =  0;
-    private static final int DOWNVOTE = -1;
-
-
     @Resource(lookup = "jdbc/help2000DS")
     DataSource dataSource;
 
@@ -235,61 +230,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
     }
 
     @Override
-    public void upvote(UserId userId, QuestionId questionId) {
-        vote(userId, questionId, UPVOTE);
-    }
-
-    @Override
-    public void downvote(UserId userId, QuestionId questionId) {
-        vote(userId, questionId, DOWNVOTE);
-    }
-
-    /**
-     * Vote on a question
-     * @param userId : id of the user voting
-     * @param questionId : id of the question being voted
-     * @param vote : value that is being done (upvote / downvote)
-     */
-    private void vote(UserId userId, QuestionId questionId, int vote) {
-        int voteValue = 0;
-
-        // Check if the user already voted
-        if (hasAlreadyVoted(userId, questionId)) {
-            voteValue = getVoteValue(userId, questionId);
-        }
-
-        // Update the vote value
-        voteValue = getNewVoteValue(voteValue, vote);
-
-        addVote(userId, questionId, voteValue);
-    }
-
-    /**
-     * Get the vote value when voting on a quesiton
-     * @param startVoteValue : start vote value of the user (if he already voted on the question)
-     * @param voteValue : vote value of the current vote
-     * @return the new vote value
-     */
-    private int getNewVoteValue(int startVoteValue, int voteValue) {
-        int result = 0;
-
-        switch (startVoteValue) {
-            // User voted : we reset the vote
-            case UPVOTE:
-            case DOWNVOTE:
-                result = 0;
-                break;
-
-            // User didn't vote : make it a downvote!
-            case NOVOTE:
-                result = voteValue;
-                break;
-        }
-
-        return result;
-    }
-
-    @Override
     public int getVotes(QuestionId questionId) {
 
         int totalVotes = 0;
@@ -322,6 +262,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
      * @param questionId : question to add the vote to
      * @param positive   : vote value (-1, 0 or 1)
      */
+    @Override
     public void addVote(UserId userId, QuestionId questionId, int positive) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
@@ -343,7 +284,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         }
     }
 
-    private boolean hasAlreadyVoted(UserId userId, QuestionId questionId) {
+    public boolean hasAlreadyVoted(UserId userId, QuestionId questionId) {
 
         boolean result = false;
 
@@ -367,7 +308,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         return result;
     }
 
-    private int getVoteValue(UserId userId, QuestionId questionId) {
+    public int getVoteValue(UserId userId, QuestionId questionId) {
 
         int voteValue = 0;
 

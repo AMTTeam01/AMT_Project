@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
  */
 public class QuestionFacade {
 
+    // Vote values
+    private static final int UPVOTE   =  1;
+    private static final int NOVOTE   =  0;
+    private static final int DOWNVOTE = -1;
+
     private IQuestionRepository questionRepository;
 
     private UserFacade userFacade;
@@ -90,7 +95,7 @@ public class QuestionFacade {
      */
     public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
         checkIfUserExists(userId);
-        questionRepository.upvote(userId, questionId);
+        vote(userId, questionId, UPVOTE);
     }
 
     /**
@@ -102,7 +107,53 @@ public class QuestionFacade {
      */
     public void downvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
         checkIfUserExists(userId);
-        questionRepository.downvote(userId, questionId);
+        vote(userId, questionId, DOWNVOTE);
+    }
+
+
+    /**
+     * Vote on a question
+     * @param userId : id of the user voting
+     * @param questionId : id of the question being voted
+     * @param vote : value that is being done (upvote / downvote)
+     */
+    private void vote(UserId userId, QuestionId questionId, int vote) {
+        int voteValue = 0;
+
+        // Check if the user already voted
+        if (questionRepository.hasAlreadyVoted(userId, questionId)) {
+            voteValue = questionRepository.getVoteValue(userId, questionId);
+        }
+
+        // Update the vote value
+        voteValue = getNewVoteValue(voteValue, vote);
+
+        questionRepository.addVote(userId, questionId, voteValue);
+    }
+
+    /**
+     * Get the vote value when voting on a quesiton
+     * @param startVoteValue : start vote value of the user (if he already voted on the question)
+     * @param voteValue : vote value of the current vote
+     * @return the new vote value
+     */
+    private int getNewVoteValue(int startVoteValue, int voteValue) {
+        int result = 0;
+
+        switch (startVoteValue) {
+            // User voted : we reset the vote
+            case UPVOTE:
+            case DOWNVOTE:
+                result = 0;
+                break;
+
+            // User didn't vote : make it a downvote!
+            case NOVOTE:
+                result = voteValue;
+                break;
+        }
+
+        return result;
     }
 
     /**

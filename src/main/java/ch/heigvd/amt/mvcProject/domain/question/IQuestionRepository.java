@@ -9,18 +9,12 @@ import java.util.Optional;
 public interface IQuestionRepository extends IRepository<Question, QuestionId> {
 
     /**
-     * Upvotes a question (+1)
-     * @param userId : id of the voter
-     * @param questionId : id of the question
+     * Add a vote to a question
+     * @param userId : id of the user voting the question
+     * @param questionId : id of the question being voted
+     * @param positive : value being voted (-1, 0, 1)
      */
-    void upvote(UserId userId, QuestionId questionId);
-
-    /**
-     * Downvotes a question (-1)
-     * @param userId : id of the voter
-     * @param questionId : id of the question
-     */
-    void downvote(UserId userId, QuestionId questionId);
+    void addVote(UserId userId, QuestionId questionId, int positive);
 
     /**
      * Get the total votes of a question
@@ -36,4 +30,19 @@ public interface IQuestionRepository extends IRepository<Question, QuestionId> {
      */
     Optional<Question> findByIdWithAllDetails(QuestionId id);
 
+    /**
+     * Check if a user already voted a specified question
+     * @param userId : id of the user
+     * @param questionId : id of the question
+     * @return true if the user already voted on the question
+     */
+    boolean hasAlreadyVoted(UserId userId, QuestionId questionId);
+
+    /**
+     * Get the vote value of a question from a specified user
+     * @param userId : user
+     * @param questionId : question
+     * @return vote value that the user made (-1, 0, 1)
+     */
+    int getVoteValue(UserId userId, QuestionId questionId);
 }
