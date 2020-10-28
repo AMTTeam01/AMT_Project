@@ -179,7 +179,7 @@ public class QuestionFacade {
      * @return all questions as DTO
      */
     public QuestionsDTO getQuestions() throws UserFailedException, QuestionFailedException, AnswerFailedException {
-        return getQuestionsDTO(questionRepository.findAll(), null);
+        return getQuestionsDTO(questionRepository.findAll());
     }
 
     /**
@@ -201,7 +201,7 @@ public class QuestionFacade {
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         questionsFound.add(question);
 
-        return getQuestionsDTO(questionsFound, query);
+        return getQuestionsDTO(questionsFound);
     }
 
     /**
@@ -211,9 +211,6 @@ public class QuestionFacade {
      * @throws QuestionFailedException
      */
     public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
-
-        System.out.println("GETTING THE QUESTION WITH QUERY : " + (query == null));
-        System.out.println("GETTING THE QUESTION WITH ID : " + query.getQuestionId().asString());
 
         if (query == null || query.getQuestionId() == null)
             throw new QuestionFailedException("Query is null or invalid");
@@ -237,11 +234,14 @@ public class QuestionFacade {
      * @param questionsFound collection of questions
      * @return Questions DTO
      */
-    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound, QuestionQuery query) throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound) throws UserFailedException, QuestionFailedException, AnswerFailedException {
         List<QuestionsDTO.QuestionDTO> QuestionsDTOFound = new ArrayList<>();
 
         for (Question question : questionsFound) {
-            QuestionsDTO.QuestionDTO questionDTO = getQuestion(question, query);
+            QuestionsDTO.QuestionDTO questionDTO = getQuestion(question,
+                    QuestionQuery.builder()
+                    .questionId(question.getId())
+                    .build());
             QuestionsDTOFound.add(questionDTO);
         }
 
@@ -299,7 +299,6 @@ public class QuestionFacade {
      * @return a collection of answer DTO associate to the question
      */
     private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException {
-        System.out.println("GETTING THE ANSWERS");
         return answerFacade.getAnswers(AnswerQuery.builder().questionId(question.getId()).build()).getAnswers();
     }
 

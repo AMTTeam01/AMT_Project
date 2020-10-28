@@ -100,9 +100,12 @@ public class QuestionFacadeTestIT {
     public void cleanUp() throws QuestionFailedException, UserFailedException, AnswerFailedException {
         userFacade.removeUser(currentUserDTO.getUserId());
 
+        System.out.println("MASTER CLEAN UP");
+
         // Clean all questions
         QuestionsDTO questionDTO = questionFacade.getQuestions();
         for(QuestionsDTO.QuestionDTO question : questionDTO.getQuestions()) {
+            System.out.println(" - REMOVING " + question.getId().asString());
             questionFacade.removeQuestion(question.getId());
         }
     }
