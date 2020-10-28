@@ -7,6 +7,7 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.question.*;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
@@ -108,9 +109,8 @@ public class AnswerFacadeTestIT {
 
     @Test
     public void addAnswer_ShouldAddAAnswerToTheQuestion_WhenCalled()
-            throws AnswerFailedException, QuestionFailedException, UserFailedException {
+            throws AnswerFailedException, QuestionFailedException, UserFailedException, CommentFailedException {
 
-        int sizeBefore = newQuestion.getAnswersDTO().getAnswers().size();
 
         AnswerCommand answerCommand = AnswerCommand.builder()
                 .questionId(newQuestion.getId())
@@ -126,7 +126,7 @@ public class AnswerFacadeTestIT {
 
         QuestionsDTO.QuestionDTO updatedQuestion = questionFacade.getQuestion(query);
 
-        assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore, 1);
+        assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size(), 1);
 
         answerFacade.removeAnswer(newAnswer.getId());
     }
@@ -161,7 +161,7 @@ public class AnswerFacadeTestIT {
 
     @Test
     public void getAnswers_ShouldReturnExpectingAnswer_WhenQuestionIdIsPassed()
-            throws AnswerFailedException, UserFailedException, QuestionFailedException {
+            throws AnswerFailedException, UserFailedException, QuestionFailedException, CommentFailedException {
         AnswerCommand answerCommand1 = AnswerCommand.builder()
                 .questionId(newQuestion.getId())
                 .description("Answer test 1")
@@ -182,7 +182,6 @@ public class AnswerFacadeTestIT {
 
         AnswersDTO answersDTO = answerFacade.getAnswers(AnswerQuery.builder().questionId(newQuestion.getId()).build());
 
-
         assertEquals(2, answersDTO.getAnswers().size());
 
         answerFacade.removeAnswer(a1.getId());
@@ -192,7 +191,7 @@ public class AnswerFacadeTestIT {
 
     @Test
     public void removeAnswer_ShouldRemoveInTheRepo_WhenCalled()
-            throws UserFailedException, AnswerFailedException, QuestionFailedException {
+            throws UserFailedException, AnswerFailedException, QuestionFailedException, CommentFailedException {
 
         AnswerQuery query = AnswerQuery.builder().questionId(newQuestion.getId()).build();
 

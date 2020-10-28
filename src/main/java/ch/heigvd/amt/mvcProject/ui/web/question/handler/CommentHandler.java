@@ -1,42 +1,37 @@
 package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
-import ch.heigvd.amt.mvcProject.application.BusinessException;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerCommand;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
-import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.comment.CommentCommand;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
-import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
-import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
+import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-@WebServlet(name = "AnswerHandler", urlPatterns = "/answer.do")
-public class AnswerHandler extends HttpServlet {
+@WebServlet(name = "CommentHandler", urlPatterns = "/comment.do")
+public class CommentHandler extends HttpServlet {
 
     @Inject
     private ServiceRegistry serviceRegistry;
-    private AnswerFacade answerFacade;
 
+    private CommentFacade commentFacade;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        answerFacade = serviceRegistry.getAnswerFacade();
+        commentFacade = serviceRegistry.getCommentFacade();
     }
 
     @Override
@@ -47,20 +42,28 @@ public class AnswerHandler extends HttpServlet {
         // retrieve the username
         CurrentUserDTO currentUserDTO = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
 
-        String questionId = req.getParameter("answer_question_id");
+        // Question id
+        String questionId = req.getParameter("comment_question_id");
+
+        // answer id
+        AnswerId answerId = req.getParameter("comment_answer_id") == null ? null : new AnswerId(
+                req.getParameter("comment_answer_id"));
 
 
-        AnswerCommand answerCommand = AnswerCommand.builder()
-                .creationDate(new Date())
-                .description(req.getParameter("txt_answer"))
-                .questionId(new QuestionId(questionId))
+        CommentCommand commentCommand = CommentCommand.builder()
+                .createDate(new Date())
                 .userId(currentUserDTO.getUserId())
+                // If null, it mean the comment is for a question, otherwise a answer comment
+                .questionId(answerId == null ? new QuestionId(questionId) : null)
+                .answerId(answerId)
+                .description(req.getParameter("txt_question_comment"))
                 .build();
 
+
         try {
-            answerFacade.addAnswer(answerCommand);
+            commentFacade.addComment(commentCommand);
             resp.sendRedirect(getServletContext().getContextPath() + "/question?id=" + questionId);
-        } catch (BusinessException e) {
+        } catch (UserFailedException | CommentFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
         }
 

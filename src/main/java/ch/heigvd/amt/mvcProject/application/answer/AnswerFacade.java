@@ -1,5 +1,9 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
+import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentQuery;
+import ch.heigvd.amt.mvcProject.application.comment.CommentsDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
@@ -11,7 +15,7 @@ import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,10 +31,14 @@ public class AnswerFacade {
 
     private QuestionFacade questionFacade;
 
-    public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade, QuestionFacade questionFacade) {
+    private CommentFacade commentFacade;
+
+    public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade, QuestionFacade questionFacade,
+                        CommentFacade commentFacade) {
         this.answerRepository = answerRepository;
         this.userFacade = userFacade;
         this.questionFacade = questionFacade;
+        this.commentFacade = commentFacade;
     }
 
     /**
@@ -41,7 +49,7 @@ public class AnswerFacade {
      * @throws AnswerFailedException
      */
     public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command)
-            throws UserFailedException, QuestionFailedException, AnswerFailedException {
+            throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
 
         UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
@@ -80,9 +88,19 @@ public class AnswerFacade {
         }
     }
 
-    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException {
+    /**
+     * Return AnswersDTO for the given query
+     * @param query query to filter result
+     * @return AnswersDTO requested
+     * @throws AnswerFailedException
+     * @throws QuestionFailedException
+     * @throws CommentFailedException
+     */
+    public AnswersDTO getAnswers(AnswerQuery query)
+            throws AnswerFailedException, QuestionFailedException, CommentFailedException {
 
-        Collection<Answer> answers = new ArrayList<>();
+        Collection<Answer> answers;
+
         if (query == null) {
             throw new AnswerFailedException("Query is null");
         } else {
@@ -92,19 +110,37 @@ public class AnswerFacade {
                 questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
 
                 answers = answerRepository.findByQuestionId(query.getQuestionId()).orElse(new ArrayList<>());
+
             } else {
                 throw new AnswerFailedException("Query invalid");
             }
         }
 
         List<AnswersDTO.AnswerDTO> answersDTO = answers.stream().map(
-                answer -> AnswersDTO.AnswerDTO.builder()
-                        .username(answer.getUsername())
-                        .description(answer.getDescription())
-                        .creationDate(answer.getCreationDate())
-                        .id(answer.getId())
-                        .build()
+                answer -> {
+                    CommentsDTO commentsDTO = null;
+                    try {
+                        commentsDTO = commentFacade.getComments(CommentQuery.builder()
+                                .answerId(answer.getId())
+                                .build());
+                    } catch (CommentFailedException e) {
+                        e.printStackTrace();
+                    } catch (AnswerFailedException e) {
+                        e.printStackTrace();
+                    } catch (QuestionFailedException e) {
+                        e.printStackTrace();
+                    }
+                    return AnswersDTO.AnswerDTO.builder()
+                            .username(answer.getUsername())
+                            .description(answer.getDescription())
+                            .creationDate(answer.getCreationDate())
+                            .id(answer.getId())
+                            .comments(commentsDTO)
+                            .build();
+
+                }
         ).collect(Collectors.toList());
+
 
         return AnswersDTO.builder().answers(answersDTO).build();
     }
