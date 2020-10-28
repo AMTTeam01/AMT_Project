@@ -33,11 +33,12 @@ public class QuestionVoteHandler extends HttpServlet {
         CurrentUserDTO currentUser = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
         QuestionId questionId = new QuestionId(req.getParameter("id"));
         boolean upvote = req.getParameter("vote").equals("upvote");
+        boolean downvote = req.getParameter("vote").equals("downvote");
 
         try {
             if(upvote) {
                 questionFacade.upvote(currentUser.getUserId(), questionId);
-            } else {
+            } else if (downvote) {
                 questionFacade.downvote(currentUser.getUserId(), questionId);
             }
             resp.sendRedirect("/question?id=" + questionId.asString());
