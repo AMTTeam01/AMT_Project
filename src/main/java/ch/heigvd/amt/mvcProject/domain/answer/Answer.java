@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject.domain.answer;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
@@ -8,7 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
@@ -24,6 +27,8 @@ public class Answer implements IEntity<Answer, AnswerId> {
     private QuestionId questionId;
 
     private UserId userId;
+
+    private List<Comment> comments;
 
     @Override
     public Answer deepClone() {
@@ -54,7 +59,11 @@ public class Answer implements IEntity<Answer, AnswerId> {
                 throw new IllegalArgumentException("userId is mandatory");
             }
 
-            return new Answer(id, description, creationDate, questionId, userId);
+            if(comments == null){
+                comments = new ArrayList<>();
+            }
+
+            return new Answer(id, description, creationDate, questionId, userId, comments);
         }
     }
 }

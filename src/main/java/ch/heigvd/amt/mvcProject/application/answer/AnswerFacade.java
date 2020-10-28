@@ -1,5 +1,9 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
+import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentQuery;
+import ch.heigvd.amt.mvcProject.application.comment.CommentsDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
@@ -11,7 +15,7 @@ import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +29,7 @@ public class AnswerFacade {
 
     private UserFacade userFacade;
     private QuestionFacade questionFacade;
+    private CommentFacade commentFacade;
 
     public AnswerFacade() {
     }
@@ -47,6 +52,10 @@ public class AnswerFacade {
         this.questionFacade = questionFacade;
     }
 
+    public void setCommentFacade(CommentFacade commentFacade) {
+        this.commentFacade = commentFacade;
+    }
+
     /**
      * Ask to the DB to insert a answer
      *
@@ -55,7 +64,7 @@ public class AnswerFacade {
      * @throws AnswerFailedException
      */
     public AnswersDTO.AnswerDTO addAnswer(AnswerCommand command)
-            throws UserFailedException, QuestionFailedException, AnswerFailedException {
+            throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
 
         UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
@@ -87,17 +96,26 @@ public class AnswerFacade {
         return newAnswer;
     }
 
-    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException, UserFailedException {
+    /**
+     * Return AnswersDTO for the given query
+     * @param query query to filter result
+     * @return AnswersDTO requested
+     * @throws AnswerFailedException
+     * @throws QuestionFailedException
+     * @throws CommentFailedException
+     */
+    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException, CommentFailedException {
 
-        Collection<Answer> answers = new ArrayList<>();
+        Collection<Answer> answers;
+
         if (query == null) {
             throw new AnswerFailedException("Query is null");
         } else {
 
             if (query.getQuestionId() != null) {
                 questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
-
-                answers = answerRepository.findByQuestionId(query.getQuestionId()).orElse(new ArrayList<>());
+                answers = answerRepository.findByQuestionId(query.getQuestionId())
+                        .orElse(new ArrayList<>());
             } else {
                 throw new AnswerFailedException("Query invalid");
             }
@@ -107,11 +125,17 @@ public class AnswerFacade {
         for (Answer answer : answers) {
             AnswersDTO.AnswerDTO build = AnswersDTO.AnswerDTO.builder()
                     .username(userFacade.getUsers(
-                            UserQuery.builder().userId(answer.getUserId()).build()
+                            UserQuery.builder()
+                                    .userId(answer.getUserId())
+                                    .build()
                     ).getUsers().get(0).getUsername())
                     .description(answer.getDescription())
                     .creationDate(answer.getCreationDate())
                     .id(answer.getId())
+                    .comments(commentFacade.getComments(
+                            CommentQuery.builder()
+                            .answerId(answer.getId())
+                            .build()))
                     .build();
             answersDTO.add(build);
         }

@@ -3,11 +3,17 @@ package ch.heigvd.amt.mvcProject.application.question;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentQuery;
+import ch.heigvd.amt.mvcProject.application.comment.CommentsDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -33,6 +39,7 @@ public class QuestionFacade {
 
     private UserFacade userFacade;
     private AnswerFacade answerFacade;
+    private CommentFacade commentFacade;
 
     public QuestionFacade() {
     }
@@ -41,6 +48,7 @@ public class QuestionFacade {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
         this.answerFacade = answerFacade;
+        this.commentFacade = commentFacade;
     }
 
     public void setQuestionRepository(IQuestionRepository questionRepository) {
@@ -53,6 +61,10 @@ public class QuestionFacade {
 
     public void setAnswerFacade(AnswerFacade answerFacade) {
         this.answerFacade = answerFacade;
+    }
+
+    public void setCommentFacade(CommentFacade commentFacade) {
+        this.commentFacade = commentFacade;
     }
 
     /**
@@ -213,16 +225,24 @@ public class QuestionFacade {
             throw new QuestionFailedException("Query is null or invalid");
 
         Question question;
+        Collection<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
+        Collection<CommentsDTO.CommentDTO> commentsDTO = new ArrayList<>();
 
         if(query.isWithDetail()) {
             question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question with details hasn't been found"));
+            answersDTO = getAnswers(question);
+            commentsDTO = commentFacade.getComments(
+                    CommentQuery.builder()
+                            .questionId(question.getId())
+                            .build()
+            ).getComments();
         } else {
             question = questionRepository.findById(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         }
 
-        return getQuestion(question, query);
+        return getQuestionDTO(question, answersDTO, commentsDTO);
     }
 
     /**
@@ -231,7 +251,10 @@ public class QuestionFacade {
      * @param questionsFound collection of questions
      * @return Questions DTO
      */
-    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound) throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound,
+                                         Collection<AnswersDTO.AnswerDTO> answers,
+                                         Collection<CommentsDTO.CommentDTO> comments) {
+        ) throws UserFailedException, QuestionFailedException, AnswerFailedException {
         List<QuestionsDTO.QuestionDTO> QuestionsDTOFound = new ArrayList<>();
 
         for (Question question : questionsFound) {
@@ -264,7 +287,9 @@ public class QuestionFacade {
      * @param question question to transform
      * @return the DTO corresponding to the parameter
      */
-    private QuestionsDTO.QuestionDTO getQuestion(Question question, QuestionQuery query) throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    private QuestionsDTO.QuestionDTO getQuestion(Question question, QuestionQuery query,
+                Collection<CommentsDTO.CommentDTO> comments)
+        throws UserFailedException, QuestionFailedException, AnswerFailedException {
 
         // Get question's answers
         List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
@@ -286,6 +311,7 @@ public class QuestionFacade {
                 .username(user.getUsername())
                 .creationDate(question.getCreationDate())
                 .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
+                .commentsDTO(CommentsDTO.builder().comments(comments).build())
                 .build();
     }
 

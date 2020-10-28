@@ -1,10 +1,12 @@
 package ch.heigvd.amt.mvcProject.ui.web.question;
 
+import ch.heigvd.amt.mvcProject.application.BusinessException;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.question.*;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -35,7 +37,7 @@ public class QuestionRenderer extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // build a question command with attribute id in URL
+        //build a question command with attribute id in URL
         QuestionId id = new QuestionId(request.getParameter("id"));
         QuestionQuery query = QuestionQuery.builder().questionId(id).withDetail(true).build();
         QuestionsDTO.QuestionDTO questionDTO = null;

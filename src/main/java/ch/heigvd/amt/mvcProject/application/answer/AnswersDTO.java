@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
 
+import ch.heigvd.amt.mvcProject.application.comment.CommentsDTO;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.Builder;
@@ -25,6 +26,7 @@ public class AnswersDTO {
         private String description;
         private Date creationDate;
         private String username;
+        private CommentsDTO comments;
     }
 
     @Singular

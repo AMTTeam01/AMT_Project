@@ -4,6 +4,7 @@ import ch.heigvd.amt.mvcProject.domain.IRepository;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import java.util.Optional;
+import java.util.Collection;
 
 
 public interface IQuestionRepository extends IRepository<Question, QuestionId> {
@@ -45,4 +46,7 @@ public interface IQuestionRepository extends IRepository<Question, QuestionId> {
      * @return vote value that the user made (-1, 0, 1)
      */
     int getVoteValue(UserId userId, QuestionId questionId);
+
+    Collection<Question> findByUserId(UserId userId);
+    Collection<Question> findByTitleContaining(String title);
 }

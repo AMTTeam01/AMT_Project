@@ -139,6 +139,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
         Optional<Question> optionalQuestion = Optional.empty();
 
         try {
+            // LEFT JOIN, because we can the question information even if the question hasn't answers
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "SELECT Q.id           as 'question_id', " +
                             "       title, " +
@@ -168,6 +169,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
             while (rs.next()) {
 
+                // If we haven't creat que Question object, create if
                 if (foundQuestion == null) {
                     foundQuestion = Question.builder()
                             .id(new QuestionId(rs.getString("question_id")))
@@ -178,15 +180,19 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .build();
                 }
 
-                /*String username = rs.getString("answer_username");*/
 
-                foundQuestion.addAnswer(Answer.builder()
-                        .id(new AnswerId(rs.getString("answer_id")))
-                        .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
-                        .description(rs.getString("answer_description"))
-                        .questionId(new QuestionId(rs.getString("question_id")))
-                        .userId(new UserId(rs.getString("answer_user_id")))
-                        .build());
+
+                // If the question has a answer, added
+                if (rs.getString("answer_id") != null) {
+                    foundQuestion.addAnswer(Answer.builder()
+                            .id(new AnswerId(rs.getString("answer_id")))
+                            .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
+                            .description(rs.getString("answer_description"))
+                            .questionId(new QuestionId(rs.getString("question_id")))
+                            .userId(new UserId(rs.getString("answer_user_id")))
+                            .build());
+                }
+
             }
             optionalQuestion = Optional.of(foundQuestion);
 
@@ -221,6 +227,70 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         return questions;
     }
+
+    /**
+     * find all questions asked by an user
+     * @param userId user
+     * @return questions found
+     */
+    @Override
+    public Collection<Question> findByUserId(UserId userId){
+        Collection<Question> questions = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
+                            "       FROM tblQuestion Q " +
+                            "INNER JOIN tblUser U on Q.tblUser_id = U.id " +
+                            "WHERE U.id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+
+            questions = getQuestions(statement.executeQuery());
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
+
+        return questions;
+    }
+
+    @Override
+    public Collection<Question> findByTitleContaining(String search) {
+        Collection<Question> questions = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT Q.id as 'question_id'," +
+                            "       Q.creationDate," +
+                            "       Q.description," +
+                            "       Q.title," +
+                            "       U.id as 'user_id'," +
+                            "       U.userName " +
+                            "       FROM tblQuestion Q " +
+                            "INNER JOIN tblUser U on Q.tblUser_id = U.id " +
+                            "WHERE Q.title LIKE ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1,  "%" + search + "%");
+
+            questions = getQuestions(statement.executeQuery());
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
+
+        return questions;
+    }
+
 
     @Override
     public int getVotes(QuestionId questionId) {

@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
+import ch.heigvd.amt.mvcProject.application.comment.CommentsDTO;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
@@ -30,6 +31,7 @@ public class QuestionsDTO {
         private String description;
         private Date creationDate;
         private AnswersDTO answersDTO;
+        private CommentsDTO commentsDTO;
     }
 
     @Singular

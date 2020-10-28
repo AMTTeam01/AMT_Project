@@ -180,6 +180,12 @@ public class JdbcAnswerRepository implements IAnswerRepository {
         return answers;
     }
 
+    /**
+     * Return a list of answer returned by the statement
+     * @param rs result set returned by the execution of the statement
+     * @return The values returned by the SQL query as a list of answer model
+     * @throws SQLException
+     */
     private ArrayList<Answer> getAnswers(ResultSet rs) throws SQLException {
         ArrayList<Answer> answers = new ArrayList<>();
 
@@ -193,6 +199,12 @@ public class JdbcAnswerRepository implements IAnswerRepository {
         return answers;
     }
 
+    /**
+     * Return a single answer
+     * @param rs the pointer in the DB
+     * @return the object pointed by rs as model object
+     * @throws SQLException
+     */
     private Answer getAnswer(ResultSet rs) throws SQLException {
         return Answer.builder()
                 .id(new AnswerId(rs.getString("answer_id")))

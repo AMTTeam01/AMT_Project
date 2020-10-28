@@ -12,11 +12,9 @@ import ch.heigvd.amt.mvcProject.application.authentication.login.LoginCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.login.LoginFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegisterCommand;
 import ch.heigvd.amt.mvcProject.application.authentication.register.RegistrationFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.answer.Answer;
-import ch.heigvd.amt.mvcProject.domain.comment.Comment;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
@@ -26,11 +24,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import javax.inject.Inject;
 
@@ -39,8 +35,6 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-// TODO remove each insertion in DB => FixMethodOrder can't be removed
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class QuestionFacadeTestIT {
 
     private final static String WARNAME = "arquillian-managed.war";
@@ -78,6 +72,7 @@ public class QuestionFacadeTestIT {
 
         answerFacade = serviceRegistry.getAnswerFacade();
 
+        // Create a new user
         RegisterCommand registerCommand = RegisterCommand.builder()
                 .email(EMAIL)
                 .confirmationClearTxtPassword(PWD)
@@ -87,6 +82,7 @@ public class QuestionFacadeTestIT {
 
         authenticationFacade.register(registerCommand);
 
+        // Login as the new user created
         LoginCommand loginCommand = LoginCommand.builder()
                 .clearTxtPassword(PWD)
                 .username(USERNAME)
@@ -110,7 +106,7 @@ public class QuestionFacadeTestIT {
     @Test
     public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
-        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -121,7 +117,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions();
+        QuestionsDTO view = questionFacade.getAllQuestions();
         assertNotNull(view);
 
 
@@ -133,7 +129,8 @@ public class QuestionFacadeTestIT {
 
 
     @Test
-    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException, AnswerFailedException {
+    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException,
+            CommentFailedException, AnswerFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -168,9 +165,9 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void removeQuestion_ShouldRemoveQuestion_WhenCalled()
-            throws QuestionFailedException, UserFailedException, AnswerFailedException {
+            throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
 
-        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -195,7 +192,7 @@ public class QuestionFacadeTestIT {
 
         questionFacade.removeQuestion(question.getId());
 
-        QuestionsDTO view = questionFacade.getQuestions();
+        QuestionsDTO view = questionFacade.getAllQuestions();
         assertNotNull(view);
         assertEquals(sizeBefore, view.getQuestions().size());
 
@@ -215,7 +212,7 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed()
-            throws QuestionFailedException, UserFailedException, AnswerFailedException {
+            throws QuestionFailedException, UserFailedException, CommentFailedException, AnswerFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
