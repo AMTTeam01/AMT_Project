@@ -62,13 +62,12 @@ public class AnswerFacade {
                     .creationDate(command.getCreationDate())
                     .questionId(existingQuestion.getId())
                     .userId(user.getId())
-                    .username(user.getUsername())
                     .build();
 
             answerRepository.save(submittedAnswer);
 
             AnswersDTO.AnswerDTO newAnswer = AnswersDTO.AnswerDTO.builder()
-                    .username(submittedAnswer.getUsername())
+                    .username(user.getUsername())
                     .description(submittedAnswer.getDescription())
                     .creationDate(submittedAnswer.getCreationDate())
                     .id(submittedAnswer.getId())
@@ -97,14 +96,18 @@ public class AnswerFacade {
             }
         }
 
-        List<AnswersDTO.AnswerDTO> answersDTO = answers.stream().map(
-                answer -> AnswersDTO.AnswerDTO.builder()
-                        .username(answer.getUsername())
-                        .description(answer.getDescription())
-                        .creationDate(answer.getCreationDate())
-                        .id(answer.getId())
-                        .build()
-        ).collect(Collectors.toList());
+        List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
+        for (Answer answer : answers) {
+            AnswersDTO.AnswerDTO build = AnswersDTO.AnswerDTO.builder()
+                    .username(userFacade.getUsers(
+                            UserQuery.builder().userId(answer.getUserId()).build()
+                    ).getUsers().get(0).getUsername())
+                    .description(answer.getDescription())
+                    .creationDate(answer.getCreationDate())
+                    .id(answer.getId())
+                    .build();
+            answersDTO.add(build);
+        }
 
         return AnswersDTO.builder().answers(answersDTO).build();
     }

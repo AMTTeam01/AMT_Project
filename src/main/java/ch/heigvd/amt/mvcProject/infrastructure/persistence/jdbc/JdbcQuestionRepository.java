@@ -171,7 +171,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             while (rs.next()) {
 
                 if (foundQuestion == null) {
-
                     foundQuestion = Question.builder()
                             .id(new QuestionId(rs.getString("question_id")))
                             .description(rs.getString("question_description"))
@@ -181,19 +180,15 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                             .build();
                 }
 
-                String username = rs.getString("answer_username");
+                /*String username = rs.getString("answer_username");*/
 
-                if (username != null) {
-                    foundQuestion.addAnswer(Answer.builder()
-                            .id(new AnswerId(rs.getString("answer_id")))
-                            .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
-                            .description(rs.getString("answer_description"))
-                            .questionId(new QuestionId(rs.getString("question_id")))
-                            .userId(new UserId(rs.getString("answer_user_id")))
-                            .username(username)
-                            .build());
-                }
-
+                foundQuestion.addAnswer(Answer.builder()
+                        .id(new AnswerId(rs.getString("answer_id")))
+                        .creationDate(new Date(rs.getTimestamp("answer_creationDate").getTime()))
+                        .description(rs.getString("answer_description"))
+                        .questionId(new QuestionId(rs.getString("question_id")))
+                        .userId(new UserId(rs.getString("answer_user_id")))
+                        .build());
             }
             optionalQuestion = Optional.of(foundQuestion);
 

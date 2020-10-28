@@ -25,8 +25,6 @@ public class Answer implements IEntity<Answer, AnswerId> {
 
     private UserId userId;
 
-    private String username;
-
     @Override
     public Answer deepClone() {
         return this.toBuilder()
@@ -56,11 +54,7 @@ public class Answer implements IEntity<Answer, AnswerId> {
                 throw new IllegalArgumentException("userId is mandatory");
             }
 
-            if (username == null || username.isEmpty()) {
-                throw new IllegalArgumentException("username is mandatory");
-            }
-
-            return new Answer(id, description, creationDate, questionId, userId, username);
+            return new Answer(id, description, creationDate, questionId, userId);
         }
     }
 }

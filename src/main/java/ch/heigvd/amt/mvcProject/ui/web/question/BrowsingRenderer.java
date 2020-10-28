@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.ui.web.question;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
+import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -28,8 +29,14 @@ public class BrowsingRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        QuestionsDTO questionsDTO = questionFacade.getQuestions();
-        request.setAttribute("questions", questionsDTO);
-        request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);
+        QuestionsDTO questionsDTO = null;
+        try {
+            questionsDTO = questionFacade.getQuestions();
+            request.setAttribute("questions", questionsDTO);
+            request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);
+        } catch (UserFailedException e) {
+            e.printStackTrace();
+            response.sendRedirect("/error");
+        }
     }
 }

@@ -97,7 +97,7 @@ public class QuestionFacadeTestIT {
     }
 
     @After
-    public void cleanUp() throws QuestionFailedException {
+    public void cleanUp() throws QuestionFailedException, UserFailedException {
         userFacade.removeUser(currentUserDTO.getUserId());
 
         // Clean all questions

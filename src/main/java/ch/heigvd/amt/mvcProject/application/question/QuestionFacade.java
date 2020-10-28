@@ -1,5 +1,8 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
@@ -29,10 +32,12 @@ public class QuestionFacade {
     private IQuestionRepository questionRepository;
 
     private UserFacade userFacade;
+    private AnswerFacade answerFacade;
 
-    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade) {
+    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, AnswerFacade answerFacade) {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
+        this.answerFacade = answerFacade;
     }
 
     /**
@@ -160,7 +165,7 @@ public class QuestionFacade {
      * Retrieve all question in the repository
      * @return all questions as DTO
      */
-    public QuestionsDTO getQuestions() throws UserFailedException {
+    public QuestionsDTO getQuestions() throws UserFailedException, QuestionFailedException, AnswerFailedException {
         return getQuestionsDTO(questionRepository.findAll(), null);
     }
 
@@ -170,7 +175,7 @@ public class QuestionFacade {
      * @return return the result asked by the query as DTO
      * @throws QuestionFailedException
      */
-    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException, UserFailedException {
+    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
         Collection<Question> questionsFound = new ArrayList<>();
 
         if (query == null)
@@ -192,7 +197,7 @@ public class QuestionFacade {
      * @return the single question asked
      * @throws QuestionFailedException
      */
-    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException {
+    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         if (query == null || query.getQuestionId() == null)
             throw new QuestionFailedException("Query is null or invalid");
@@ -201,7 +206,7 @@ public class QuestionFacade {
 
         if(query.isWithDetail()) {
             question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
-                    .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+                    .orElseThrow(() -> new QuestionFailedException("The question with details hasn't been found"));
         } else {
             question = questionRepository.findById(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
@@ -216,7 +221,7 @@ public class QuestionFacade {
      * @param questionsFound collection of questions
      * @return Questions DTO
      */
-    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound, QuestionQuery query) throws UserFailedException {
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound, QuestionQuery query) throws UserFailedException, QuestionFailedException, AnswerFailedException {
         List<QuestionsDTO.QuestionDTO> QuestionsDTOFound = new ArrayList<>();
 
         for (Question question : questionsFound) {
@@ -246,7 +251,7 @@ public class QuestionFacade {
      * @param question question to transform
      * @return the DTO corresponding to the parameter
      */
-    private QuestionsDTO.QuestionDTO getQuestion(Question question, QuestionQuery query) throws UserFailedException {
+    private QuestionsDTO.QuestionDTO getQuestion(Question question, QuestionQuery query) throws UserFailedException, QuestionFailedException, AnswerFailedException {
 
         // Get question's answers
         List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
@@ -276,15 +281,8 @@ public class QuestionFacade {
      * @param question Which question want the ansers
      * @return a collection of answer DTO associate to the question
      */
-    private List<AnswersDTO.AnswerDTO> getAnswers(Question question) {
-        return question.getAnswers().stream().map(
-                answer -> AnswersDTO.AnswerDTO.builder()
-                        .id(answer.getId())
-                        .creationDate(answer.getCreationDate())
-                        .description(answer.getDescription())
-                        .username(answer.getUsername())
-                        .build()
-        ).collect(Collectors.toList());
+    private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException {
+        return answerFacade.getAnswers(AnswerQuery.builder().questionId(question.getId()).build()).getAnswers();
     }
 
     /**
@@ -298,6 +296,5 @@ public class QuestionFacade {
 
         if (existingUser.getUsers().size() == 0)
             throw new QuestionFailedException("The user hasn't been found");
-
     }
 }

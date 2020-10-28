@@ -126,7 +126,7 @@ public class AnswerFacadeTestIT {
 
         QuestionsDTO.QuestionDTO updatedQuestion = questionFacade.getQuestion(query);
 
-        assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore, 1);
+        assertEquals(1, updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore);
 
         answerFacade.removeAnswer(newAnswer.getId());
     }

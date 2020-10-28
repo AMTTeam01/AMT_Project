@@ -39,7 +39,6 @@ public class QuestionTest {
                 .title("titre")
                 .description("description")
                 .userId(userJean.getId())
-                .username(userJean.getUsername())
                 .creationDate(new Date())
                 .build();
 
@@ -56,7 +55,6 @@ public class QuestionTest {
                  .title("titre")
                  .description("description")
                  .userId(userJean.getId())
-                 .username(userJean.getUsername())
                  .creationDate(new Date())
                  .build();
 
