@@ -32,8 +32,7 @@ import javax.inject.Inject;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class CommentFacadeTestIT {
@@ -290,9 +289,8 @@ public class CommentFacadeTestIT {
 
         assertEquals(2, view.getComments().size());
 
-        assertEquals(answerComment.getId().asString(), view.getComments().get(1).getId().asString());
-        assertEquals(questionComment.getId().asString(), view.getComments().get(0).getId().asString());
-
+        commentFacade.getComment(CommentQuery.builder().commentId(answerComment.getId()).build());
+        commentFacade.getComment(CommentQuery.builder().commentId(questionComment.getId()).build());
 
         commentFacade.removeComment(answerComment.getId());
         commentFacade.removeComment(questionComment.getId());

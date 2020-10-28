@@ -44,7 +44,7 @@ public class QuestionFacade {
         UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(command.getUserId()).build());
 
         if (existingUser.getUsers().size() == 0)
-            new QuestionFailedException("The user hasn't been found");
+            throw new QuestionFailedException("The user hasn't been found");
 
         try {
 
@@ -81,7 +81,7 @@ public class QuestionFacade {
      *
      * @return all questions as DTO
      */
-    public QuestionsDTO getQuestions() {
+    public QuestionsDTO getAllQuestions() {
         Collection<Question> allQuestions = questionRepository.findAll();
 
         return getQuestionsAsDTO(allQuestions, new ArrayList<>(), new ArrayList<>());
@@ -95,26 +95,23 @@ public class QuestionFacade {
      * @throws QuestionFailedException
      */
     public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException {
-        Collection<Question> questionsFound = new ArrayList<>();
 
         if (query == null) {
             throw new QuestionFailedException("Query is null");
         } else {
 
-            if (query.getQuestionId() != null) {
-                Question question = questionRepository.findById(query.getQuestionId())
-                        .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-
-                questionsFound.add(question);
+            if (query.userId != null && query.title == null) {
+                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), null, null);
+            } else if (query.userId == null && query.title != null) {
+                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), null, null);
 
             } else {
                 throw new QuestionFailedException("Query invalid");
-
             }
         }
 
-        return getQuestionsAsDTO(questionsFound, new ArrayList<>(), new ArrayList<>());
     }
+
 
     /**
      * Return a single Question asked by query

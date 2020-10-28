@@ -100,7 +100,7 @@ public class QuestionFacadeTestIT {
     @Test
     public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException {
 
-        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -111,7 +111,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getQuestions();
+        QuestionsDTO view = questionFacade.getAllQuestions();
         assertNotNull(view);
 
 
@@ -161,7 +161,7 @@ public class QuestionFacadeTestIT {
     public void removeQuestion_ShouldRemoveQuestion_WhenCalled()
             throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
 
-        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -186,7 +186,7 @@ public class QuestionFacadeTestIT {
 
         questionFacade.removeQuestion(question.getId());
 
-        QuestionsDTO view = questionFacade.getQuestions();
+        QuestionsDTO view = questionFacade.getAllQuestions();
         assertNotNull(view);
         assertEquals(sizeBefore, view.getQuestions().size());
 

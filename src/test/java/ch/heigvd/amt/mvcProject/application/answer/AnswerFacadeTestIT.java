@@ -111,7 +111,6 @@ public class AnswerFacadeTestIT {
     public void addAnswer_ShouldAddAAnswerToTheQuestion_WhenCalled()
             throws AnswerFailedException, QuestionFailedException, UserFailedException, CommentFailedException {
 
-        int sizeBefore = newQuestion.getAnswersDTO().getAnswers().size();
 
         AnswerCommand answerCommand = AnswerCommand.builder()
                 .questionId(newQuestion.getId())
@@ -127,7 +126,7 @@ public class AnswerFacadeTestIT {
 
         QuestionsDTO.QuestionDTO updatedQuestion = questionFacade.getQuestion(query);
 
-        assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size() - sizeBefore, 1);
+        assertEquals(updatedQuestion.getAnswersDTO().getAnswers().size(), 1);
 
         answerFacade.removeAnswer(newAnswer.getId());
     }
