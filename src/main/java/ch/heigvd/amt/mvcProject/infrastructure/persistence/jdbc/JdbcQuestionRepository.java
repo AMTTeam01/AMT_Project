@@ -40,7 +40,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void save(Question question) {
-        System.out.println("SAVING : " + question.getId().asString());
         // TODO : gerer l'ajout des tags
 
         try {
@@ -71,7 +70,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
     @Override
     public void remove(QuestionId id) {
-        System.out.println("REMOVING QUESTION : " + id.asString());
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "DELETE FROM tblQuestion WHERE id = ?"

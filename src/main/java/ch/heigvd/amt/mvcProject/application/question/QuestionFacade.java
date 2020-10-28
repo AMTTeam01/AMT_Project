@@ -110,7 +110,6 @@ public class QuestionFacade {
      */
     public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
         checkIfUserExists(userId);
-        System.out.println("UPVOTING " + questionId.asString());
         vote(userId, questionId, UPVOTE);
     }
 
@@ -168,8 +167,6 @@ public class QuestionFacade {
                 result = voteValue;
                 break;
         }
-
-        System.out.println("NEW VOTE VALUE : " + result);
 
         return result;
     }

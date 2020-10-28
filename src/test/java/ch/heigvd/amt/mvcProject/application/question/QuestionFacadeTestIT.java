@@ -100,12 +100,9 @@ public class QuestionFacadeTestIT {
     public void cleanUp() throws QuestionFailedException, UserFailedException, AnswerFailedException {
         userFacade.removeUser(currentUserDTO.getUserId());
 
-        System.out.println("MASTER CLEAN UP");
-
         // Clean all questions
         QuestionsDTO questionDTO = questionFacade.getQuestions();
         for(QuestionsDTO.QuestionDTO question : questionDTO.getQuestions()) {
-            System.out.println(" - REMOVING " + question.getId().asString());
             questionFacade.removeQuestion(question.getId());
         }
     }
@@ -262,8 +259,9 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-
         assertEquals(1, upvotedQuestion.getVotes());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
     }
 
     @Test
@@ -283,6 +281,8 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(0, upvotedQuestion.getVotes());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
     }
 
     @Test
@@ -304,6 +304,8 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(initVotes, upvotedQuestion.getVotes());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
     }
 
     @Test
@@ -342,6 +344,10 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(3, upvotedQuestion.getVotes());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
+        userFacade.removeUser(u1.getId());
+        userFacade.removeUser(u2.getId());
     }
 
     @Test
@@ -380,5 +386,9 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(-3, upvotedQuestion.getVotes());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
+        userFacade.removeUser(u1.getId());
+        userFacade.removeUser(u2.getId());
     }
 }

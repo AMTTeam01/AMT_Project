@@ -62,13 +62,9 @@ public class AnswerFacade {
         if (existingUser.getUsers().size() == 0)
             throw new UserFailedException("The user hasn't been found");
 
-        System.out.println("GETTING ANSWER");
-
         QuestionsDTO.QuestionDTO existingQuestion = questionFacade.getQuestion(QuestionQuery.builder()
                 .questionId(command.getQuestionId())
                 .build());
-
-        System.out.println("GETTING USER ANSWER");
 
         UsersDTO.UserDTO user = existingUser.getUsers().get(0);
 
@@ -78,8 +74,6 @@ public class AnswerFacade {
                 .questionId(existingQuestion.getId())
                 .userId(user.getId())
                 .build();
-
-        System.out.println("SAVING ANSWER");
 
         answerRepository.save(submittedAnswer);
 
@@ -101,12 +95,8 @@ public class AnswerFacade {
         } else {
 
             if (query.getQuestionId() != null) {
-                System.out.println("GETTING QUESTION");
-                System.out.println("GETTING QUESTION FOR FACADE : " + (questionFacade == null));
-                System.out.println("GETTING QUESTION FOR QUERY Q-ID : " + (query.getQuestionId()));
                 questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
 
-                System.out.println("FINDING THE QUESTION");
                 answers = answerRepository.findByQuestionId(query.getQuestionId()).orElse(new ArrayList<>());
             } else {
                 throw new AnswerFailedException("Query invalid");
