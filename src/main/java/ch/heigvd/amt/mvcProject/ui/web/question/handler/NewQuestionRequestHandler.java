@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject.ui.web.question.handler;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionCommand;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
@@ -53,7 +54,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
             questionFacade.addQuestion(command);
             resp.sendRedirect(getServletContext().getContextPath() + "/browsing");
 
-        } catch (QuestionFailedException | UserFailedException e) {
+        } catch (QuestionFailedException | UserFailedException | AnswerFailedException e) {
             req.getSession().setAttribute("errors", List.of(e.getMessage()));
             resp.sendRedirect(getServletContext().getContextPath() + "/new_question");
         }

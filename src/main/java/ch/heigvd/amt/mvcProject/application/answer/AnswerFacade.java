@@ -24,12 +24,26 @@ public class AnswerFacade {
     private IAnswerRepository answerRepository;
 
     private UserFacade userFacade;
-
     private QuestionFacade questionFacade;
+
+    public AnswerFacade() {
+    }
 
     public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade, QuestionFacade questionFacade) {
         this.answerRepository = answerRepository;
         this.userFacade = userFacade;
+        this.questionFacade = questionFacade;
+    }
+
+    public void setAnswerRepository(IAnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
+    }
+
+    public void setUserFacade(UserFacade userFacade) {
+        this.userFacade = userFacade;
+    }
+
+    public void setQuestionFacade(QuestionFacade questionFacade) {
         this.questionFacade = questionFacade;
     }
 
@@ -48,35 +62,35 @@ public class AnswerFacade {
         if (existingUser.getUsers().size() == 0)
             throw new UserFailedException("The user hasn't been found");
 
+        System.out.println("GETTING ANSWER");
+
         QuestionsDTO.QuestionDTO existingQuestion = questionFacade.getQuestion(QuestionQuery.builder()
                 .questionId(command.getQuestionId())
                 .build());
 
+        System.out.println("GETTING USER ANSWER");
 
-        try {
-            UsersDTO.UserDTO user = existingUser.getUsers().get(0);
+        UsersDTO.UserDTO user = existingUser.getUsers().get(0);
 
+        Answer submittedAnswer = Answer.builder()
+                .description(command.getDescription())
+                .creationDate(command.getCreationDate())
+                .questionId(existingQuestion.getId())
+                .userId(user.getId())
+                .build();
 
-            Answer submittedAnswer = Answer.builder()
-                    .description(command.getDescription())
-                    .creationDate(command.getCreationDate())
-                    .questionId(existingQuestion.getId())
-                    .userId(user.getId())
-                    .build();
+        System.out.println("SAVING ANSWER");
 
-            answerRepository.save(submittedAnswer);
+        answerRepository.save(submittedAnswer);
 
-            AnswersDTO.AnswerDTO newAnswer = AnswersDTO.AnswerDTO.builder()
-                    .username(user.getUsername())
-                    .description(submittedAnswer.getDescription())
-                    .creationDate(submittedAnswer.getCreationDate())
-                    .id(submittedAnswer.getId())
-                    .build();
+        AnswersDTO.AnswerDTO newAnswer = AnswersDTO.AnswerDTO.builder()
+                .username(user.getUsername())
+                .description(submittedAnswer.getDescription())
+                .creationDate(submittedAnswer.getCreationDate())
+                .id(submittedAnswer.getId())
+                .build();
 
-            return newAnswer;
-        } catch (Exception e) {
-            throw new AnswerFailedException(e.getMessage());
-        }
+        return newAnswer;
     }
 
     public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException, UserFailedException {
@@ -87,9 +101,12 @@ public class AnswerFacade {
         } else {
 
             if (query.getQuestionId() != null) {
-
+                System.out.println("GETTING QUESTION");
+                System.out.println("GETTING QUESTION FOR FACADE : " + (questionFacade == null));
+                System.out.println("GETTING QUESTION FOR QUERY Q-ID : " + (query.getQuestionId()));
                 questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
 
+                System.out.println("FINDING THE QUESTION");
                 answers = answerRepository.findByQuestionId(query.getQuestionId()).orElse(new ArrayList<>());
             } else {
                 throw new AnswerFailedException("Query invalid");

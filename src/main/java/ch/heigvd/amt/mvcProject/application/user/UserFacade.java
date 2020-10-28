@@ -29,6 +29,10 @@ public class UserFacade {
         this.userRepository = userRepository;
     }
 
+    public void setUserRepository(IUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     /**
      * @return Returns all users
      */

@@ -1,7 +1,9 @@
 package ch.heigvd.amt.mvcProject.ui.web.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
+import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
+import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
 
@@ -34,7 +36,7 @@ public class BrowsingRenderer extends HttpServlet {
             questionsDTO = questionFacade.getQuestions();
             request.setAttribute("questions", questionsDTO);
             request.getRequestDispatcher("/WEB-INF/views/browsing.jsp").forward(request, response);
-        } catch (UserFailedException e) {
+        } catch (UserFailedException | QuestionFailedException | AnswerFailedException e) {
             e.printStackTrace();
             response.sendRedirect("/error");
         }

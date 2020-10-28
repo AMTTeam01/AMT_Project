@@ -97,7 +97,7 @@ public class QuestionFacadeTestIT {
     }
 
     @After
-    public void cleanUp() throws QuestionFailedException, UserFailedException {
+    public void cleanUp() throws QuestionFailedException, UserFailedException, AnswerFailedException {
         userFacade.removeUser(currentUserDTO.getUserId());
 
         // Clean all questions
@@ -108,7 +108,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException {
+    public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
@@ -133,7 +133,7 @@ public class QuestionFacadeTestIT {
 
 
     @Test
-    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException {
+    public void getQuestionByIdShouldWork() throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -215,7 +215,7 @@ public class QuestionFacadeTestIT {
 
     @Test
     public void getQuestionById_ShouldReturnQuestion_WhenACorrectIdWasPassed()
-            throws QuestionFailedException, UserFailedException {
+            throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -245,7 +245,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException {
+    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")

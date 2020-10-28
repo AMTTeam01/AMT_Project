@@ -44,9 +44,20 @@ public class ServiceRegistry {
     @PostConstruct
     private void setup() {
         authenticationFacade = new AuthenticationFacade(userRepository);
-        userFacade = new UserFacade(userRepository);
-        questionFacade = new QuestionFacade(questionRepository, userFacade);
-        answerFacade = new AnswerFacade(answerRepository, userFacade, questionFacade);
+
+        // init empty facades
+        userFacade = new UserFacade();
+        answerFacade = new AnswerFacade();
+        questionFacade = new QuestionFacade();
+
+        // Set the values (after construction to avoid null values)
+        userFacade.setUserRepository(userRepository);
+        questionFacade.setAnswerFacade(answerFacade);
+        questionFacade.setQuestionRepository(questionRepository);
+        questionFacade.setUserFacade(userFacade);
+        answerFacade.setAnswerRepository(answerRepository);
+        answerFacade.setQuestionFacade(questionFacade);
+        answerFacade.setUserFacade(userFacade);
     }
 
     public AuthenticationFacade getAuthenticationFacade() {
@@ -58,7 +69,7 @@ public class ServiceRegistry {
     }
 
     public UserFacade getUserFacade(){
-        return userFacade;
+         return userFacade;
     }
 
     public AnswerFacade getAnswerFacade(){

@@ -63,7 +63,6 @@ public class QuestionTest {
                 .creationDate(new Date())
                 .description("Answer")
                 .questionId(question.getId())
-                .username(userMarie.getUsername())
                 .build();
 
         question.addAnswer(answer);

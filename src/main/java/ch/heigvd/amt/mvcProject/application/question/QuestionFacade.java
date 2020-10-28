@@ -34,9 +34,24 @@ public class QuestionFacade {
     private UserFacade userFacade;
     private AnswerFacade answerFacade;
 
+    public QuestionFacade() {
+    }
+
     public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, AnswerFacade answerFacade) {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
+        this.answerFacade = answerFacade;
+    }
+
+    public void setQuestionRepository(IQuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
+
+    public void setUserFacade(UserFacade userFacade) {
+        this.userFacade = userFacade;
+    }
+
+    public void setAnswerFacade(AnswerFacade answerFacade) {
         this.answerFacade = answerFacade;
     }
 
@@ -48,47 +63,46 @@ public class QuestionFacade {
      * @throws QuestionFailedException
      */
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command)
-            throws UserFailedException, QuestionFailedException {
+            throws UserFailedException, QuestionFailedException, AnswerFailedException {
 
         checkIfUserExists(command.getUserId());
 
-        try {
-            // Create submitted question
-            Question submittedQuestion = Question.builder()
-                    .title(command.getTitle())
-                    .description(command.getDescription())
-                    .userId(command.getUserId())
-                    .creationDate(command.getCreationDate())
-                    .build();
+        // Create submitted question
+        Question submittedQuestion = Question.builder()
+                .title(command.getTitle())
+                .description(command.getDescription())
+                .userId(command.getUserId())
+                .creationDate(command.getCreationDate())
+                .build();
 
-            // Save to repository
-            questionRepository.save(submittedQuestion);
+        // Save to repository
+        questionRepository.save(submittedQuestion);
 
-            // Get author for the questionDTO
-            UsersDTO.UserDTO user = userFacade.getUsers(
-                    UserQuery.builder().userId(command.getUserId()).build()
-            ).getUsers().get(0);
+        System.out.println("GETTING THE USER");
 
-            // Get the answers for the questionDTO
-            Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
+        // Get author for the questionDTO
+        UsersDTO.UserDTO user = userFacade.getUsers(
+                UserQuery.builder().userId(command.getUserId()).build()
+        ).getUsers().get(0);
 
-            // create questionDTO of the submitted quesiton
-            QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
-                    .description(submittedQuestion.getDescription())
-                    .id(submittedQuestion.getId())
-                    .title(submittedQuestion.getTitle())
-                    .username(user.getUsername())
-                    .votes(0)
-                    .creationDate(submittedQuestion.getCreationDate())
-                    .userId(submittedQuestion.getUserId())
-                    .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
-                    .build();
+        System.out.println("GETTING THE ANSWERS 2");
 
-            return newQuestion;
+        // Get the answers for the questionDTO
+        Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
 
-        } catch (Exception e) {
-            throw new QuestionFailedException(e.getMessage());
-        }
+        // create questionDTO of the submitted quesiton
+        QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
+                .description(submittedQuestion.getDescription())
+                .id(submittedQuestion.getId())
+                .title(submittedQuestion.getTitle())
+                .username(user.getUsername())
+                .votes(0)
+                .creationDate(submittedQuestion.getCreationDate())
+                .userId(submittedQuestion.getUserId())
+                .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
+                .build();
+
+        return newQuestion;
     }
 
     /**
@@ -199,6 +213,9 @@ public class QuestionFacade {
      */
     public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
+        System.out.println("GETTING THE QUESTION WITH QUERY : " + (query == null));
+        System.out.println("GETTING THE QUESTION WITH ID : " + query.getQuestionId());
+
         if (query == null || query.getQuestionId() == null)
             throw new QuestionFailedException("Query is null or invalid");
 
@@ -282,6 +299,7 @@ public class QuestionFacade {
      * @return a collection of answer DTO associate to the question
      */
     private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException {
+        System.out.println("GETTING THE ANSWERS");
         return answerFacade.getAnswers(AnswerQuery.builder().questionId(question.getId()).build()).getAnswers();
     }
 

@@ -46,7 +46,7 @@ public class QuestionRenderer extends HttpServlet {
             request.setAttribute("question", questionDTO);
 
             request.getRequestDispatcher("/WEB-INF/views/question.jsp").forward(request, response);
-        } catch (QuestionFailedException | UserFailedException e) {
+        } catch (QuestionFailedException | UserFailedException | AnswerFailedException e) {
             e.printStackTrace();
             response.sendRedirect("/error");
         }

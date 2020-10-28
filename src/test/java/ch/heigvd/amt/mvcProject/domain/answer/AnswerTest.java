@@ -39,7 +39,6 @@ public class AnswerTest {
                 .creationDate(new Date())
                 .description("Test")
                 .questionId(question.getId())
-                .username(user.getUsername())
                 .userId(user.getId())
                 .build();
 

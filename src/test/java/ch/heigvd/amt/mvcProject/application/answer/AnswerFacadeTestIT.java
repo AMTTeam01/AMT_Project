@@ -61,8 +61,8 @@ public class AnswerFacadeTestIT {
     }
 
     @Before
-    public void init()
-            throws RegistrationFailedException, QuestionFailedException, LoginFailedException, UserFailedException {
+    public void init() throws RegistrationFailedException, QuestionFailedException,
+            LoginFailedException, UserFailedException, AnswerFailedException {
         answerFacade = serviceRegistry.getAnswerFacade();
 
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
@@ -103,7 +103,6 @@ public class AnswerFacadeTestIT {
         questionFacade.removeQuestion(newQuestion.getId());
 
         authenticationFacade.delete(currentUserDTO.getUserId());
-
     }
 
     @Test

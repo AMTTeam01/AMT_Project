@@ -199,7 +199,6 @@ public class JdbcAnswerRepository implements IAnswerRepository {
                 .description(rs.getString("description"))
                 .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
                 .questionId(new QuestionId(rs.getString("tblQuestion_id")))
-                .username(rs.getString("userName"))
                 .userId(new UserId(rs.getString("user_id")))
                 .build();
     }

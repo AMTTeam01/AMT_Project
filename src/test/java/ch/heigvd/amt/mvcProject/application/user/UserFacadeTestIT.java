@@ -32,11 +32,11 @@ public class UserFacadeTestIT {
     @Inject
     ServiceRegistry serviceRegistry;
 
-    private final String username = "chau";
+    private final String username = "userFacade1";
     private final String password = "1234";
-    private final String email = "chau@gmail.com";
-    private final String newUsername = "patrick";
-    private final String newEmail = "patrick@gmail.com";
+    private final String email = "userFacade1@gmail.com";
+    private final String newUsername = "userFacade2";
+    private final String newEmail = "userFacade2@gmail.com";
     private final String newPassword = "5678";
     private CurrentUserDTO currentUserDTO = null;
 
@@ -108,8 +108,8 @@ public class UserFacadeTestIT {
                 .builder()
                 .clearTxtPassword("1234")
                 .confirmationClearTxtPassword("1234")
-                .username("henri")
-                .email("henri@gmail.com")
+                .username("userFacade3")
+                .email("userFacade3@gmail.com")
                 .build();
 
         authenticationFacade.register(registerCommand);
@@ -204,10 +204,10 @@ public class UserFacadeTestIT {
         UserFacade userFacade = serviceRegistry.getUserFacade();
 
         EditUserCommand editUserCommand = EditUserCommand.builder()
-                .email("liechti@gmail.com")
-                .username("")
-                .password("")
-                .confirmationPassword("")
+                .email("userFacade4@gmail.com")
+                .username("userFacade4")
+                .password("1234")
+                .confirmationPassword("1234")
                 .build();
 
         assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
