@@ -78,14 +78,10 @@ public class QuestionFacade {
         // Save to repository
         questionRepository.save(submittedQuestion);
 
-        System.out.println("GETTING THE USER");
-
         // Get author for the questionDTO
         UsersDTO.UserDTO user = userFacade.getUsers(
                 UserQuery.builder().userId(command.getUserId()).build()
         ).getUsers().get(0);
-
-        System.out.println("GETTING THE ANSWERS 2");
 
         // Get the answers for the questionDTO
         Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
@@ -114,6 +110,7 @@ public class QuestionFacade {
      */
     public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
         checkIfUserExists(userId);
+        System.out.println("UPVOTING " + questionId.asString());
         vote(userId, questionId, UPVOTE);
     }
 
@@ -172,6 +169,8 @@ public class QuestionFacade {
                 break;
         }
 
+        System.out.println("NEW VOTE VALUE : " + result);
+
         return result;
     }
 
@@ -214,7 +213,7 @@ public class QuestionFacade {
     public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
 
         System.out.println("GETTING THE QUESTION WITH QUERY : " + (query == null));
-        System.out.println("GETTING THE QUESTION WITH ID : " + query.getQuestionId());
+        System.out.println("GETTING THE QUESTION WITH ID : " + query.getQuestionId().asString());
 
         if (query == null || query.getQuestionId() == null)
             throw new QuestionFailedException("Query is null or invalid");
@@ -285,6 +284,7 @@ public class QuestionFacade {
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
+                .votes(questionRepository.getVotes(question.getId()))
                 .userId(question.getUserId())
                 .username(user.getUsername())
                 .creationDate(question.getCreationDate())

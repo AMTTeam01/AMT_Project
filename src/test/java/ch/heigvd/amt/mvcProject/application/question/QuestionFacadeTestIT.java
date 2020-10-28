@@ -245,7 +245,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -259,11 +259,12 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
+
         assertEquals(1, upvotedQuestion.getVotes());
     }
 
-    /*@Test
-    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException {
+    @Test
+    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -282,7 +283,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvotingAndDownvotingShouldNotChangeTheVotes() throws UserFailedException, QuestionFailedException {
+    public void upvotingAndDownvotingShouldNotChangeTheVotes() throws UserFailedException, QuestionFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -303,7 +304,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvotingWithMultipleUsersShouldGiveMultipleVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException {
+    public void upvotingWithMultipleUsersShouldGiveMultipleVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -341,7 +342,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void downvotingWithMultipleUsersShouldGiveNegativeVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException {
+    public void downvotingWithMultipleUsersShouldGiveNegativeVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -376,5 +377,5 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(-3, upvotedQuestion.getVotes());
-    }*/
+    }
 }

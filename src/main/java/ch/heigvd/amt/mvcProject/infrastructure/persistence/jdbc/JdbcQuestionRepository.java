@@ -259,6 +259,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
      */
     @Override
     public void addVote(UserId userId, QuestionId questionId, int positive) {
+        System.out.println("VOTING FOR " + questionId.asString() + " - " + positive);
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
                     "INSERT INTO tblUser_vote_tblQuestion (tblUser_id, tblQuestion_id, positiv)" +
