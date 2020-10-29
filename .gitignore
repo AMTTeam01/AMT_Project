@@ -88,3 +88,5 @@ docker/images/payara/apps/help-2020.war
 .idea/
 
 *.iml
+
+src/test/resources/arquillian.xml

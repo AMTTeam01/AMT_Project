@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      
+
       # Cache optimization
       - uses: actions/cache@v1
         with:
@@ -40,19 +40,28 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-          
+
       # Codeceptjs
       - uses: actions/checkout@v2
-      - name : Use Node.js${{matrix.node-version}}
-        uses : actions/setup-node@v1
-        with :
+      - name: Use Node.js${{matrix.node-version}}
+        uses: actions/setup-node@v1
+        with:
           node-version: ${{matrix.node-version}}
       - run: |
           npm install --prefix e2e
           npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
         env:
           CI: true
-          
+
+      # Run integration test with arquillian
+      - uses: actions/checkout@v2
+      - name: Run IT
+        run : |
+          ./run-app.sh
+          cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
+          ./run-integration-tests.sh
+          mvn liberty:stop
+
       # Maven package
       - name: Build with Maven
         run: mvn clean package
