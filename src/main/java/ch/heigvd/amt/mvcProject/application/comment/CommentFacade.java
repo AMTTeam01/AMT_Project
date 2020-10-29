@@ -22,9 +22,21 @@ public class CommentFacade {
 
     private UserFacade userFacade;
 
+    public CommentFacade() {
+
+    }
+
     public CommentFacade(ICommentRepository commentRepository,
                          UserFacade userFacade) {
         this.commentRepository = commentRepository;
+        this.userFacade = userFacade;
+    }
+
+    public void setCommentRepository(ICommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
+
+    public void setUserFacade(UserFacade userFacade) {
         this.userFacade = userFacade;
     }
 

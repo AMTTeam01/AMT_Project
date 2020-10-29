@@ -104,7 +104,9 @@ public class AnswerFacade {
      * @throws QuestionFailedException
      * @throws CommentFailedException
      */
-    public AnswersDTO getAnswers(AnswerQuery query) throws AnswerFailedException, QuestionFailedException, CommentFailedException {
+    public AnswersDTO getAnswers(AnswerQuery query)
+            throws AnswerFailedException, QuestionFailedException,
+            CommentFailedException, UserFailedException {
 
         Collection<Answer> answers;
 

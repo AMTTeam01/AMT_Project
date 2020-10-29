@@ -44,7 +44,8 @@ public class QuestionFacade {
     public QuestionFacade() {
     }
 
-    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, AnswerFacade answerFacade) {
+    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade,
+                          AnswerFacade answerFacade, CommentFacade commentFacade) {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
         this.answerFacade = answerFacade;
@@ -75,7 +76,7 @@ public class QuestionFacade {
      * @throws QuestionFailedException
      */
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command)
-            throws UserFailedException, QuestionFailedException, AnswerFailedException {
+            throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
 
         checkIfUserExists(command.getUserId());
 
@@ -187,7 +188,8 @@ public class QuestionFacade {
      * Retrieve all question in the repository
      * @return all questions as DTO
      */
-    public QuestionsDTO getQuestions() throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    public QuestionsDTO getQuestions() throws UserFailedException, QuestionFailedException,
+            AnswerFailedException, CommentFailedException {
         return getQuestionsDTO(questionRepository.findAll());
     }
 
@@ -197,7 +199,8 @@ public class QuestionFacade {
      * @return return the result asked by the query as DTO
      * @throws QuestionFailedException
      */
-    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
+    public QuestionsDTO getQuestions(QuestionQuery query) throws QuestionFailedException,
+            UserFailedException, AnswerFailedException, CommentFailedException {
         Collection<Question> questionsFound = new ArrayList<>();
 
         if (query == null)
@@ -219,7 +222,8 @@ public class QuestionFacade {
      * @return the single question asked
      * @throws QuestionFailedException
      */
-    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query) throws QuestionFailedException, UserFailedException, AnswerFailedException {
+    public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query)
+            throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
 
         if (query == null || query.getQuestionId() == null)
             throw new QuestionFailedException("Query is null or invalid");
@@ -242,7 +246,7 @@ public class QuestionFacade {
                     .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         }
 
-        return getQuestionDTO(question, answersDTO, commentsDTO);
+        return getQuestionDTO(question);
     }
 
     /**
@@ -251,14 +255,12 @@ public class QuestionFacade {
      * @param questionsFound collection of questions
      * @return Questions DTO
      */
-    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound,
-                                         Collection<AnswersDTO.AnswerDTO> answers,
-                                         Collection<CommentsDTO.CommentDTO> comments) {
-        ) throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    private QuestionsDTO getQuestionsDTO(Collection<Question> questionsFound)
+            throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
         List<QuestionsDTO.QuestionDTO> QuestionsDTOFound = new ArrayList<>();
 
         for (Question question : questionsFound) {
-            QuestionsDTO.QuestionDTO questionDTO = getQuestion(question,
+            QuestionsDTO.QuestionDTO questionDTO = getQuestion(
                     QuestionQuery.builder()
                     .questionId(question.getId())
                     .build());
@@ -287,42 +289,47 @@ public class QuestionFacade {
      * @param question question to transform
      * @return the DTO corresponding to the parameter
      */
-    private QuestionsDTO.QuestionDTO getQuestion(Question question, QuestionQuery query,
-                Collection<CommentsDTO.CommentDTO> comments)
-        throws UserFailedException, QuestionFailedException, AnswerFailedException {
-
-        // Get question's answers
-        List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
-        if (query != null && query.isWithDetail()) {
-            answersDTO = getAnswers(question);
-        }
-
-        // Get question user details
-        UsersDTO.UserDTO user = userFacade.getUsers(
-                UserQuery.builder().userId(question.getUserId()).build()
-        ).getUsers().get(0);
-
+    private QuestionsDTO.QuestionDTO getQuestionDTO(Question question)
+            throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
         return QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
                 .votes(questionRepository.getVotes(question.getId()))
                 .userId(question.getUserId())
-                .username(user.getUsername())
+                .username(getAuthor(question).getUsername())
                 .creationDate(question.getCreationDate())
-                .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
-                .commentsDTO(CommentsDTO.builder().comments(comments).build())
+                .answersDTO(AnswersDTO.builder().answers(getAnswers(question)).build())
+                .commentsDTO(CommentsDTO.builder().comments(getComments(question)).build())
                 .build();
     }
 
     /**
      * Retrieve all answers associate to the question
-     *
      * @param question Which question want the ansers
      * @return a collection of answer DTO associate to the question
      */
-    private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException {
+    private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException, CommentFailedException {
         return answerFacade.getAnswers(AnswerQuery.builder().questionId(question.getId()).build()).getAnswers();
+    }
+
+    /**
+     * Retrieve all comments associate to the question
+     * @param question Which question want the ansers
+     * @return a collection of comments DTO associate to the question
+     */
+    private List<CommentsDTO.CommentDTO> getComments(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException, CommentFailedException {
+        return commentFacade.getComments(CommentQuery.builder().questionId(question.getId()).build()).getComments();
+    }
+
+    /**
+     * Get the author of the question
+     * @param question : question id
+     * @return author of the id (user)
+     * @throws UserFailedException
+     */
+    private UsersDTO.UserDTO getAuthor(Question question) throws UserFailedException {
+        return userFacade.getUsers(UserQuery.builder().userId(question.getUserId()).build()).getUsers().get(0);
     }
 
     /**

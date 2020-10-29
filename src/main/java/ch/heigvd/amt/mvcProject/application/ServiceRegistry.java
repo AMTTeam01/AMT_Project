@@ -66,10 +66,13 @@ public class ServiceRegistry {
         questionFacade.setAnswerFacade(answerFacade);
         questionFacade.setQuestionRepository(questionRepository);
         questionFacade.setUserFacade(userFacade);
+        questionFacade.setCommentFacade(commentFacade);
         answerFacade.setAnswerRepository(answerRepository);
         answerFacade.setQuestionFacade(questionFacade);
         answerFacade.setUserFacade(userFacade);
-        //commentFacade.set
+        answerFacade.setCommentFacade(commentFacade);
+        commentFacade.setUserFacade(userFacade);
+        commentFacade.setCommentRepository(commentRepository);
     }
 
     public AuthenticationFacade getAuthenticationFacade() {

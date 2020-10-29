@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.ui.web.question;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
@@ -38,15 +39,16 @@ public class BrowsingRenderer extends HttpServlet {
         QuestionsDTO questionsDTO = null;
         String search = request.getParameter("txt_search");
 
-        if(search == null || search.isEmpty()) {
-            questionsDTO = questionFacade.getAllQuestions();
-        } else {
-            QuestionQuery query = QuestionQuery.builder().title(search).build();
-            try {
+        try {
+            if(search == null || search.isEmpty()) {
+                questionsDTO = questionFacade.getQuestions();
+            } else {
+                QuestionQuery query = QuestionQuery.builder().title(search).build();
                 questionsDTO = questionFacade.getQuestions(query);
-            } catch (QuestionFailedException e) {
-                e.printStackTrace();
             }
+        } catch (UserFailedException | QuestionFailedException |
+                AnswerFailedException | CommentFailedException e) {
+            e.printStackTrace();
         }
 
         request.setAttribute("questions", questionsDTO);

@@ -93,7 +93,7 @@ public class QuestionFacadeTestIT {
     }
 
     @After
-    public void cleanUp() throws QuestionFailedException, UserFailedException, AnswerFailedException {
+    public void cleanUp() throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
         userFacade.removeUser(currentUserDTO.getUserId());
 
         // Clean all questions
@@ -104,9 +104,9 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException, AnswerFailedException {
+    public void addQuestionShouldWork() throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
 
-        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -117,7 +117,7 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        QuestionsDTO view = questionFacade.getAllQuestions();
+        QuestionsDTO view = questionFacade.getQuestions();
         assertNotNull(view);
 
 
@@ -167,7 +167,7 @@ public class QuestionFacadeTestIT {
     public void removeQuestion_ShouldRemoveQuestion_WhenCalled()
             throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
 
-        int sizeBefore = questionFacade.getAllQuestions().getQuestions().size();
+        int sizeBefore = questionFacade.getQuestions().getQuestions().size();
 
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -192,7 +192,7 @@ public class QuestionFacadeTestIT {
 
         questionFacade.removeQuestion(question.getId());
 
-        QuestionsDTO view = questionFacade.getAllQuestions();
+        QuestionsDTO view = questionFacade.getQuestions();
         assertNotNull(view);
         assertEquals(sizeBefore, view.getQuestions().size());
 
@@ -242,7 +242,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException {
+    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException, CommentFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -262,7 +262,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -283,7 +283,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvotingAndDownvotingShouldNotChangeTheVotes() throws UserFailedException, QuestionFailedException, AnswerFailedException {
+    public void upvotingAndDownvotingShouldNotChangeTheVotes() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -306,7 +306,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvotingWithMultipleUsersShouldGiveMultipleVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException {
+    public void upvotingWithMultipleUsersShouldGiveMultipleVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException, CommentFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -348,7 +348,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void downvotingWithMultipleUsersShouldGiveNegativeVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException {
+    public void downvotingWithMultipleUsersShouldGiveNegativeVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException, CommentFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")

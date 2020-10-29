@@ -63,7 +63,7 @@ public class AnswerFacadeTestIT {
 
     @Before
     public void init() throws RegistrationFailedException, QuestionFailedException,
-            LoginFailedException, UserFailedException, AnswerFailedException {
+            LoginFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
         answerFacade = serviceRegistry.getAnswerFacade();
 
         authenticationFacade = serviceRegistry.getAuthenticationFacade();

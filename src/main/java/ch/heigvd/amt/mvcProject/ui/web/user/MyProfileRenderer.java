@@ -3,6 +3,7 @@ package ch.heigvd.amt.mvcProject.ui.web.user;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
@@ -62,7 +63,7 @@ public class MyProfileRenderer extends HttpServlet {
             questionsDTO = questionFacade.getQuestions();
             request.setAttribute("questions", questionsDTO);
             request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
-        } catch (UserFailedException | AnswerFailedException | QuestionFailedException e) {
+        } catch (UserFailedException | AnswerFailedException | QuestionFailedException | CommentFailedException e) {
             e.printStackTrace();
             response.sendRedirect("/error");
         }
