@@ -88,26 +88,6 @@ public class QuestionFacade {
         // Save to repository
         questionRepository.save(submittedQuestion);
 
-        // Get author for the questionDTO
-        /*UsersDTO.UserDTO user = userFacade.getUsers(
-                UserQuery.builder().userId(command.getUserId()).build()
-        ).getUsers().get(0);*/
-
-        // Get the answers for the questionDTO
-        //Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
-
-        // create questionDTO of the submitted quesiton
-        /*QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
-                .description(submittedQuestion.getDescription())
-                .id(submittedQuestion.getId())
-                .title(submittedQuestion.getTitle())
-                .username(user.getUsername())
-                .votes(0)
-                .creationDate(submittedQuestion.getCreationDate())
-                .userId(submittedQuestion.getUserId())
-                .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
-                .build();*/
-
         return getQuestionAsDTO(submittedQuestion, null, null);
     }
 

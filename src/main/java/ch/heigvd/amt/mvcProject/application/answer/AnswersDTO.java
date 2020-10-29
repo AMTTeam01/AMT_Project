@@ -26,6 +26,7 @@ public class AnswersDTO {
         private String description;
         private Date creationDate;
         private String username;
+        private int votes;
         private CommentsDTO comments;
     }
 

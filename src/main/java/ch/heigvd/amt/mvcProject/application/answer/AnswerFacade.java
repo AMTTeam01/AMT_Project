@@ -16,7 +16,9 @@ import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.User;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +27,11 @@ import java.util.stream.Collectors;
 
 
 public class AnswerFacade {
+
+    // Vote values
+    private static final int UPVOTE   =  1;
+    private static final int NOVOTE   =  0;
+    private static final int DOWNVOTE = -1;
 
     private IAnswerRepository answerRepository;
 
@@ -140,6 +147,7 @@ public class AnswerFacade {
                     .creationDate(answer.getCreationDate())
                     .id(answer.getId())
                     .comments(comments)
+                    .votes(answerRepository.getVotes(answer.getId()))
                     .build();
 
             answersDTO.add(build);
@@ -161,5 +169,100 @@ public class AnswerFacade {
 
         answerRepository.remove(id);
     }
+
+
+    /**
+     * Upvotes an answer, if already upvoted it will remove the upvote
+     * @param userId : user that is upvoting
+     * @param answerId : answer being upvoted
+     * @throws QuestionFailedException
+     * @throws UserFailedException
+     */
+    public void upvote(UserId userId, AnswerId answerId) throws QuestionFailedException, UserFailedException {
+        checkIfUserExists(userId);
+        vote(userId, answerId, UPVOTE);
+    }
+
+    /**
+     * Downvotes an answer, if already downvoted it will remove the downvote
+     * @param userId : user that is upvoting
+     * @param answerId : answer being upvoted
+     * @throws QuestionFailedException
+     * @throws UserFailedException
+     */
+    public void downvote(UserId userId, AnswerId answerId) throws QuestionFailedException, UserFailedException {
+        checkIfUserExists(userId);
+        vote(userId, answerId, DOWNVOTE);
+    }
+
+
+    /**
+     * Vote on a question
+     * @param userId : id of the user voting
+     * @param answerId : id of the answer being voted
+     * @param vote : value that is being done (upvote / downvote)
+     */
+    private void vote(UserId userId, AnswerId answerId, int vote) {
+        int voteValue = 0;
+
+        // Check if the user already voted
+        if (answerRepository.hasAlreadyVoted(userId, answerId)) {
+            voteValue = answerRepository.getVoteValue(userId, answerId);
+        }
+
+        // Update the vote value
+        voteValue = getNewVoteValue(voteValue, vote);
+
+        answerRepository.addVote(userId, answerId, voteValue);
+    }
+
+    /**
+     * TODO : refactor
+     * Get the vote value when voting on a quesiton
+     * @param startVoteValue : start vote value of the user (if he already voted on the question)
+     * @param voteValue : vote value of the current vote
+     * @return the new vote value
+     */
+    private int getNewVoteValue(int startVoteValue, int voteValue) {
+        int result = 0;
+
+        if(voteValue == UPVOTE) {
+            switch(startVoteValue) {
+                case NOVOTE:
+                case DOWNVOTE:
+                    result = UPVOTE;
+                    break;
+                case UPVOTE:
+                    result = 0;
+                    break;
+            }
+        } else if (voteValue == DOWNVOTE) {
+            switch(startVoteValue) {
+                case NOVOTE:
+                case UPVOTE:
+                    result = DOWNVOTE;
+                    break;
+                case DOWNVOTE:
+                    result = 0;
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Checks if the given user id is linked to an actual user
+     * @param userId : id of the user we want to search
+     * @throws QuestionFailedException if the user doesn't exist
+     * @throws UserFailedException
+     */
+    private void checkIfUserExists(UserId userId) throws QuestionFailedException, UserFailedException {
+        UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(userId).build());
+
+        if (existingUser.getUsers().size() == 0)
+            throw new QuestionFailedException("The user hasn't been found");
+    }
+
 
 }

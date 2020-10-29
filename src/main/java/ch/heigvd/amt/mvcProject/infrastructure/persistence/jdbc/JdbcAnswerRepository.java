@@ -72,6 +72,108 @@ public class JdbcAnswerRepository implements IAnswerRepository {
     }
 
     @Override
+    public boolean hasAlreadyVoted(UserId userId, AnswerId answerId) {
+
+        boolean result = false;
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblUser_vote_tblAnswer " +
+                            "WHERE tblUser_id = ? AND tblAnswer_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, answerId.asString());
+
+            ResultSet rs = statement.executeQuery();
+            result = rs.next();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public int getVoteValue(UserId userId, AnswerId answerId) {
+
+        int voteValue = 0;
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblUser_vote_tblAnswer " +
+                            "WHERE tblUser_id = ? AND tblAnswer_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, answerId.asString());
+
+            ResultSet rs = statement.executeQuery();
+
+            while(rs.next()) {
+                voteValue = rs.getInt(3);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return voteValue;
+    }
+
+    @Override
+    public void addVote(UserId userId, AnswerId answerId, int positive) {
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "INSERT INTO tblUser_vote_tblAnswer (tblUser_id, tblAnswer_id, positiv)" +
+                            "VALUES (?, ?, ?)" +
+                            "ON DUPLICATE KEY UPDATE positiv = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, answerId.asString());
+            statement.setInt(3, positive);
+            statement.setInt(4, positive);
+
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    @Override
+    public int getVotes(AnswerId answerId) {
+        int totalVotes = 0;
+
+        try {
+            // First we get the total number of votes
+            PreparedStatement voteStatement = dataSource.getConnection().prepareStatement(
+                    "SELECT SUM(positiv) FROM tblUser_vote_tblAnswer " +
+                            "WHERE tblQuestion_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+            voteStatement.setString(1, answerId.asString());
+
+            ResultSet rs = voteStatement.executeQuery();
+
+            while (rs.next()) {
+                totalVotes = rs.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return totalVotes;
+    }
+
+    @Override
     public void save(Answer answer) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(

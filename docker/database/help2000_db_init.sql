@@ -154,12 +154,12 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `help2000`.`tblUser_vote_tblComment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblComment` (
+CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblAnswer` (
   `tblUser_id` VARCHAR(256) NOT NULL,
-  `tblComment_id` VARCHAR(256) NOT NULL,
+  `tblAnswer_id` VARCHAR(256) NOT NULL,
   `positv` TINYINT NOT NULL,
-  PRIMARY KEY (`tblUser_id`, `tblComment_id`),
-  INDEX `fk_tblUser_has_tblComment_tblComment1_idx` (`tblComment_id` ASC) VISIBLE,
+  PRIMARY KEY (`tblUser_id`, `tblAnswer_id`))
+  /*INDEX `fk_tblUser_has_tblComment_tblComment1_idx` (`tblComment_id` ASC) VISIBLE,
   INDEX `fk_tblUser_has_tblComment_tblUser1_idx` (`tblUser_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblUser_has_tblComment_tblUser1`
     FOREIGN KEY (`tblUser_id`)
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblComment` (
     FOREIGN KEY (`tblComment_id`)
     REFERENCES `help2000`.`tblComment` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION)*/
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
