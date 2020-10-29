@@ -101,9 +101,9 @@ public class QuestionFacade {
         } else {
 
             if (query.userId != null && query.title == null) {
-                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), null, null);
+                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(), new ArrayList<>());
             } else if (query.userId == null && query.title != null) {
-                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), null, null);
+                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(), new ArrayList<>());
 
             } else {
                 throw new QuestionFailedException("Query invalid");
