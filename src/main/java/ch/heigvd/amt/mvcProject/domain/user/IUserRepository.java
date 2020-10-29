@@ -14,4 +14,10 @@ public interface IUserRepository extends IRepository<User, UserId> {
      */
     Optional<User> findByUsername(String username);
 
+    /**
+     * @param email email of the user
+     * @return the user stored
+     */
+    Optional<User> findByEmail(String email);
+
 }
