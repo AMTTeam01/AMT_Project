@@ -65,4 +65,4 @@ jobs:
           docker build -t amt-project/help2000 .
           docker tag amt-project/help2000 ghcr.io/amtteamheig/amt_project
           docker push ghcr.io/amtteamheig/amt_project
-          run pwd
+          pwd
