@@ -201,16 +201,22 @@ public class QuestionFacade {
                                                               question, Collection<AnswersDTO.AnswerDTO> answers,
                                                       Collection<CommentsDTO.CommentDTO> comments) {
 
-        return QuestionsDTO.QuestionDTO.builder()
+        QuestionsDTO.QuestionDTO.QuestionDTOBuilder builder = QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
                 .userId(question.getUserId())
                 .username(question.getUsername())
-                .creationDate(question.getCreationDate())
-                .answersDTO(AnswersDTO.builder().answers(answers).build())
-                .commentsDTO(CommentsDTO.builder().comments(comments).build())
-                .build();
+                .creationDate(question.getCreationDate());
+
+        if (answers != null)
+            builder.answersDTO(AnswersDTO.builder().answers(answers).build());
+
+        if (comments != null)
+            builder.commentsDTO(CommentsDTO.builder().comments(comments).build());
+
+
+        return builder.build();
     }
 
     /**
