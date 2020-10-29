@@ -90,15 +90,15 @@ public class QuestionFacade {
         questionRepository.save(submittedQuestion);
 
         // Get author for the questionDTO
-        UsersDTO.UserDTO user = userFacade.getUsers(
+        /*UsersDTO.UserDTO user = userFacade.getUsers(
                 UserQuery.builder().userId(command.getUserId()).build()
-        ).getUsers().get(0);
+        ).getUsers().get(0);*/
 
         // Get the answers for the questionDTO
-        Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
+        //Collection<AnswersDTO.AnswerDTO> answersDTO = getAnswers(submittedQuestion);
 
         // create questionDTO of the submitted quesiton
-        QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
+        /*QuestionsDTO.QuestionDTO newQuestion = QuestionsDTO.QuestionDTO.builder()
                 .description(submittedQuestion.getDescription())
                 .id(submittedQuestion.getId())
                 .title(submittedQuestion.getTitle())
@@ -107,9 +107,9 @@ public class QuestionFacade {
                 .creationDate(submittedQuestion.getCreationDate())
                 .userId(submittedQuestion.getUserId())
                 .answersDTO(AnswersDTO.builder().answers(answersDTO).build())
-                .build();
+                .build();*/
 
-        return newQuestion;
+        return getQuestionAsDTO(submittedQuestion, null, null);
     }
 
     /**
@@ -223,16 +223,21 @@ public class QuestionFacade {
         checkQueryValidity(query);
 
         Question question;
+        Collection<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
+        Collection<CommentsDTO.CommentDTO> commentsDTO = new ArrayList<>();
 
         if(query.isWithDetail()) {
             question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question with details hasn't been found"));
+
+            answersDTO = getAnswers(question);
+            commentsDTO = getComments(question);
         } else {
             question = questionRepository.findById(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         }
 
-        return getQuestionDTO(question);
+        return getQuestionAsDTO(question, answersDTO, commentsDTO);
     }
 
     /**
@@ -276,16 +281,16 @@ public class QuestionFacade {
      * @param answers  list of answer to the question
      * @return the DTO corresponding to the parameter
      */
-    private QuestionsDTO.QuestionDTO getQuestionAsDTO(Question
-                                                              question, Collection<AnswersDTO.AnswerDTO> answers,
-                                                      Collection<CommentsDTO.CommentDTO> comments) {
+    private QuestionsDTO.QuestionDTO getQuestionAsDTO(Question question, Collection<AnswersDTO.AnswerDTO> answers,
+                                                      Collection<CommentsDTO.CommentDTO> comments) throws UserFailedException {
 
         QuestionsDTO.QuestionDTO.QuestionDTOBuilder builder = QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
+                .votes(questionRepository.getVotes(question.getId()))
                 .userId(question.getUserId())
-                .username(question.getUsername())
+                .username(getAuthor(question).getUsername())
                 .creationDate(question.getCreationDate());
 
         if (answers != null)

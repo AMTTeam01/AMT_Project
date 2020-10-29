@@ -262,7 +262,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
+    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException, RegistrationFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
                 .description("Description")
@@ -272,14 +272,26 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
+        // Add a user to avoid having 0 as the expected result
+        RegisterCommand registerCommand1 = RegisterCommand
+                .builder()
+                .clearTxtPassword("1234")
+                .confirmationClearTxtPassword("1234")
+                .username("gandalf")
+                .email("gandalf@gmail.com")
+                .build();
+        User u1 = authenticationFacade.register(registerCommand1);
+
+        questionFacade.upvote(u1.getId(), question.getId());
         questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
         questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(0, upvotedQuestion.getVotes());
+        assertEquals(1, upvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(upvotedQuestion.getId());
+        userFacade.removeUser(u1.getId());
     }
 
     @Test
@@ -293,14 +305,12 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        int initVotes = question.getVotes();
-
         questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
         questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(initVotes, upvotedQuestion.getVotes());
+        assertEquals(0, upvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(upvotedQuestion.getId());
     }

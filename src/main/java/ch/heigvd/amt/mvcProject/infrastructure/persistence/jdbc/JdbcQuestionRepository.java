@@ -171,8 +171,9 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
                 // If we haven't creat que Question object, create if
                 if (foundQuestion == null) {
+                    QuestionId questionId = new QuestionId(rs.getString("question_id"));
                     foundQuestion = Question.builder()
-                            .id(new QuestionId(rs.getString("question_id")))
+                            .id(questionId)
                             .description(rs.getString("question_description"))
                             .title(rs.getString("title"))
                             .creationDate(new Date(rs.getTimestamp("question_creationDate").getTime()))
