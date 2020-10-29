@@ -189,8 +189,16 @@ public class QuestionFacade {
             UserFailedException, AnswerFailedException, CommentFailedException {
         Collection<Question> questionsFound = new ArrayList<>();
 
-        checkQueryValidity(query);
+        if (query == null) {
+            throw new QuestionFailedException("Query is null");
+        } else {
 
+            if (query.userId != null && query.title == null) {
+                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(), new ArrayList<>());
+            } else if (query.userId == null && query.title != null) {
+                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(), new ArrayList<>());
+            }
+        }
         Question question = questionRepository.findById(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
         questionsFound.add(question);

@@ -30,7 +30,9 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -242,6 +244,20 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
+    public void getQuestionsWithNullQueryShouldThrowQuestionFailedException() {
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.getQuestions(null);
+        });
+    }
+
+    @Test
+    public void getQuestionsWithNoQueryShouldThrowQuestionFailedException() {
+        assertThrows(QuestionFailedException.class, () -> {
+            questionFacade.getQuestions(QuestionQuery.builder().build());
+        });
+    }
+  
+    @Test
     public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException, CommentFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -290,7 +306,7 @@ public class QuestionFacadeTestIT {
                 .userId(currentUserDTO.getUserId())
                 .build();
 
-        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+      QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
         // Add a user to avoid having 0 as the expected result
         RegisterCommand registerCommand1 = RegisterCommand
@@ -322,7 +338,7 @@ public class QuestionFacadeTestIT {
                 .creationDate(new Date())
                 .userId(currentUserDTO.getUserId())
                 .build();
-
+                  
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
         // Create 2 new users
@@ -364,7 +380,7 @@ public class QuestionFacadeTestIT {
                 .creationDate(new Date())
                 .userId(currentUserDTO.getUserId())
                 .build();
-
+      
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
         // Create 2 new users
@@ -396,5 +412,64 @@ public class QuestionFacadeTestIT {
         questionFacade.removeQuestion(upvotedQuestion.getId());
         userFacade.removeUser(u1.getId());
         userFacade.removeUser(u2.getId());
+    }
+  
+    @Test
+    public void getQuestionsWithTitleQueryShouldGetRightQuestions() throws UserFailedException, QuestionFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("I don't know some fancy title")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+      
+          
+        questionFacade.addQuestion(command);
+        questionFacade.addQuestion(command);
+
+        QuestionCommand command2 = QuestionCommand.builder()
+                .title("Some other title")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+      
+        questionFacade.addQuestion(command2);
+
+        QuestionsDTO questionsFromFirstCommand = questionFacade.getQuestions(QuestionQuery.builder().title(command.getTitle()).build());
+        assertEquals(questionsFromFirstCommand.getQuestions().size(),2);
+
+        QuestionsDTO questionsFromSecondCommand = questionFacade.getQuestions(QuestionQuery.builder().title(command2.getTitle()).build());
+        assertEquals(questionsFromSecondCommand.getQuestions().size(),1);
+
+        for(QuestionsDTO.QuestionDTO question : questionsFromFirstCommand.getQuestions()) {
+            questionFacade.removeQuestion(question.getId());
+        }
+        for(QuestionsDTO.QuestionDTO question : questionsFromSecondCommand.getQuestions()) {
+            questionFacade.removeQuestion(question.getId());
+        }
+    }
+
+    @Test
+    public void getQuestionsWithUserIdQueryShouldWork() throws UserFailedException, QuestionFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("I don't know some fancy title")
+                 .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+      
+        questionFacade.addQuestion(command);
+        questionFacade.addQuestion(command);
+
+        QuestionsDTO questions = questionFacade.getQuestions(QuestionQuery.builder().userId(command.getUserId()).build());
+        assertEquals(questions.getQuestions().size(),2);
+
+        QuestionsDTO noQuestionsHopefully = questionFacade.getQuestions(QuestionQuery.builder().userId(new UserId()).build());
+        assertEquals(noQuestionsHopefully.getQuestions().size(),0);
+
+        for(QuestionsDTO.QuestionDTO question : questions.getQuestions()) {
+            questionFacade.removeQuestion(question.getId());
+        }
     }
 }
