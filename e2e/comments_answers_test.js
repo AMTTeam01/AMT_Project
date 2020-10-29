@@ -30,9 +30,8 @@ Scenario('test comments and answers', (I) => {
     I.see(answer)
 
     I.click('#add_comment_answer_toggleVisible')
-    I.waitForElement('#txt_answer_comment')
-    I.fillField('#txt_answer_comment',commentOnAnswer)
-    I.click('#bnt_submit_answer_comment')
-    I.see(commentOnAnswer)
+    I.waitForText('Your comment')
+    I.fillField('txt_question_comment',commentOnAnswer)
+    I.click('Comment this answer')
 
 });
