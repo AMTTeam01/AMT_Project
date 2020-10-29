@@ -223,24 +223,17 @@ public class QuestionFacade {
      * @throws QuestionFailedException
      */
     public QuestionsDTO.QuestionDTO getQuestion(QuestionQuery query)
-            throws QuestionFailedException, UserFailedException, AnswerFailedException, CommentFailedException {
+            throws QuestionFailedException, UserFailedException,
+            AnswerFailedException, CommentFailedException {
 
         if (query == null || query.getQuestionId() == null)
             throw new QuestionFailedException("Query is null or invalid");
 
         Question question;
-        Collection<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
-        Collection<CommentsDTO.CommentDTO> commentsDTO = new ArrayList<>();
 
         if(query.isWithDetail()) {
             question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question with details hasn't been found"));
-            answersDTO = getAnswers(question);
-            commentsDTO = commentFacade.getComments(
-                    CommentQuery.builder()
-                            .questionId(question.getId())
-                            .build()
-            ).getComments();
         } else {
             question = questionRepository.findById(query.getQuestionId())
                     .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
@@ -290,7 +283,8 @@ public class QuestionFacade {
      * @return the DTO corresponding to the parameter
      */
     private QuestionsDTO.QuestionDTO getQuestionDTO(Question question)
-            throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
+            throws UserFailedException, QuestionFailedException,
+            AnswerFailedException, CommentFailedException {
         return QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
@@ -310,7 +304,36 @@ public class QuestionFacade {
      * @return a collection of answer DTO associate to the question
      */
     private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException, CommentFailedException {
-        return answerFacade.getAnswers(AnswerQuery.builder().questionId(question.getId()).build()).getAnswers();
+        return question.getAnswers().stream().map(
+                answer -> {
+                    Collection<CommentsDTO.CommentDTO> commentsDTO = new ArrayList<>();
+                    UsersDTO.UserDTO author = null;
+                    try {
+                        commentsDTO = commentFacade.getComments(CommentQuery.builder()
+                                        .answerId(answer.getId())
+                                        .build()).getComments();
+                        author = userFacade.getUsers(UserQuery.builder()
+                                .userId(answer.getUserId()).build()).getUsers().get(0);
+
+                    } catch (CommentFailedException e) {
+                        e.printStackTrace();
+                    } catch (AnswerFailedException e) {
+                        e.printStackTrace();
+                    } catch (QuestionFailedException e) {
+                        e.printStackTrace();
+                    } catch (UserFailedException e) {
+                        e.printStackTrace();
+                    }
+
+                    return AnswersDTO.AnswerDTO.builder()
+                            .id(answer.getId())
+                            .creationDate(answer.getCreationDate())
+                            .description(answer.getDescription())
+                            .username(author.getUsername())
+                            .comments(CommentsDTO.builder().comments(commentsDTO).build())
+                            .build();
+                }
+        ).collect(Collectors.toList());
     }
 
     /**

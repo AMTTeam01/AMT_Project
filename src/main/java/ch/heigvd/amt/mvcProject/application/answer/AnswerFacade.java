@@ -16,6 +16,7 @@ import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.user.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,37 +109,39 @@ public class AnswerFacade {
             throws AnswerFailedException, QuestionFailedException,
             CommentFailedException, UserFailedException {
 
-        Collection<Answer> answers;
-
-        if (query == null) {
+        if (query == null)
             throw new AnswerFailedException("Query is null");
-        } else {
 
-            if (query.getQuestionId() != null) {
-                questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
-                answers = answerRepository.findByQuestionId(query.getQuestionId())
-                        .orElse(new ArrayList<>());
-            } else {
-                throw new AnswerFailedException("Query invalid");
-            }
-        }
+        if (query.getQuestionId() == null)
+            throw new AnswerFailedException("Query invalid");
+
+        // Check if the question exists (else throw error)
+        questionFacade.getQuestion(QuestionQuery.builder().questionId(query.getQuestionId()).build());
+
+        Collection<Answer> answers = answerRepository.findByQuestionId(query.getQuestionId())
+                .orElse(new ArrayList<>());
 
         List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
         for (Answer answer : answers) {
+            // Author of the answer
+            UsersDTO.UserDTO author = userFacade.getUsers(UserQuery.builder()
+                            .userId(answer.getUserId())
+                            .build()).getUsers().get(0);
+
+            // Comments of the answer
+            CommentsDTO comments = commentFacade.getComments(CommentQuery.builder()
+                            .answerId(answer.getId())
+                            .build());
+
+            // Create answer to add it to the list of answers
             AnswersDTO.AnswerDTO build = AnswersDTO.AnswerDTO.builder()
-                    .username(userFacade.getUsers(
-                            UserQuery.builder()
-                                    .userId(answer.getUserId())
-                                    .build()
-                    ).getUsers().get(0).getUsername())
+                    .username(author.getUsername())
                     .description(answer.getDescription())
                     .creationDate(answer.getCreationDate())
                     .id(answer.getId())
-                    .comments(commentFacade.getComments(
-                            CommentQuery.builder()
-                            .answerId(answer.getId())
-                            .build()))
+                    .comments(comments)
                     .build();
+
             answersDTO.add(build);
         }
 
