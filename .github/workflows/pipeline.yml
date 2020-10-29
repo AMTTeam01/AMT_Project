@@ -57,6 +57,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
+      # Run integration test with arquillian
+      - name: Run IT
+        run : |
+          cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
+          ./run-integration-tests.sh
+
 
       # Docker build (with PAT)
       - name: Build Docker image (with mvn clean package)
@@ -65,4 +71,3 @@ jobs:
           docker build -t amt-project/help2000 .
           docker tag amt-project/help2000 ghcr.io/amtteamheig/amt_project
           docker push ghcr.io/amtteamheig/amt_project
-          pwd
