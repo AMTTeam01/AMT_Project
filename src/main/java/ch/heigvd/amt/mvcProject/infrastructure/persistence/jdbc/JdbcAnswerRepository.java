@@ -155,7 +155,7 @@ public class JdbcAnswerRepository implements IAnswerRepository {
             // First we get the total number of votes
             PreparedStatement voteStatement = dataSource.getConnection().prepareStatement(
                     "SELECT SUM(positiv) FROM tblUser_vote_tblAnswer " +
-                            "WHERE tblQuestion_id = ?",
+                            "WHERE tblAnswer_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
             );

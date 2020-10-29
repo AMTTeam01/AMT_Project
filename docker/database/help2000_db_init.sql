@@ -157,7 +157,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblAnswer` (
   `tblUser_id` VARCHAR(256) NOT NULL,
   `tblAnswer_id` VARCHAR(256) NOT NULL,
-  `positv` TINYINT NOT NULL,
+  `positiv` TINYINT NOT NULL,
   PRIMARY KEY (`tblUser_id`, `tblAnswer_id`))
   /*INDEX `fk_tblUser_has_tblComment_tblComment1_idx` (`tblComment_id` ASC) VISIBLE,
   INDEX `fk_tblUser_has_tblComment_tblUser1_idx` (`tblUser_id` ASC) VISIBLE,

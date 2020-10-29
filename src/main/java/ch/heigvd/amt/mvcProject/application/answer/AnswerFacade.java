@@ -16,6 +16,7 @@ import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
 import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
@@ -130,30 +131,58 @@ public class AnswerFacade {
 
         List<AnswersDTO.AnswerDTO> answersDTO = new ArrayList<>();
         for (Answer answer : answers) {
-            // Author of the answer
-            UsersDTO.UserDTO author = userFacade.getUsers(UserQuery.builder()
-                            .userId(answer.getUserId())
-                            .build()).getUsers().get(0);
-
-            // Comments of the answer
-            CommentsDTO comments = commentFacade.getComments(CommentQuery.builder()
-                            .answerId(answer.getId())
-                            .build());
-
-            // Create answer to add it to the list of answers
-            AnswersDTO.AnswerDTO build = AnswersDTO.AnswerDTO.builder()
-                    .username(author.getUsername())
-                    .description(answer.getDescription())
-                    .creationDate(answer.getCreationDate())
-                    .id(answer.getId())
-                    .comments(comments)
-                    .votes(answerRepository.getVotes(answer.getId()))
-                    .build();
-
-            answersDTO.add(build);
+            answersDTO.add(getAnswerAsDTO(answer));
         }
 
         return AnswersDTO.builder().answers(answersDTO).build();
+    }
+
+    /**
+     * Return a single Answer asked by query
+     * @param query Answer passed
+     * @return the single question asked
+     * @throws QuestionFailedException
+     */
+    public AnswersDTO.AnswerDTO getAnswer(AnswerQuery query)
+            throws QuestionFailedException, UserFailedException,
+            AnswerFailedException, CommentFailedException {
+
+        checkQueryValidity(query);
+
+        Answer answer = answerRepository.findById(query.getAnswerId())
+                    .orElseThrow(() -> new AnswerFailedException("The answer hasn't been found"));
+
+        return getAnswerAsDTO(answer);
+    }
+
+    /**
+     * Return the DTO of the answer in the parameter
+     * @param answer Answer to convert to DTO
+     * @return the DTO corresponding to the parameter
+     */
+    private AnswersDTO.AnswerDTO getAnswerAsDTO(Answer answer) throws UserFailedException,
+            CommentFailedException, AnswerFailedException, QuestionFailedException {
+        // Author of the answer
+        UsersDTO.UserDTO author = userFacade.getUsers(UserQuery.builder()
+                .userId(answer.getUserId())
+                .build()).getUsers().get(0);
+
+        // Comments of the answer
+        CommentsDTO comments = commentFacade.getComments(CommentQuery.builder()
+                .answerId(answer.getId())
+                .build());
+
+        // Create answer to add it to the list of answers
+        AnswersDTO.AnswerDTO build = AnswersDTO.AnswerDTO.builder()
+                .username(author.getUsername())
+                .description(answer.getDescription())
+                .creationDate(answer.getCreationDate())
+                .id(answer.getId())
+                .comments(comments)
+                .votes(answerRepository.getVotes(answer.getId()))
+                .build();
+
+        return build;
     }
 
     /**
@@ -262,6 +291,16 @@ public class AnswerFacade {
 
         if (existingUser.getUsers().size() == 0)
             throw new QuestionFailedException("The user hasn't been found");
+    }
+
+    /**
+     * Check if a query is valid
+     * @param query : query to check
+     * @throws AnswerFailedException if not valid
+     */
+    private void checkQueryValidity(AnswerQuery query) throws AnswerFailedException {
+        if (query == null || query.getAnswerId() == null || query.getQuestionId() == null)
+            throw new AnswerFailedException("Query is null or invalid");
     }
 
 
