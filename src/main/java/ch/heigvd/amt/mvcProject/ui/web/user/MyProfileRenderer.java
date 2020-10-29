@@ -55,9 +55,6 @@ public class MyProfileRenderer extends HttpServlet {
         CurrentUserDTO currentUser = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
         request.setAttribute("user", currentUser);
 
-        QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
-
-        //TODO : Query to user specific questions
         QuestionsDTO questionsDTO = null;
         try {
             questionsDTO = questionFacade.getQuestions();
