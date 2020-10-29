@@ -53,16 +53,17 @@ jobs:
         env:
           CI: true
 
-      # Maven package
-      - name: Build with Maven
-        run: mvn clean package
-
       # Run integration test with arquillian
+      - uses: actions/checkout@v2
       - name: Run IT
         run : |
           cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
+          ls
           ./run-integration-tests.sh
 
+      # Maven package
+      - name: Build with Maven
+        run: mvn clean package
 
       # Docker build (with PAT)
       - name: Build Docker image (with mvn clean package)
