@@ -38,13 +38,9 @@ public class AnswerFacadeTestIT {
     ServiceRegistry serviceRegistry;
 
     private AnswerFacade answerFacade;
-
     private AuthenticationFacade authenticationFacade;
-
     private QuestionFacade questionFacade;
-
     private UserFacade userFacade;
-
 
     private final static String USERNAME = "answerFacade";
     private final static String EMAIL = USERNAME + "@heig.ch";
@@ -100,9 +96,7 @@ public class AnswerFacadeTestIT {
 
     @After
     public void cleanUp() throws QuestionFailedException {
-
         questionFacade.removeQuestion(newQuestion.getId());
-
         authenticationFacade.delete(currentUserDTO.getUserId());
     }
 
