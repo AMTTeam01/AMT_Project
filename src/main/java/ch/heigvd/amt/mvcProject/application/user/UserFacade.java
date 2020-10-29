@@ -113,6 +113,18 @@ public class UserFacade {
             throw new EditFailedException("The password and the confirmation of password are different");
         }
 
+        if (command.getUsername() != null) {
+            userRepository.findByUsername(command.getUsername()).orElseThrow(
+                    () -> new EditFailedException("Username already used")
+            );
+        }
+
+        if (command.getEmail() != null) {
+            userRepository.findByEmail(command.getEmail()).orElseThrow(
+                    () -> new EditFailedException("Email already used")
+            );
+        }
+
         try {
 
             // For each field which is possible to be updated, we must check if the command takes in account

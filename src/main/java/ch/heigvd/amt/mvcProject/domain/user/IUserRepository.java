@@ -14,4 +14,10 @@ public interface IUserRepository extends IRepository<User, UserId> {
      */
     Optional<User> findByUsername(String username);
 
+    /**
+     * an e-mail should be unique, so there exists only one user in this world with the e-mail
+     * @param email e-mail of the user
+     * @return the user stored
+     */
+    Optional<User> findByEmail(String email);
 }

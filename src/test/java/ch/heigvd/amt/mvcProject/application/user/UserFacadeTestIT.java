@@ -33,8 +33,10 @@ public class UserFacadeTestIT {
     ServiceRegistry serviceRegistry;
 
     private final String username = "chau";
+    private final String usernameOther = "bastien";
     private final String password = "1234";
     private final String email = "chau@gmail.com";
+    private final String emailOther = "bastien@gmail.com";
     private final String newUsername = "patrick";
     private final String newEmail = "patrick@gmail.com";
     private final String newPassword = "5678";
@@ -60,6 +62,16 @@ public class UserFacadeTestIT {
                 .confirmationClearTxtPassword(password)
                 .username(username)
                 .email(email)
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        registerCommand = RegisterCommand
+                .builder()
+                .clearTxtPassword(password)
+                .confirmationClearTxtPassword(password)
+                .username(usernameOther)
+                .email(emailOther)
                 .build();
 
         authenticationFacade.register(registerCommand);
@@ -182,6 +194,36 @@ public class UserFacadeTestIT {
         CurrentUserDTO newUserDTO = authenticationFacade.login(loginCommand);
 
         assertEquals(newUserDTO.getUsername(), username);
+    }
+
+    @Test
+    public void itShoulThrowIfTheUsernameIsAlreadyPressent(){
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .id(currentUserDTO.getUserId().asString())
+                .password("")
+                .confirmationPassword("")
+                .email("")
+                .username(usernameOther)
+                .build();
+
+        assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
+    }
+
+    @Test
+    public void itShoulThrowIfTheEmailIsAlreadyPressent(){
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .id(currentUserDTO.getUserId().asString())
+                .password("")
+                .confirmationPassword("")
+                .email(emailOther)
+                .username("")
+                .build();
+
+        assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
     }
 
     @Test
