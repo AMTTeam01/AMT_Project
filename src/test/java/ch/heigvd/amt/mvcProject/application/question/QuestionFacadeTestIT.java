@@ -415,7 +415,7 @@ public class QuestionFacadeTestIT {
     }
   
     @Test
-    public void getQuestionsWithTitleQueryShouldGetRightQuestions() throws UserFailedException, QuestionFailedException {
+    public void getQuestionsWithTitleQueryShouldGetRightQuestions() throws UserFailedException, QuestionFailedException, CommentFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("I don't know some fancy title")
                 .description("Description")
@@ -451,7 +451,7 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
-    public void getQuestionsWithUserIdQueryShouldWork() throws UserFailedException, QuestionFailedException {
+    public void getQuestionsWithUserIdQueryShouldWork() throws UserFailedException, QuestionFailedException, CommentFailedException, AnswerFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("I don't know some fancy title")
                  .description("Description")

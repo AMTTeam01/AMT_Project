@@ -189,14 +189,13 @@ public class QuestionFacade {
             UserFailedException, AnswerFailedException, CommentFailedException {
         Collection<Question> questionsFound = new ArrayList<>();
 
-        if (query == null) {
+        if (query == null || (query.getQuestionId() == null && query.getUserId() == null && query.getTitle() == null)) {
             throw new QuestionFailedException("Query is null");
         } else {
-
             if (query.userId != null && query.title == null) {
-                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(), new ArrayList<>());
+                return getQuestionsDTO(questionRepository.findByUserId(query.userId));
             } else if (query.userId == null && query.title != null) {
-                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(), new ArrayList<>());
+                return getQuestionsDTO(questionRepository.findByTitleContaining(query.title));
             }
         }
         Question question = questionRepository.findById(query.getQuestionId())
