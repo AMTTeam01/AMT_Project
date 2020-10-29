@@ -20,7 +20,6 @@ import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Link the question and the domain, what we offer to the user to interact with the domain
