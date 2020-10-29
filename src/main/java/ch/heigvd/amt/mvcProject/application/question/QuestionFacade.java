@@ -20,6 +20,7 @@ import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Link the question and the domain, what we offer to the user to interact with the domain
@@ -272,23 +273,29 @@ public class QuestionFacade {
      * Return the DTO of the question in the parameter
      *
      * @param question question to transform
+     * @param answers  list of answer to the question
      * @return the DTO corresponding to the parameter
      */
-    private QuestionsDTO.QuestionDTO getQuestionDTO(Question question)
-            throws UserFailedException, QuestionFailedException,
-            AnswerFailedException, CommentFailedException {
+    private QuestionsDTO.QuestionDTO getQuestionAsDTO(Question
+                                                              question, Collection<AnswersDTO.AnswerDTO> answers,
+                                                      Collection<CommentsDTO.CommentDTO> comments) {
 
-        return QuestionsDTO.QuestionDTO.builder()
+        QuestionsDTO.QuestionDTO.QuestionDTOBuilder builder = QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
                 .id(question.getId())
-                .votes(questionRepository.getVotes(question.getId()))
                 .userId(question.getUserId())
-                .username(getAuthor(question).getUsername())
-                .creationDate(question.getCreationDate())
-                .answersDTO(AnswersDTO.builder().answers(getAnswers(question)).build())
-                .commentsDTO(CommentsDTO.builder().comments(getComments(question)).build())
-                .build();
+                .username(question.getUsername())
+                .creationDate(question.getCreationDate());
+
+        if (answers != null)
+            builder.answersDTO(AnswersDTO.builder().answers(answers).build());
+
+        if (comments != null)
+            builder.commentsDTO(CommentsDTO.builder().comments(comments).build());
+
+
+        return builder.build();
     }
 
     /**
