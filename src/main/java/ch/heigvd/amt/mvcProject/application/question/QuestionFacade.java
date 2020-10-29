@@ -2,8 +2,6 @@ package ch.heigvd.amt.mvcProject.application.question;
 
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
-import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
@@ -13,7 +11,7 @@ import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.comment.Comment;
+import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -22,7 +20,6 @@ import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Link the question and the domain, what we offer to the user to interact with the domain
@@ -203,11 +200,7 @@ public class QuestionFacade {
             UserFailedException, AnswerFailedException, CommentFailedException {
         Collection<Question> questionsFound = new ArrayList<>();
 
-        if (query == null)
-            throw new QuestionFailedException("Query is null");
-
-        if(query.getQuestionId() == null)
-            throw new QuestionFailedException("Query invalid");
+        checkQueryValidity(query);
 
         Question question = questionRepository.findById(query.getQuestionId())
                 .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
@@ -226,8 +219,7 @@ public class QuestionFacade {
             throws QuestionFailedException, UserFailedException,
             AnswerFailedException, CommentFailedException {
 
-        if (query == null || query.getQuestionId() == null)
-            throw new QuestionFailedException("Query is null or invalid");
+        checkQueryValidity(query);
 
         Question question;
 
@@ -285,6 +277,7 @@ public class QuestionFacade {
     private QuestionsDTO.QuestionDTO getQuestionDTO(Question question)
             throws UserFailedException, QuestionFailedException,
             AnswerFailedException, CommentFailedException {
+
         return QuestionsDTO.QuestionDTO.builder()
                 .title(question.getTitle())
                 .description(question.getDescription())
@@ -304,36 +297,31 @@ public class QuestionFacade {
      * @return a collection of answer DTO associate to the question
      */
     private List<AnswersDTO.AnswerDTO> getAnswers(Question question) throws UserFailedException, AnswerFailedException, QuestionFailedException, CommentFailedException {
-        return question.getAnswers().stream().map(
-                answer -> {
-                    Collection<CommentsDTO.CommentDTO> commentsDTO = new ArrayList<>();
-                    UsersDTO.UserDTO author = null;
-                    try {
-                        commentsDTO = commentFacade.getComments(CommentQuery.builder()
-                                        .answerId(answer.getId())
-                                        .build()).getComments();
-                        author = userFacade.getUsers(UserQuery.builder()
-                                .userId(answer.getUserId()).build()).getUsers().get(0);
 
-                    } catch (CommentFailedException e) {
-                        e.printStackTrace();
-                    } catch (AnswerFailedException e) {
-                        e.printStackTrace();
-                    } catch (QuestionFailedException e) {
-                        e.printStackTrace();
-                    } catch (UserFailedException e) {
-                        e.printStackTrace();
-                    }
+        List<AnswersDTO.AnswerDTO> answers = new ArrayList<>();
 
-                    return AnswersDTO.AnswerDTO.builder()
-                            .id(answer.getId())
-                            .creationDate(answer.getCreationDate())
-                            .description(answer.getDescription())
-                            .username(author.getUsername())
-                            .comments(CommentsDTO.builder().comments(commentsDTO).build())
-                            .build();
-                }
-        ).collect(Collectors.toList());
+        for(Answer answer : question.getAnswers()) {
+
+            // Get the answer's comments
+            Collection<CommentsDTO.CommentDTO> commentsDTO = commentFacade.getComments(CommentQuery.builder()
+                    .answerId(answer.getId())
+                    .build()).getComments();
+
+            // Get the answer's author
+            UsersDTO.UserDTO author = userFacade.getUsers(UserQuery.builder()
+                    .userId(answer.getUserId()).build()).getUsers().get(0);
+
+            // Add to the list
+            answers.add(AnswersDTO.AnswerDTO.builder()
+                    .id(answer.getId())
+                    .creationDate(answer.getCreationDate())
+                    .description(answer.getDescription())
+                    .username(author.getUsername())
+                    .comments(CommentsDTO.builder().comments(commentsDTO).build())
+                    .build());
+        }
+
+        return answers;
     }
 
     /**
@@ -358,7 +346,7 @@ public class QuestionFacade {
     /**
      * Checks if the given user id is linked to an actual user
      * @param userId : id of the user we want to search
-     * @throws QuestionFailedException
+     * @throws QuestionFailedException if the user doesn't exist
      * @throws UserFailedException
      */
     private void checkIfUserExists(UserId userId) throws QuestionFailedException, UserFailedException {
@@ -366,5 +354,15 @@ public class QuestionFacade {
 
         if (existingUser.getUsers().size() == 0)
             throw new QuestionFailedException("The user hasn't been found");
+    }
+
+    /**
+     * Check if a query is valid
+     * @param query : query to check
+     * @throws QuestionFailedException if not valid
+     */
+    private void checkQueryValidity(QuestionQuery query) throws QuestionFailedException {
+        if (query == null || query.getQuestionId() == null)
+            throw new QuestionFailedException("Query is null or invalid");
     }
 }
