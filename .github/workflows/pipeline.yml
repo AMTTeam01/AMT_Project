@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      
+
       # Cache optimization
       - uses: actions/cache@v1
         with:
@@ -40,22 +40,23 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-          
+
       # Codeceptjs
       - uses: actions/checkout@v2
-      - name : Use Node.js${{matrix.node-version}}
-        uses : actions/setup-node@v1
-        with :
+      - name: Use Node.js${{matrix.node-version}}
+        uses: actions/setup-node@v1
+        with:
           node-version: ${{matrix.node-version}}
       - run: |
           npm install --prefix e2e
           npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
         env:
           CI: true
-          
+
       # Maven package
       - name: Build with Maven
         run: mvn clean package
+
 
       # Docker build (with PAT)
       - name: Build Docker image (with mvn clean package)
@@ -64,3 +65,4 @@ jobs:
           docker build -t amt-project/help2000 .
           docker tag amt-project/help2000 ghcr.io/amtteamheig/amt_project
           docker push ghcr.io/amtteamheig/amt_project
+          run pwd
