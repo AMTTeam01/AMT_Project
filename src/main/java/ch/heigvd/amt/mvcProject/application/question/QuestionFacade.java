@@ -165,17 +165,26 @@ public class QuestionFacade {
     private int getNewVoteValue(int startVoteValue, int voteValue) {
         int result = 0;
 
-        switch (startVoteValue) {
-            // User voted : we reset the vote
-            case UPVOTE:
-            case DOWNVOTE:
-                result = 0;
-                break;
-
-            // User didn't vote : make it a downvote!
-            case NOVOTE:
-                result = voteValue;
-                break;
+        if(voteValue == UPVOTE) {
+            switch(startVoteValue) {
+                case NOVOTE:
+                case DOWNVOTE:
+                    result = UPVOTE;
+                    break;
+                case UPVOTE:
+                    result = 0;
+                    break;
+            }
+        } else if (voteValue == DOWNVOTE) {
+            switch(startVoteValue) {
+                case NOVOTE:
+                case UPVOTE:
+                    result = DOWNVOTE;
+                    break;
+                case DOWNVOTE:
+                    result = 0;
+                    break;
+            }
         }
 
         return result;
