@@ -2,7 +2,8 @@ Feature('Navigation')
 
 Scenario('navigation tests', (I) => {
 
-    //login user 1 generated in setup
+    //login 1 generated user
+    I.registerUsers(1)
     I.login(1)
 
     //home -> browsing

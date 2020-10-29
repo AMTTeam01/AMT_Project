@@ -31,10 +31,10 @@ module.exports = function() {
     // Define custom steps here, use 'this' to access default methods of this.
     // It is recommended to place a general 'login' function here.
 
-    generateUsers(length){
+    registerUsers(amount){
 
       users = []
-      for(i = 0; i < length; i++){
+      for(i = 0; i < amount; i++){
         users.push(new User())
       }
 
@@ -50,7 +50,7 @@ module.exports = function() {
 
     login(i) {
 
-      if(i >= users.length || i < 1)
+      if(i > users.length || i < 1)
         throw new Error("Selection out of range. Generate new users or select an existing one")
 
       user = users[i-1];
@@ -119,6 +119,14 @@ module.exports = function() {
       this.fillField('#txt_password',secret(randomUser.password))
       this.click('Login')
       this.dontSeeInCurrentUrl('/login')
+    },
+
+    generateString(length){
+      return makeRandomString(length)
+    },
+
+    generateEmail(){
+      return makeEmail()
     }
 
   });
