@@ -4,7 +4,7 @@
             xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <container qualifier="liberty_managed" default="true">
         <configuration>
-            <property name="wlpHome">C:/Users/simon/Desktop/HEIG/S5/AMT/Labos/Projet/target/liberty/wlp</property>
+            <property name="wlpHome">/home/runner/work/amt_project/amt_project/target/liberty/wlp</property>
             <property name="serverName">defaultServer</property>
             <property name="httpPort">9080</property>
             <property name="allowConnectingToRunningServer">true</property>

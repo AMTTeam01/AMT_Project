@@ -146,6 +146,16 @@ body {
   margin-top: 20px;
 }
 
+.btn-link {
+  text-decoration: none;
+  color: white;
+}
+.btn-link:hover {
+  text-decoration: none;
+  color: #FF7300;
+  transition: all 0.5s;
+}
+
 .navbar {
   background-color: white;
 }
@@ -193,6 +203,10 @@ body {
   background-color: #cc5c00;
 }
 
+hr.solid {
+  border-top: 1px solid #FF7300;
+}
+
 .my_profile {
   margin-left: 20px;
   margin-right: 20px;
@@ -213,6 +227,10 @@ body {
 .my_profile .fragment-profile {
   padding: 20px;
   background-color: #46444e;
+}
+
+.comment {
+  color: #A8B1A9;
 }
 
 /* Attention, l'étoile signifie qu'il n'y a pas besoin de spécifier

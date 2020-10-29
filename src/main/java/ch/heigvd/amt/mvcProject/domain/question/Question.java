@@ -2,6 +2,7 @@ package ch.heigvd.amt.mvcProject.domain.question;
 
 import ch.heigvd.amt.mvcProject.domain.IEntity;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
+import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,7 +32,11 @@ public class Question implements IEntity<Question, QuestionId> {
 
     private List<Answer> answers;
 
-    public void addAnswer(Answer answer) {
+    /**
+     * Add a answer in the question
+     * @param answer Answer that will be added
+     */
+    public void addAnswer(Answer answer){
         answers.add(answer);
     }
 
@@ -76,7 +81,7 @@ public class Question implements IEntity<Question, QuestionId> {
                 answers = new ArrayList<>();
             }
 
-            return new Question(id, title, description, creationDate, userId, username, answers);
+            return new Question(id, title, description, creationDate, userId,username, answers);
         }
     }
 
