@@ -262,6 +262,26 @@ public class QuestionFacadeTestIT {
     }
 
     @Test
+    public void downvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException, CommentFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(-1, upvotedQuestion.getVotes());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
+    }
+
+    @Test
     public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException, RegistrationFailedException {
         QuestionCommand command = QuestionCommand.builder()
                 .title("Titre")
@@ -292,27 +312,6 @@ public class QuestionFacadeTestIT {
 
         questionFacade.removeQuestion(upvotedQuestion.getId());
         userFacade.removeUser(u1.getId());
-    }
-
-    @Test
-    public void upvotingAndDownvotingShouldNotChangeTheVotes() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException {
-        QuestionCommand command = QuestionCommand.builder()
-                .title("Titre")
-                .description("Description")
-                .creationDate(new Date())
-                .userId(currentUserDTO.getUserId())
-                .build();
-
-        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
-
-        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
-        questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
-
-        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
-
-        assertEquals(0, upvotedQuestion.getVotes());
-
-        questionFacade.removeQuestion(upvotedQuestion.getId());
     }
 
     @Test
