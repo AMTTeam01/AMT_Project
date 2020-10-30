@@ -1,6 +1,19 @@
 # AMT_Project
 
-## Introduction
+## Features working
+
+- Sign up / login
+- Create question
+- Comment/Answer
+- Upvote questions
+- Browse and filter questions
+- My profile view
+
+## Features not working
+
+- Edit profile works, but no checks on if the user is already taken, new password does not work
+- Upvotes on comments
+- JMeter load tests missing a bunch
 
 ## Get Started
 
