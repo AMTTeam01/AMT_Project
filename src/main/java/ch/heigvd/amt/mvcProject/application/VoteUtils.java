@@ -6,7 +6,6 @@ public class VoteUtils {
     public static final int UPVOTE      =  1;
     public static final int NOVOTE      =  0;
     public static final int DOWNVOTE    = -1;
-    public static final int NONEXISTANT = -2;
 
     /**
      * Get the vote value when voting on a quesiton
@@ -15,28 +14,10 @@ public class VoteUtils {
      * @return the new vote value
      */
     public static int getNewVoteValue(int startVoteValue, int voteValue) {
-        int result = 0;
+        int result = NOVOTE;
 
-        if(voteValue == UPVOTE) {
-            switch(startVoteValue) {
-                case NOVOTE:
-                case DOWNVOTE:
-                    result = UPVOTE;
-                    break;
-                case UPVOTE:
-                    result = 0;
-                    break;
-            }
-        } else if (voteValue == DOWNVOTE) {
-            switch(startVoteValue) {
-                case NOVOTE:
-                case UPVOTE:
-                    result = DOWNVOTE;
-                    break;
-                case DOWNVOTE:
-                    result = 0;
-                    break;
-            }
+        if(voteValue != startVoteValue){
+            result = voteValue;
         }
 
         return result;

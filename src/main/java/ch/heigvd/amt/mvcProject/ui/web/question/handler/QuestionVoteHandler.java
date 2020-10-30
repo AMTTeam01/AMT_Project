@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.DOWNVOTE;
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.UPVOTE;
+
 @WebServlet(name = "QuestionVoteHandler", urlPatterns = "/q_vote")
 public class QuestionVoteHandler extends HttpServlet {
 
@@ -36,13 +39,10 @@ public class QuestionVoteHandler extends HttpServlet {
         String vote = req.getParameter("vote");
         try {
 
-            switch(vote) {
-                case "upvote":
-                    questionFacade.upvote(currentUser.getUserId(), questionId);
-                    break;
-                case "downvote":
-                    questionFacade.downvote(currentUser.getUserId(), questionId);
-                    break;
+            if(vote.equals("upvote")) {
+                questionFacade.vote(currentUser.getUserId(), questionId, UPVOTE);
+            } else if (vote.equals("downvote")){
+                questionFacade.vote(currentUser.getUserId(), questionId, DOWNVOTE);
             }
 
             // refresh the page

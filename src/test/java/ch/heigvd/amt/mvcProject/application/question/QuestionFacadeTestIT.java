@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.DOWNVOTE;
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.UPVOTE;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -336,11 +338,11 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+        questionFacade.vote(currentUserDTO.getUserId(), question.getId(), UPVOTE);
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(1, upvotedQuestion.getRanking());
+        assertEquals(1, upvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(upvotedQuestion.getId());
     }
@@ -356,11 +358,11 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
+        questionFacade.vote(currentUserDTO.getUserId(), question.getId(), DOWNVOTE);
 
         QuestionsDTO.QuestionDTO downvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(-1, downvotedQuestion.getRanking());
+        assertEquals(-1, downvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(downvotedQuestion.getId());
     }
@@ -378,14 +380,14 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
         // to avoid having 0 as the expected value
-        questionFacade.upvote(userDTO1.getUserId(), question.getId());
+        questionFacade.vote(userDTO1.getUserId(), question.getId(), UPVOTE);
 
-        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
-        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+        questionFacade.vote(currentUserDTO.getUserId(), question.getId(), UPVOTE);
+        questionFacade.vote(currentUserDTO.getUserId(), question.getId(), UPVOTE);
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(1, upvotedQuestion.getRanking());
+        assertEquals(1, upvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(question.getId());
     }
@@ -401,13 +403,13 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
-        questionFacade.upvote(userDTO1.getUserId(), question.getId());
-        questionFacade.upvote(userDTO2.getUserId(), question.getId());
+        questionFacade.vote(currentUserDTO.getUserId(), question.getId(), UPVOTE);
+        questionFacade.vote(userDTO1.getUserId(), question.getId(), UPVOTE);
+        questionFacade.vote(userDTO2.getUserId(), question.getId(), UPVOTE);
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(3, upvotedQuestion.getRanking());
+        assertEquals(3, upvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(question.getId());
     }
@@ -423,13 +425,13 @@ public class QuestionFacadeTestIT {
 
         QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
 
-        questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
-        questionFacade.downvote(userDTO1.getUserId(), question.getId());
-        questionFacade.downvote(userDTO2.getUserId(), question.getId());
+        questionFacade.vote(currentUserDTO.getUserId(), question.getId(), DOWNVOTE);
+        questionFacade.vote(userDTO1.getUserId(), question.getId(), DOWNVOTE);
+        questionFacade.vote(userDTO2.getUserId(), question.getId(), DOWNVOTE);
 
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(-3, upvotedQuestion.getRanking());
+        assertEquals(-3, upvotedQuestion.getVotes());
 
         questionFacade.removeQuestion(question.getId());
     }

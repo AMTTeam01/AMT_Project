@@ -209,7 +209,7 @@ public class QuestionFacade {
                 .description(question.getDescription())
                 .id(question.getId())
                 .userId(question.getUserId())
-                .ranking(questionRepository.getVotes(question.getId()))
+                .votes(questionRepository.getVotes(question.getId()))
                 .username(question.getUsername())
                 .creationDate(question.getCreationDate());
 
@@ -258,36 +258,15 @@ public class QuestionFacade {
     }
 
     /**
-     * Upvotes a question, if already upvoted it will remove the upvote
-     * @param userId : user that is upvoting
-     * @param questionId : question being upvoted
-     * @throws QuestionFailedException
-     * @throws UserFailedException
-     */
-    public void upvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
-        checkIfUserExists(userId);
-        vote(userId, questionId, UPVOTE);
-    }
-
-    /**
-     * Downvotes a question, if already downvoted it will remove the downvote
-     * @param userId : user that is upvoting
-     * @param questionId : question being upvoted
-     * @throws QuestionFailedException
-     * @throws UserFailedException
-     */
-    public void downvote(UserId userId, QuestionId questionId) throws QuestionFailedException, UserFailedException {
-        checkIfUserExists(userId);
-        vote(userId, questionId, DOWNVOTE);
-    }
-
-    /**
      * Vote on a question
      * @param userId : id of the user voting
      * @param questionId : id of the question being voted
      * @param vote : value that is being done (upvote / downvote)
      */
-    private void vote(UserId userId, QuestionId questionId, int vote) {
+    public void vote(UserId userId, QuestionId questionId, int vote) throws QuestionFailedException, UserFailedException {
+
+        checkIfUserExists(userId);
+
         int voteValue = questionRepository.getVoteValue(userId, questionId);
 
         // Update the vote value
