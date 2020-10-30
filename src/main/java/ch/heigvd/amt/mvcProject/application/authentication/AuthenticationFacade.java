@@ -45,7 +45,7 @@ public class AuthenticationFacade {
             throw new RegistrationFailedException("The password and the confirmation of the password aren't the same");
         }
 
-        try{
+        try {
             User newUser = User.builder()
                 .username(cmd.getUsername())
                 .email(cmd.getEmail())
@@ -53,9 +53,7 @@ public class AuthenticationFacade {
                 .build();
 
             userRepository.save(newUser);
-
-            return newUser;
-        }catch(Exception e){
+        } catch(Exception e) {
             throw new RegistrationFailedException(e.getMessage());
         }
     }

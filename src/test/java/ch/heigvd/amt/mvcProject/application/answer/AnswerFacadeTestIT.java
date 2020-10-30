@@ -46,8 +46,16 @@ public class AnswerFacadeTestIT {
     private final static String USERNAME = "answerFacade";
     private final static String EMAIL = USERNAME + "@heig.ch";
     private final static String PWD = "1234";
+    private final static String USERNAME_1 = "answerFacade1";
+    private final static String EMAIL_1 = USERNAME_1 + "@heig.ch";
+    private final static String PWD_1 = "1234";
+    private final static String USERNAME_2 = "answerFacade2";
+    private final static String EMAIL_2 = USERNAME_2 + "@heig.ch";
+    private final static String PWD_2 = "1234";
 
     private CurrentUserDTO currentUserDTO;
+    private CurrentUserDTO userDTO1;
+    private CurrentUserDTO userDTO2;
 
     private QuestionsDTO.QuestionDTO newQuestion;
 
@@ -69,21 +77,9 @@ public class AnswerFacadeTestIT {
 
         userFacade = serviceRegistry.getUserFacade();
 
-        RegisterCommand registerCommand = RegisterCommand.builder()
-                .username(USERNAME)
-                .clearTxtPassword(PWD)
-                .confirmationClearTxtPassword(PWD)
-                .email(EMAIL)
-                .build();
-
-        authenticationFacade.register(registerCommand);
-
-        LoginCommand loginCommand = LoginCommand.builder()
-                .clearTxtPassword(PWD)
-                .username(USERNAME)
-                .build();
-
-        currentUserDTO = authenticationFacade.login(loginCommand);
+        currentUserDTO = registerAndLoginUser(USERNAME, EMAIL, PWD);
+        userDTO1 = registerAndLoginUser(USERNAME_1, EMAIL_1, PWD_1);
+        userDTO2 = registerAndLoginUser(USERNAME_2, EMAIL_2, PWD_2);
 
         QuestionCommand questionCommand = QuestionCommand.builder()
                 .userId(currentUserDTO.getUserId())
@@ -95,10 +91,33 @@ public class AnswerFacadeTestIT {
         newQuestion = questionFacade.addQuestion(questionCommand);
     }
 
+    private CurrentUserDTO registerAndLoginUser(String username, String email,
+                                                String password) throws RegistrationFailedException, LoginFailedException {
+        // Create a new user
+        RegisterCommand registerCommand = RegisterCommand.builder()
+                .email(email)
+                .confirmationClearTxtPassword(password)
+                .clearTxtPassword(password)
+                .username(username)
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        // Login as the new user created
+        LoginCommand loginCommand = LoginCommand.builder()
+                .clearTxtPassword(PWD)
+                .username(USERNAME)
+                .build();
+
+        return authenticationFacade.login(loginCommand);
+    }
+
     @After
     public void cleanUp() throws QuestionFailedException {
         questionFacade.removeQuestion(newQuestion.getId());
         authenticationFacade.delete(currentUserDTO.getUserId());
+        authenticationFacade.delete(userDTO1.getUserId());
+        authenticationFacade.delete(userDTO2.getUserId());
     }
 
     @Test
@@ -270,17 +289,7 @@ public class AnswerFacadeTestIT {
 
         AnswersDTO.AnswerDTO answerDTO = answerFacade.addAnswer(answerCommand);
 
-        // Add a user to avoid having 0 as the expected result
-        RegisterCommand registerCommand1 = RegisterCommand
-                .builder()
-                .clearTxtPassword("1234")
-                .confirmationClearTxtPassword("1234")
-                .username("gandalf")
-                .email("gandalf@gmail.com")
-                .build();
-        User u1 = authenticationFacade.register(registerCommand1);
-
-        answerFacade.upvote(u1.getId(), answerDTO.getId());
+        answerFacade.upvote(userDTO1.getUserId(), answerDTO.getId());
         answerFacade.upvote(currentUserDTO.getUserId(), answerDTO.getId());
         answerFacade.upvote(currentUserDTO.getUserId(), answerDTO.getId());
 
@@ -292,7 +301,6 @@ public class AnswerFacadeTestIT {
         assertEquals(1, upvotedAnswer.getVotes());
 
         answerFacade.removeAnswer(upvotedAnswer.getId());
-        userFacade.removeUser(u1.getId());
     }
 
     @Test
@@ -306,29 +314,9 @@ public class AnswerFacadeTestIT {
 
         AnswersDTO.AnswerDTO answerDTO = answerFacade.addAnswer(answerCommand);
 
-        // Create 2 new users
-        RegisterCommand registerCommand1 = RegisterCommand
-                .builder()
-                .clearTxtPassword("1234")
-                .confirmationClearTxtPassword("1234")
-                .username("steph")
-                .email("steph@gmail.com")
-                .build();
-        RegisterCommand registerCommand2 = RegisterCommand
-                .builder()
-                .clearTxtPassword("1234")
-                .confirmationClearTxtPassword("1234")
-                .username("john")
-                .email("john@gmail.com")
-                .build();
-        User u1 = authenticationFacade.register(registerCommand1);
-        User u2 = authenticationFacade.register(registerCommand2);
-
-
-
         answerFacade.upvote(currentUserDTO.getUserId(), answerDTO.getId());
-        answerFacade.upvote(u1.getId(), answerDTO.getId());
-        answerFacade.upvote(u2.getId(), answerDTO.getId());
+        answerFacade.upvote(userDTO1.getUserId(), answerDTO.getId());
+        answerFacade.upvote(userDTO2.getUserId(), answerDTO.getId());
 
         AnswersDTO.AnswerDTO upvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
                 .questionId(answerCommand.getQuestionId())
@@ -338,8 +326,6 @@ public class AnswerFacadeTestIT {
         assertEquals(3, upvotedAnswer.getVotes());
 
         answerFacade.removeAnswer(upvotedAnswer.getId());
-        userFacade.removeUser(u1.getId());
-        userFacade.removeUser(u2.getId());
     }
 
     @Test
@@ -353,27 +339,9 @@ public class AnswerFacadeTestIT {
 
         AnswersDTO.AnswerDTO answerDTO = answerFacade.addAnswer(answerCommand);
 
-        // Create 2 new users
-        RegisterCommand registerCommand1 = RegisterCommand
-                .builder()
-                .clearTxtPassword("1234")
-                .confirmationClearTxtPassword("1234")
-                .username("steph")
-                .email("steph@gmail.com")
-                .build();
-        RegisterCommand registerCommand2 = RegisterCommand
-                .builder()
-                .clearTxtPassword("1234")
-                .confirmationClearTxtPassword("1234")
-                .username("john")
-                .email("john@gmail.com")
-                .build();
-        User u1 = authenticationFacade.register(registerCommand1);
-        User u2 = authenticationFacade.register(registerCommand2);
-
         answerFacade.downvote(currentUserDTO.getUserId(), answerDTO.getId());
-        answerFacade.downvote(u1.getId(), answerDTO.getId());
-        answerFacade.downvote(u2.getId(), answerDTO.getId());
+        answerFacade.downvote(userDTO1.getUserId(), answerDTO.getId());
+        answerFacade.downvote(userDTO2.getUserId(), answerDTO.getId());
 
         AnswersDTO.AnswerDTO upvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
                 .questionId(answerCommand.getQuestionId())
@@ -383,7 +351,5 @@ public class AnswerFacadeTestIT {
         assertEquals(-3, upvotedAnswer.getVotes());
 
         answerFacade.removeAnswer(upvotedAnswer.getId());
-        userFacade.removeUser(u1.getId());
-        userFacade.removeUser(u2.getId());
     }
 }
