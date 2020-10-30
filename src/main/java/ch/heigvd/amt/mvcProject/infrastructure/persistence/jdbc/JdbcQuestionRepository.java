@@ -335,7 +335,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
-                    "SELECT * FROM tblUser_vote_tblQuestion " +
+                    "SELECT positiv FROM tblUser_vote_tblQuestion " +
                             "WHERE tblUser_id = ? AND tblQuestion_id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE
@@ -347,7 +347,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             ResultSet rs = statement.executeQuery();
 
             while(rs.next()) {
-                voteValue = rs.getInt(3);
+                voteValue = rs.getInt(1);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
