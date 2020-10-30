@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.infrastructure.persistence.jdbc;
 
+import ch.heigvd.amt.mvcProject.application.VoteUtils;
 import ch.heigvd.amt.mvcProject.domain.answer.Answer;
 import ch.heigvd.amt.mvcProject.domain.answer.AnswerId;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
@@ -88,6 +89,8 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         // TODO : gérer les tags toujours
 
+        System.out.println("LOOKING FOR : " + id.asString());
+
         Optional<Question> optionalQuestion = Optional.empty();
 
         try {
@@ -110,7 +113,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
             ResultSet rs = statement.executeQuery();
 
             if (rs.next()) {
-
                 rs.first();
 
                 Question foundQuestion = getQuestion(rs);
@@ -318,6 +320,7 @@ public class JdbcQuestionRepository implements IQuestionRepository {
      * @throws SQLException
      */
     private Question getQuestion(ResultSet rs) throws SQLException {
+        System.out.println("FOUND!");
         return Question.builder()
                 .id(new QuestionId(rs.getString("question_id")))
                 .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
@@ -328,5 +331,80 @@ public class JdbcQuestionRepository implements IQuestionRepository {
                 .build();
     }
 
+    @Override
+    public int getVoteValue(UserId userId, QuestionId questionId) {
 
+        int voteValue = 0;
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblUser_vote_tblQuestion " +
+                            "WHERE tblUser_id = ? AND tblQuestion_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, questionId.asString());
+
+            ResultSet rs = statement.executeQuery();
+
+            while(rs.next()) {
+                voteValue = rs.getInt(3);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return voteValue;
+    }
+
+    @Override
+    public void addVote(UserId userId, QuestionId questionId, int vote) {
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "INSERT INTO tblUser_vote_tblQuestion (tblUser_id, tblQuestion_id, positiv)" +
+                            "VALUES (?, ?, ?)" +
+                            "ON DUPLICATE KEY UPDATE positiv = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, userId.asString());
+            statement.setString(2, questionId.asString());
+            statement.setInt(3, vote);
+            statement.setInt(4, vote);
+
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    @Override
+    public int getVotes(QuestionId questionId) {
+
+        int totalVotes = 0;
+
+        try {
+            // First we get the total number of votes
+            PreparedStatement voteStatement = dataSource.getConnection().prepareStatement(
+                    "SELECT SUM(positiv) FROM tblUser_vote_tblQuestion " +
+                            "WHERE tblQuestion_id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+            voteStatement.setString(1, questionId.asString());
+
+            ResultSet rs = voteStatement.executeQuery();
+
+            while (rs.next()) {
+                totalVotes = rs.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return totalVotes;
+    }
 }

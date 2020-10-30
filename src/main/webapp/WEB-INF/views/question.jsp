@@ -11,7 +11,11 @@
 <div class="container-fluid body-with-navbar col-8">
     <h1>${question.title}</h1>
     <div class="row mt-5 mb-5" id="question">
-        <%@include file="fragments/vote.jsp" %>
+        <jsp:include page="fragments/vote.jsp">
+            <jsp:param name="votes" value="${question.ranking}"/>
+            <jsp:param name="servlet" value="q_vote"/>
+            <jsp:param name="extras" value="id=${question.id.asString()}"/>
+        </jsp:include>
         <div class="col-10" id="question_description">
             <p class="justify-content-between">${question.description}</p>
         </div>
