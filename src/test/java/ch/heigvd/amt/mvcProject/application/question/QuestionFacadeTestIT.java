@@ -40,10 +40,20 @@ public class QuestionFacadeTestIT {
     private final static String WARNAME = "arquillian-managed.war";
 
     private CurrentUserDTO currentUserDTO;
+    private CurrentUserDTO userDTO1;
+    private CurrentUserDTO userDTO2;
 
     private final static String USERNAME = "questionFacade";
     private final static String EMAIL = USERNAME + "@heig.ch";
     private final static String PWD = "1234";
+    private final static String USERNAME_1 = "questionFacade1";
+    private final static String EMAIL_1 = USERNAME_1 + "@heig.ch";
+    private final static String PWD_1 = "1234";
+    private final static String USERNAME_2 = "questionFacade2";
+    private final static String EMAIL_2 = USERNAME_2 + "@heig.ch";
+    private final static String PWD_2 = "1234";
+
+    private QuestionsDTO.QuestionDTO question;
 
     private AuthenticationFacade authenticationFacade;
     private UserFacade userFacade;
@@ -64,21 +74,37 @@ public class QuestionFacadeTestIT {
 
 
     @Before
-    public void init() throws RegistrationFailedException, LoginFailedException {
+    public void init() throws RegistrationFailedException, LoginFailedException,
+            UserFailedException, QuestionFailedException {
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
-
         questionFacade = serviceRegistry.getQuestionFacade();
-
         userFacade = serviceRegistry.getUserFacade();
-
         answerFacade = serviceRegistry.getAnswerFacade();
 
+        currentUserDTO = registerAndLoginUser(USERNAME, EMAIL, PWD);
+        userDTO1 = registerAndLoginUser(USERNAME_1, EMAIL_1, PWD_1);
+        userDTO2 = registerAndLoginUser(USERNAME_2, EMAIL_2, PWD_2);
+
+        // Create a new question
+        QuestionCommand questionCommand = QuestionCommand.builder()
+                .userId(currentUserDTO.getUserId())
+                .title("Comment Facade Test Question")
+                .description("Test")
+                .creationDate(new Date())
+                .build();
+
+        question = questionFacade.addQuestion(questionCommand);
+
+    }
+
+    private CurrentUserDTO registerAndLoginUser(String username, String email,
+                                                String password) throws RegistrationFailedException, LoginFailedException {
         // Create a new user
         RegisterCommand registerCommand = RegisterCommand.builder()
-                .email(EMAIL)
-                .confirmationClearTxtPassword(PWD)
-                .clearTxtPassword(PWD)
-                .username(USERNAME)
+                .email(email)
+                .confirmationClearTxtPassword(password)
+                .clearTxtPassword(password)
+                .username(username)
                 .build();
 
         authenticationFacade.register(registerCommand);
@@ -89,8 +115,7 @@ public class QuestionFacadeTestIT {
                 .username(USERNAME)
                 .build();
 
-        currentUserDTO = authenticationFacade.login(loginCommand);
-
+        return authenticationFacade.login(loginCommand);
     }
 
     @After
@@ -308,5 +333,21 @@ public class QuestionFacadeTestIT {
             questionFacade.removeQuestion(question.getId());
         }
     }
+
+    @Test
+    public void upvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException, CommentFailedException {
+
+        int initVotes = question.getRanking();
+
+        //TODO : questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(initVotes + 1, upvotedQuestion.getRanking());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
+    }
+
+
 
 }
