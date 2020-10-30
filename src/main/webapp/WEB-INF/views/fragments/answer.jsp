@@ -5,7 +5,11 @@
     <div class="container-fluid mb-3 mt-3 answer_container">
         <div class="row" id="answer_block">
             <div class="col-1" id="answer_vote">
-                <%@include file="vote.jsp" %>
+                <jsp:include page="vote.jsp">
+                    <jsp:param name="votes" value="${answer.votes}"/>
+                    <jsp:param name="servlet" value="a_vote"/>
+                    <jsp:param name="extras" value="answer_id=${answer.id.asString()}&question_id=${requestScope.question.id.asString()}"/>
+                </jsp:include>
             </div>
             <div class="col" id="answer_detail">
                 <p class="justify-content-between">
