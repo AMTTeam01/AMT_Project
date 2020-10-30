@@ -358,11 +358,11 @@ public class QuestionFacadeTestIT {
 
         questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
 
-        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+        QuestionsDTO.QuestionDTO downvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
-        assertEquals(-1, upvotedQuestion.getRanking());
+        assertEquals(-1, downvotedQuestion.getRanking());
 
-        questionFacade.removeQuestion(upvotedQuestion.getId());
+        questionFacade.removeQuestion(downvotedQuestion.getId());
     }
 
 
@@ -386,6 +386,53 @@ public class QuestionFacadeTestIT {
         QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
 
         assertEquals(1, upvotedQuestion.getRanking());
+
+        questionFacade.removeQuestion(question.getId());
     }
+
+    @Test
+    public void upvotingWithMultipleUsersShouldGiveMultipleVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException, CommentFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+        questionFacade.upvote(userDTO1.getUserId(), question.getId());
+        questionFacade.upvote(userDTO2.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(3, upvotedQuestion.getRanking());
+
+        questionFacade.removeQuestion(question.getId());
+    }
+
+    @Test
+    public void downvotingWithMultipleUsersShouldGiveNegativeVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException, CommentFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
+        questionFacade.downvote(userDTO1.getUserId(), question.getId());
+        questionFacade.downvote(userDTO2.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(-3, upvotedQuestion.getRanking());
+
+        questionFacade.removeQuestion(question.getId());
+    }
+
 
 }
