@@ -158,8 +158,9 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblComment` (
   `tblUser_id` VARCHAR(256) NOT NULL,
   `tblComment_id` VARCHAR(256) NOT NULL,
   `positv` TINYINT NOT NULL,
-  PRIMARY KEY (`tblUser_id`, `tblComment_id`),
-  INDEX `fk_tblUser_has_tblComment_tblComment1_idx` (`tblComment_id` ASC) VISIBLE,
+  PRIMARY KEY (`tblUser_id`, `tblComment_id`))
+  /* Doesn't work for some reason (constraint error of jdbc or something)*/
+  /*INDEX `fk_tblUser_has_tblComment_tblComment1_idx` (`tblComment_id` ASC) VISIBLE,
   INDEX `fk_tblUser_has_tblComment_tblUser1_idx` (`tblUser_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblUser_has_tblComment_tblUser1`
     FOREIGN KEY (`tblUser_id`)
@@ -170,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblComment` (
     FOREIGN KEY (`tblComment_id`)
     REFERENCES `help2000`.`tblComment` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION)*/
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -183,8 +184,9 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblQuestion` (
   `tblUser_id` VARCHAR(256) NOT NULL,
   `tblQuestion_id` VARCHAR(256) NOT NULL,
   `positiv` TINYINT NOT NULL,
-  PRIMARY KEY (`tblUser_id`, `tblQuestion_id`),
-  INDEX `fk_tblUser_has_tblQuestion_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
+  PRIMARY KEY (`tblUser_id`, `tblQuestion_id`))
+  /*Same as above*/
+  /*INDEX `fk_tblUser_has_tblQuestion_tblQuestion1_idx` (`tblQuestion_id` ASC) VISIBLE,
   INDEX `fk_tblUser_has_tblQuestion_tblUser1_idx` (`tblUser_id` ASC) VISIBLE,
   CONSTRAINT `fk_tblUser_has_tblQuestion_tblUser1`
     FOREIGN KEY (`tblUser_id`)
@@ -195,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblQuestion` (
     FOREIGN KEY (`tblQuestion_id`)
     REFERENCES `help2000`.`tblQuestion` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION)*/
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;

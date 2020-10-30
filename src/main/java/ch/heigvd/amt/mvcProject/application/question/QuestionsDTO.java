@@ -24,7 +24,7 @@ public class QuestionsDTO {
     public static class QuestionDTO {
         private QuestionId id;
         private String title;
-        private int ranking;
+        private int votes;
         private String username;
         private UserId userId;
         private List<String> tags;

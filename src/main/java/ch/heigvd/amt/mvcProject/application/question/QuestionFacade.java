@@ -14,11 +14,14 @@ import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.*;
 
 /**
  * Link the question and the domain, what we offer to the user to interact with the domain
@@ -206,6 +209,7 @@ public class QuestionFacade {
                 .description(question.getDescription())
                 .id(question.getId())
                 .userId(question.getUserId())
+                .votes(questionRepository.getVotes(question.getId()))
                 .username(question.getUsername())
                 .creationDate(question.getCreationDate());
 
@@ -251,5 +255,37 @@ public class QuestionFacade {
                             .build();
                 }
         ).collect(Collectors.toList());
+    }
+
+    /**
+     * Vote on a question
+     * @param userId : id of the user voting
+     * @param questionId : id of the question being voted
+     * @param vote : value that is being done (upvote / downvote)
+     */
+    public void vote(UserId userId, QuestionId questionId, int vote) throws QuestionFailedException, UserFailedException {
+
+        checkIfUserExists(userId);
+
+        int voteValue = questionRepository.getVoteValue(userId, questionId);
+
+        // Update the vote value
+        voteValue = getNewVoteValue(voteValue, vote);
+
+        questionRepository.addVote(userId, questionId, voteValue);
+    }
+
+
+    /**
+     * Checks if the given user id is linked to an actual user
+     * @param userId : id of the user we want to search
+     * @throws QuestionFailedException if the user doesn't exist
+     * @throws UserFailedException
+     */
+    private void checkIfUserExists(UserId userId) throws QuestionFailedException, UserFailedException {
+        UsersDTO existingUser = userFacade.getUsers(UserQuery.builder().userId(userId).build());
+
+        if (existingUser.getUsers().size() == 0)
+            throw new QuestionFailedException("The user hasn't been found");
     }
 }
