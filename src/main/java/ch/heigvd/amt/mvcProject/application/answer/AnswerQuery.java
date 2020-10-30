@@ -14,4 +14,5 @@ import lombok.Getter;
 public class AnswerQuery {
 
     QuestionId questionId;
+    AnswerId answerId;
 }

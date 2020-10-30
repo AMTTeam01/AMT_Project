@@ -26,6 +26,8 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.util.Date;
 
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.DOWNVOTE;
+import static ch.heigvd.amt.mvcProject.application.VoteUtils.UPVOTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -49,8 +51,16 @@ public class AnswerFacadeTestIT {
     private final static String USERNAME = "answerFacade";
     private final static String EMAIL = USERNAME + "@heig.ch";
     private final static String PWD = "1234";
+    private String USERNAME_1 = "answerFacade1";
+    private String EMAIL_1 = USERNAME_1 + "@heig.ch";
+    private String PWD_1 = "1234";
+    private String USERNAME_2 = "answerFacade2";
+    private String EMAIL_2 = USERNAME_2 + "@heig.ch";
+    private String PWD_2 = "1234";
 
     private CurrentUserDTO currentUserDTO;
+    private CurrentUserDTO userDTO1;
+    private CurrentUserDTO userDTO2;
 
     private QuestionsDTO.QuestionDTO newQuestion;
 
@@ -63,30 +73,16 @@ public class AnswerFacadeTestIT {
 
     @Before
     public void init()
-            throws RegistrationFailedException, QuestionFailedException, LoginFailedException, UserFailedException {
+            throws RegistrationFailedException, LoginFailedException, UserFailedException, QuestionFailedException {
+
         answerFacade = serviceRegistry.getAnswerFacade();
-
         authenticationFacade = serviceRegistry.getAuthenticationFacade();
-
         questionFacade = serviceRegistry.getQuestionFacade();
-
         userFacade = serviceRegistry.getUserFacade();
 
-        RegisterCommand registerCommand = RegisterCommand.builder()
-                .username(USERNAME)
-                .clearTxtPassword(PWD)
-                .confirmationClearTxtPassword(PWD)
-                .email(EMAIL)
-                .build();
-
-        authenticationFacade.register(registerCommand);
-
-        LoginCommand loginCommand = LoginCommand.builder()
-                .clearTxtPassword(PWD)
-                .username(USERNAME)
-                .build();
-
-        currentUserDTO = authenticationFacade.login(loginCommand);
+        currentUserDTO = registerAndLoginUser(USERNAME, EMAIL, PWD);
+        userDTO1 = registerAndLoginUser(USERNAME_1, EMAIL_1, PWD_1);
+        userDTO2 = registerAndLoginUser(USERNAME_2, EMAIL_2, PWD_2);
 
         QuestionCommand questionCommand = QuestionCommand.builder()
                 .userId(currentUserDTO.getUserId())
@@ -98,12 +94,36 @@ public class AnswerFacadeTestIT {
         newQuestion = questionFacade.addQuestion(questionCommand);
     }
 
+    private CurrentUserDTO registerAndLoginUser(String username,
+                                                String email, String password)
+            throws RegistrationFailedException, LoginFailedException {
+        // Create a new user
+        RegisterCommand registerCommand = RegisterCommand.builder()
+                .email(email)
+                .confirmationClearTxtPassword(password)
+                .clearTxtPassword(password)
+                .username(username)
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        // Login as the new user created
+        LoginCommand loginCommand = LoginCommand.builder()
+                .clearTxtPassword(password)
+                .username(username)
+                .build();
+
+        return authenticationFacade.login(loginCommand);
+    }
+
     @After
     public void cleanUp() throws QuestionFailedException {
 
         questionFacade.removeQuestion(newQuestion.getId());
 
         authenticationFacade.delete(currentUserDTO.getUserId());
+        authenticationFacade.delete(userDTO1.getUserId());
+        authenticationFacade.delete(userDTO2.getUserId());
 
     }
 
@@ -219,5 +239,128 @@ public class AnswerFacadeTestIT {
         );
     }
 
+    @Test
+    public void upvoteAnswerShouldWork() throws UserFailedException, AnswerFailedException, QuestionFailedException, CommentFailedException {
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
 
+        AnswersDTO.AnswerDTO answer = answerFacade.addAnswer(answerCommand);
+
+        answerFacade.vote(currentUserDTO.getUserId(), answer.getId(), UPVOTE);
+
+        AnswersDTO.AnswerDTO upvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
+                .questionId(answerCommand.getQuestionId())
+                .answerId(answer.getId())
+                .build());
+
+        assertEquals(1, upvotedAnswer.getVotes());
+
+        answerFacade.removeAnswer(upvotedAnswer.getId());
+    }
+
+    @Test
+    public void downvoteAnswerShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException, CommentFailedException {
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO answer = answerFacade.addAnswer(answerCommand);
+
+        answerFacade.vote(currentUserDTO.getUserId(), answer.getId(), DOWNVOTE);
+
+        AnswersDTO.AnswerDTO downvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
+                .questionId(answerCommand.getQuestionId())
+                .answerId(answer.getId())
+                .build());
+
+        assertEquals(-1, downvotedAnswer.getVotes());
+
+        answerFacade.removeAnswer(downvotedAnswer.getId());
+    }
+
+
+    @Test
+    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException, RegistrationFailedException {
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO answer = answerFacade.addAnswer(answerCommand);
+
+        // to avoid having 0 as the expected value
+        answerFacade.vote(userDTO1.getUserId(), answer.getId(), UPVOTE);
+
+        answerFacade.vote(currentUserDTO.getUserId(), answer.getId(), UPVOTE);
+        answerFacade.vote(currentUserDTO.getUserId(), answer.getId(), UPVOTE);
+
+        AnswersDTO.AnswerDTO upvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
+                .questionId(answerCommand.getQuestionId())
+                .answerId(answer.getId())
+                .build());
+
+        assertEquals(1, upvotedAnswer.getVotes());
+
+        answerFacade.removeAnswer(upvotedAnswer.getId());
+    }
+
+    @Test
+    public void upvotingWithMultipleUsersShouldGiveMultipleVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException, CommentFailedException {
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO answer = answerFacade.addAnswer(answerCommand);
+
+        // to avoid having 0 as the expected value
+        answerFacade.vote(userDTO1.getUserId(), answer.getId(), UPVOTE);
+        answerFacade.vote(userDTO2.getUserId(), answer.getId(), UPVOTE);
+        answerFacade.vote(currentUserDTO.getUserId(), answer.getId(), UPVOTE);
+
+        AnswersDTO.AnswerDTO upvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
+                .questionId(answerCommand.getQuestionId())
+                .answerId(answer.getId())
+                .build());
+
+        assertEquals(3, upvotedAnswer.getVotes());
+
+        answerFacade.removeAnswer(upvotedAnswer.getId());
+    }
+
+    @Test
+    public void downvotingWithMultipleUsersShouldGiveNegativeVotes() throws UserFailedException, QuestionFailedException, RegistrationFailedException, AnswerFailedException, CommentFailedException {
+        AnswerCommand answerCommand = AnswerCommand.builder()
+                .questionId(newQuestion.getId())
+                .description("Answer test")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        AnswersDTO.AnswerDTO answer = answerFacade.addAnswer(answerCommand);
+
+        answerFacade.vote(userDTO1.getUserId(), answer.getId(), DOWNVOTE);
+        answerFacade.vote(userDTO2.getUserId(), answer.getId(), DOWNVOTE);
+        answerFacade.vote(currentUserDTO.getUserId(), answer.getId(), DOWNVOTE);
+
+        AnswersDTO.AnswerDTO upvotedAnswer = answerFacade.getAnswer(AnswerQuery.builder()
+                .questionId(answerCommand.getQuestionId())
+                .answerId(answer.getId())
+                .build());
+
+        assertEquals(-3, upvotedAnswer.getVotes());
+
+        answerFacade.removeAnswer(upvotedAnswer.getId());
+    }
 }
