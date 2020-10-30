@@ -40,10 +40,18 @@ public class QuestionFacadeTestIT {
     private final static String WARNAME = "arquillian-managed.war";
 
     private CurrentUserDTO currentUserDTO;
+    private CurrentUserDTO userDTO1;
+    private CurrentUserDTO userDTO2;
 
-    private final static String USERNAME = "questionFacade";
-    private final static String EMAIL = USERNAME + "@heig.ch";
-    private final static String PWD = "1234";
+    private String USERNAME = "questionFacade";
+    private String EMAIL = USERNAME + "@heig.ch";
+    private String PWD = "1234";
+    private String USERNAME_1 = "questionFacade1";
+    private String EMAIL_1 = USERNAME_1 + "@heig.ch";
+    private String PWD_1 = "1234";
+    private String USERNAME_2 = "questionFacade2";
+    private String EMAIL_2 = USERNAME_2 + "@heig.ch";
+    private String PWD_2 = "1234";
 
     private AuthenticationFacade authenticationFacade;
     private UserFacade userFacade;
@@ -73,30 +81,38 @@ public class QuestionFacadeTestIT {
 
         answerFacade = serviceRegistry.getAnswerFacade();
 
+        currentUserDTO = registerAndLoginUser(USERNAME, EMAIL, PWD);
+        userDTO1 = registerAndLoginUser(USERNAME_1, EMAIL_1, PWD_1);
+        userDTO2 = registerAndLoginUser(USERNAME_2, EMAIL_2, PWD_2);
+    }
+
+    private CurrentUserDTO registerAndLoginUser(String username, String email,
+                                                String password) throws RegistrationFailedException, LoginFailedException {
         // Create a new user
         RegisterCommand registerCommand = RegisterCommand.builder()
-                .email(EMAIL)
-                .confirmationClearTxtPassword(PWD)
-                .clearTxtPassword(PWD)
-                .username(USERNAME)
+                .email(email)
+                .confirmationClearTxtPassword(password)
+                .clearTxtPassword(password)
+                .username(username)
                 .build();
 
         authenticationFacade.register(registerCommand);
 
         // Login as the new user created
         LoginCommand loginCommand = LoginCommand.builder()
-                .clearTxtPassword(PWD)
-                .username(USERNAME)
+                .clearTxtPassword(password)
+                .username(username)
                 .build();
 
-        currentUserDTO = authenticationFacade.login(loginCommand);
-
+        return authenticationFacade.login(loginCommand);
     }
 
     @After
     public void cleanUp() {
 
         userFacade.removeUser(currentUserDTO.getUserId());
+        userFacade.removeUser(userDTO1.getUserId());
+        userFacade.removeUser(userDTO2.getUserId());
     }
 
     @Test
@@ -327,6 +343,49 @@ public class QuestionFacadeTestIT {
         assertEquals(1, upvotedQuestion.getRanking());
 
         questionFacade.removeQuestion(upvotedQuestion.getId());
+    }
+
+    @Test
+    public void downvoteQuestionShouldWork() throws UserFailedException, QuestionFailedException, AnswerFailedException, InterruptedException, CommentFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        questionFacade.downvote(currentUserDTO.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(-1, upvotedQuestion.getRanking());
+
+        questionFacade.removeQuestion(upvotedQuestion.getId());
+    }
+
+
+    @Test
+    public void upvotingTwiceRemovesTheUpvote() throws UserFailedException, QuestionFailedException, AnswerFailedException, CommentFailedException, RegistrationFailedException {
+        QuestionCommand command = QuestionCommand.builder()
+                .title("Titre")
+                .description("Description")
+                .creationDate(new Date())
+                .userId(currentUserDTO.getUserId())
+                .build();
+
+        QuestionsDTO.QuestionDTO question = questionFacade.addQuestion(command);
+
+        // to avoid having 0 as the expected value
+        questionFacade.upvote(userDTO1.getUserId(), question.getId());
+
+        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+        questionFacade.upvote(currentUserDTO.getUserId(), question.getId());
+
+        QuestionsDTO.QuestionDTO upvotedQuestion = questionFacade.getQuestion(QuestionQuery.builder().questionId(question.getId()).build());
+
+        assertEquals(1, upvotedQuestion.getRanking());
     }
 
 }

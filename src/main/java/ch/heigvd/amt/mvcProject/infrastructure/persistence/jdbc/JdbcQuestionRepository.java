@@ -89,8 +89,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
 
         // TODO : gérer les tags toujours
 
-        System.out.println("LOOKING FOR : " + id.asString());
-
         Optional<Question> optionalQuestion = Optional.empty();
 
         try {
@@ -320,7 +318,6 @@ public class JdbcQuestionRepository implements IQuestionRepository {
      * @throws SQLException
      */
     private Question getQuestion(ResultSet rs) throws SQLException {
-        System.out.println("FOUND!");
         return Question.builder()
                 .id(new QuestionId(rs.getString("question_id")))
                 .creationDate(new Date(rs.getTimestamp("creationDate").getTime()))
