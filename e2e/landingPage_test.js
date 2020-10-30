@@ -1,4 +1,4 @@
-Feature('landing page');
+Feature('landing_page')
 
 Scenario('landing page tests', (I) => {
     //landing page setup

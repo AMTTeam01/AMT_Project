@@ -83,6 +83,31 @@ public class JdbcUserRepository implements IUserRepository {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+        Optional<User> user = Optional.empty();
+
+        try {
+            PreparedStatement statement = dataSource.getConnection().prepareStatement(
+                    "SELECT * FROM tblUser WHERE email = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE
+            );
+
+            statement.setString(1, email);
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next())
+                user = Optional.of(getUsers(statement.executeQuery()).get(0));
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return user;
+    }
+
+    @Override
     public void save(User entity) {
         try {
             PreparedStatement statement = dataSource.getConnection().prepareStatement(
