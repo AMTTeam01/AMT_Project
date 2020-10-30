@@ -12,7 +12,7 @@
 ## Features not working
 
 - Edit profile works, but no checks on if the user is already taken, new password does not work
-- Upvotes on comments
+- Upvotes on answers
 - JMeter load tests missing a bunch
 
 ## Get Started
