@@ -154,11 +154,11 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `help2000`.`tblUser_vote_tblComment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblComment` (
+CREATE TABLE IF NOT EXISTS `help2000`.`tblUser_vote_tblAnswer` (
   `tblUser_id` VARCHAR(256) NOT NULL,
-  `tblComment_id` VARCHAR(256) NOT NULL,
-  `positv` TINYINT NOT NULL,
-  PRIMARY KEY (`tblUser_id`, `tblComment_id`))
+  `tblAnswer_id` VARCHAR(256) NOT NULL,
+  `positiv` TINYINT NOT NULL,
+  PRIMARY KEY (`tblUser_id`, `tblAnswer_id`))
   /* Doesn't work for some reason (constraint error of jdbc or something)*/
   /*INDEX `fk_tblUser_has_tblComment_tblComment1_idx` (`tblComment_id` ASC) VISIBLE,
   INDEX `fk_tblUser_has_tblComment_tblUser1_idx` (`tblUser_id` ASC) VISIBLE,
