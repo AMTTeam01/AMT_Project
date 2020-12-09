@@ -42,10 +42,10 @@ jobs:
             ${{ runner.os }}-maven-
 
       # Codeceptjs
+      - name: Use Node.js${{matrix.node-version}}
       - uses: |
           actions/checkout@v2
           actions/setup-node@v1
-        name: Use Node.js${{matrix.node-version}}
         with:
           node-version: ${{matrix.node-version}}
         run: |
