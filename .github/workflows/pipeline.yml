@@ -48,8 +48,8 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
       - run: |
-          npm install --prefix e2e
-          npm install puppeteer --prefix e2e
+#          npm install --prefix e2e
+#          npm install puppeteer --prefix e2e
           npx codeceptjs run -c e2e
 #        env:
 #          CI: true
