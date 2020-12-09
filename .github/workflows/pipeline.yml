@@ -48,7 +48,7 @@ jobs:
         name: Use Node.js${{matrix.node-version}}
         with:
           node-version: ${{matrix.node-version}}
-      - run: |
+        run: |
           npm install --prefix e2e
           npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
         env:
