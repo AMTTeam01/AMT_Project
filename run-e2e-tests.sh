@@ -6,7 +6,7 @@ rm -rf ./volumes/db
 docker-compose build
 docker-compose up -d
 
-sleep 60
+sleep 300
 
 cd e2e/
 npm install
