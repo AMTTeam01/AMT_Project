@@ -50,9 +50,9 @@ jobs:
       - run: |
           npm install --prefix e2e
           npm install puppeteer --prefix e2e
-          npx codeceptjs run -c e2e
-        env:
-          CI: true
+#          npx codeceptjs run -c e2e
+#        env:
+#          CI: true
 
       # Run integration test with arquillian
       - uses: actions/checkout@v2
