@@ -8,6 +8,8 @@ docker-compose up -d
 
 sleep 300
 
+curl -v http://localhost:9080/register
+
 cd e2e/
 npm install
 npx codeceptjs run --steps
