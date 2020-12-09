@@ -42,25 +42,17 @@ jobs:
             ${{ runner.os }}-maven-
 
       # Codeceptjs
-      - task: NodeTool@0
-        inputs:
-          versionSpec: '12.x'
-        displayName: 'Install Node.js'
-      - script: |
-          npm install
-          npx codeceptjs run --grep Upload
-        displayName: 'Run tests with codeceptjs puppeteer'
-
-#      - uses: actions/checkout@v2
-#      - name: Use Node.js${{matrix.node-version}}
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: ${{matrix.node-version}}
-#      - run: |
-#          npm install --prefix e2e
-#          npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
-#        env:
-#          CI: true
+      - uses: |
+          actions/checkout@v2
+          actions/setup-node@v1
+        name: Use Node.js${{matrix.node-version}}
+        with:
+          node-version: ${{matrix.node-version}}
+      - run: |
+          npm install --prefix e2e
+          npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
+        env:
+          CI: true
 
       # Run integration test with arquillian
       - uses: actions/checkout@v2
