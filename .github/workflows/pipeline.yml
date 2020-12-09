@@ -43,19 +43,11 @@ jobs:
 
       # Codeceptjs
       - uses: actions/checkout@v2
-      - name: Use Node.js${{matrix.node-version}}
+      - name: Run End2End Tests
         uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
-      - run: |
-          cd e2e
-          ls
-          npm install
-          npm i codeceptjs --save
-          npx codeceptjs init
-          npx codeceptjs generate:test
-          npx codeceptjs run --steps
-
+      - run: ./run-e2e-tests.sh
 #          npm install puppeteer --prefix e2e
 #          npx codeceptjs run -c e2e
         env:
