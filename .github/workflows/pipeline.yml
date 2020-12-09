@@ -42,13 +42,12 @@ jobs:
             ${{ runner.os }}-maven-
 
       # Codeceptjs
+      - uses: actions/checkout@v2
       - name: Use Node.js${{matrix.node-version}}
-      - uses: |
-          actions/checkout@v2
-          actions/setup-node@v1
+        uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
-        run: |
+      - run: |
           npm install --prefix e2e
           npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
         env:
