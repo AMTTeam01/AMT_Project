@@ -49,6 +49,7 @@ jobs:
           node-version: ${{matrix.node-version}}
       - run: |
           npm install --prefix e2e
+          npm install -g puppeteer
           npx codeceptjs run -c e2e --override '{"helpers": {"Puppeteer": {"show": false}}}' --steps
         env:
           CI: true
