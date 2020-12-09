@@ -6,6 +6,8 @@ rm -rf ./volumes/db
 docker-compose build
 docker-compose up -d
 
+sleep 60
+
 cd e2e/
 npm install
 npx codeceptjs run --steps
