@@ -24,7 +24,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        
+
       - name: Setup JDK 11
         uses: actions/setup-java@v1
         with:
@@ -46,6 +46,14 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
 
+      - name: wait
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: 'http://localhost:9080/'
+          responseCode: 200
+          timeout: 2000
+          interval: 500
+
       # Codeceptjs
       - name: Run End2End Tests
         run: |
@@ -54,7 +62,7 @@ jobs:
           npm run test
         env:
           CI: true
-      
+
       - name: Save output
         uses: actions/upload-artifact@v2
         if: ${{ failure() }}
