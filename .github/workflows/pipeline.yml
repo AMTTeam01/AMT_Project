@@ -33,13 +33,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      -  name: Run web
+      - name: Run web
         run: ./run-app.sh
 
       # Codeceptjs
       - name: Run End2End Tests
-        with:
-          node-version: ${{matrix.node-version}}
         run: |
           cd e2e
           npm run test
