@@ -51,8 +51,15 @@ jobs:
         with:
           url: 'http://localhost:9080/'
           responseCode: 200
-          timeout: 10000
+          timeout: 100000
           interval: 500
+
+      - name: Docker status
+        if: ${{ failure() }}
+        run: |
+          docker ps
+          docker logs help2000_db_container
+          docker logs help2000_webapp_container
 
       # Codeceptjs
       - name: Run End2End Tests
@@ -70,13 +77,6 @@ jobs:
           name: e2e screenshoots
           path: e2e/output/*
           retention-days: 5
-
-      - name: Docker status
-        if: ${{ failure() }}
-        run: |
-          docker ps
-          docker logs help2000_db_container
-          docker logs help2000_webapp_container
 
 ## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 #jobs:
