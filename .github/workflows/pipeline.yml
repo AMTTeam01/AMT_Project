@@ -23,7 +23,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout the repository
+        uses: actions/checkout@v2
 
       - name: Setup JDK 11
         uses: actions/setup-java@v1
@@ -31,7 +32,8 @@ jobs:
           java-version: 11
 
       # Cache optimization
-      - uses: actions/cache@v1
+      - name: Cache Maven packages
+        uses: actions/cache@v1
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -43,16 +45,22 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
 
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+
+      - name: Install dependencies
+        run: npm ci
+
       # Codeceptjs
       - name: Run End2End Tests
         run: ./run-e2e-tests.sh
-
-      - name: Docker status
-        if: ${{ always() }}
-        run: |
-          docker ps
-          docker logs help2000_db_container
-          docker logs help2000_webapp_container
 
       - name: Save output
         uses: actions/upload-artifact@v2
@@ -61,6 +69,30 @@ jobs:
           name: e2e screenshoots
           path: e2e/output/*
           retention-days: 5
+
+  junit:
+    runs-on: ubuntu-latest
+    name: Unit test
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      # Cache optimization
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run tests with Maven
+        run: mvn -B test --file pom.xml
 
 ## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 #jobs:
