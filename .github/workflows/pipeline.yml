@@ -54,6 +54,13 @@ jobs:
           npm run test
         env:
           CI: true
+      
+      - name: Save output
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e screenshoots
+          path: output/*
+          retention-days: 5
 
 ## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 #jobs:
