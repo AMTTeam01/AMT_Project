@@ -40,11 +40,17 @@ jobs:
 
       - name: Run web
         run: ./run-app.sh
+      
+      - name: User Node.js ${{matrix.node-version}}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node-version}}
 
       # Codeceptjs
       - name: Run End2End Tests
         run: |
           cd e2e
+          npm ci
           npm run test
         env:
           CI: true
