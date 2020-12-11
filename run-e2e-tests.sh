@@ -1,19 +1,12 @@
 #!/bin/bash
 
 # Start web app and database
-docker-compose down
-rm -rf ./volumes/db
-docker-compose build
-docker-compose up -d
-
-sleep 300
-
-curl -v http://localhost:9080/register
+sh run-app.sh
 
 cd e2e/
+ls
 npm install
-npx codeceptjs run --steps
-cd ..
+npm run test
 
 # Restart web app and database
 #docker-compose down

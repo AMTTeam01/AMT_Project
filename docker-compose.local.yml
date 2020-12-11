@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  # Web app
+  web:
+    image: amt_project:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  # Database
+  db:
+    image: library/mysql:8.0.21
