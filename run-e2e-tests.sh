@@ -11,7 +11,12 @@ done
 docker-compose -f docker-compose.yml -f docker-compose.local.yml build codecpetjs
 docker-compose -f docker-compose.yml -f docker-compose.local.yml up codecpetjs
 
+CONTAINER_ID=$(docker ps -aqf "name=help2000_codeceptjs")
+EXIT_CODE=$(docker inspect $CONTAINER_ID --format='{{.State.ExitCode}}')
+
 docker-compose down --remove-orphan
+
+EXIT $EXIT_CODE
 
 
 
