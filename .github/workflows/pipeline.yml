@@ -56,7 +56,9 @@ jobs:
             ${{ runner.OS }}-
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          cd e2e
+          npm ci
 
       # Codeceptjs
       - name: Run End2End Tests
