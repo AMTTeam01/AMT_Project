@@ -64,6 +64,7 @@ jobs:
           retention-days: 5
 
       - name: Docker status
+        if: ${{ failure() }}
         run: |
           docker ps
           docker logs help2000_db_container
