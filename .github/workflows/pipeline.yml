@@ -96,6 +96,36 @@ jobs:
       - name: Run tests with Maven
         run: mvn -B test --file pom.xml
 
+  # Run integration test with arquillian
+  arquillian :
+    runs-on: ubuntu-latest
+    name: Integration test
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      # Cache optimization
+      - name: Cache Maven packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+      - uses: actions/checkout@v2
+      - name: Run IT
+        run: |
+          ./run-app.sh
+          cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
+          ./run-integration-tests.sh
+          mvn liberty:stop
+
 ## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 #jobs:
 #  # This workflow contains a single job called "build"
