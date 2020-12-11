@@ -1,6 +1,6 @@
 Feature('comments_answers');
 
-Scenario('test comments and answers', (I) => {
+Scenario('test comments and answers', ({ I }) => {
 
     let questionTitle = I.generateString(10)
     let questionDescription = I.generateString(30)

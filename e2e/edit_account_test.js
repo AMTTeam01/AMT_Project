@@ -1,6 +1,6 @@
 Feature('edit_account');
 
-Scenario('test edit account', (I) => {
+Scenario('test edit account', ({ I }) => {
 
     let newUsername = I.generateString(10)
     let newEmail = I.generateEmail()
