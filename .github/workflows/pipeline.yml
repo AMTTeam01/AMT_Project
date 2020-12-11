@@ -55,7 +55,7 @@ jobs:
           interval: 500
 
       - name: Docker status
-        if: ${{ failure() }}
+        if: ${{ always() }}
         run: |
           docker ps
           docker logs help2000_db_container
