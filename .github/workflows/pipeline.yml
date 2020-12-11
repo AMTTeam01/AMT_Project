@@ -123,7 +123,7 @@ jobs:
 
       - name : start db
         run: |
-          docker-compose up -ddb
+          docker-compose up -d db
 
       - uses: actions/checkout@v2
       - name: Run IT
