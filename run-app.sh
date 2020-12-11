@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Rebuild project
-mvn clean package
+mvn clean package -Dmaven.test.skip=true
 
 # Restart web app and database
 docker-compose down

@@ -1,6 +1,6 @@
 Feature('Navigation')
 
-Scenario('navigation tests', ({ I }) => {
+Scenario('navigation tests', ( I ) => {
 
     //login 1 generated user
     I.registerUsers(1)

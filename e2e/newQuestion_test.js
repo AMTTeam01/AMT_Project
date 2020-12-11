@@ -1,6 +1,6 @@
 Feature('New question')
 
-Scenario('adding question', ({ I }) => {
+Scenario('adding question', (I) => {
 
     let questionTitle = I.generateString(10)
     let questionDescription = I.generateString(100)
@@ -11,8 +11,8 @@ Scenario('adding question', ({ I }) => {
 
     //add question
     I.amOnPage('/new_question')
-    I.fillField('#txt_title',questionTitle)
-    I.fillField('#txt_description',questionDescription)
+    I.fillField('#txt_title', questionTitle)
+    I.fillField('#txt_description', questionDescription)
     I.click('Submit')
 
     //see my question

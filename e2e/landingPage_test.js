@@ -1,6 +1,6 @@
 Feature('landing_page')
 
-Scenario('landing page tests', ({ I }) => {
+Scenario('landing page tests', (I) => {
     //landing page setup
     I.amOnPage('/')
     I.see('Question about programming ?')

@@ -11,3 +11,13 @@ services:
   # Database
   db:
     image: library/mysql:8.0.21
+
+  codecpetjs:
+    container_name: "help2000_codeceptjs"
+    image: codeception/codeceptjs
+    depends_on:
+      - web
+    network_mode: "host"
+    volumes:
+      - ./e2e:/tests
+

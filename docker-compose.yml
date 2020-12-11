@@ -5,6 +5,7 @@ services:
   web:
     image: ghcr.io/amtteamheig/amt_project:latest
     container_name: 'help2000_webapp_container'
+    network_mode: "host"
     ports:
       - "9080:9080"
     depends_on:
@@ -30,6 +31,7 @@ services:
       MYSQL_USER: 'dbDevHelp2000'
       MYSQL_PASSWORD: 'devpass'
       MYSQL_ROOT_PASSWORD: 'devpa$$'
+    network_mode: "host"
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
@@ -42,3 +44,4 @@ services:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
+
