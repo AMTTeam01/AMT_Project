@@ -118,16 +118,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name : Copy arquillian.xml
-        run: cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
-
-      - name : start db
-        run: |
-          docker-compose up -d db
-
       - uses: actions/checkout@v2
       - name: Run IT
         run: |
+          ./run-app.sh
+          cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
           ./run-integration-tests.sh
           mvn liberty:stop
 
