@@ -11,6 +11,29 @@ on:
     branches: [ master ]
 
 jobs:
+  junit:
+    runs-on: ubuntu-latest
+    name: Unit test
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      # Cache optimization
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run tests with Maven
+        run: mvn -B test --file pom.xml
   e2e:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -71,30 +94,6 @@ jobs:
           name: e2e screenshoots
           path: e2e/output/*
           retention-days: 5
-
-  junit:
-    runs-on: ubuntu-latest
-    name: Unit test
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-
-      - name: Setup JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-
-      # Cache optimization
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Run tests with Maven
-        run: mvn -B test --file pom.xml
 
   # Run integration test with arquillian
   arquillian:
