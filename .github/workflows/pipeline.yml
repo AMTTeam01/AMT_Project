@@ -127,6 +127,22 @@ jobs:
           ./run-integration-tests.sh
           mvn liberty:stop
 
+  docker-image:
+    runs-on: ubuntu-latest
+    name: Create a docker container
+    steps:
+      # Maven package
+      - name: Build with Maven
+        run: mvn clean package -Dmaven.test.skip=true
+
+      # Docker build (with PAT)
+      - name: Build Docker image (with mvn clean package)
+        run: |
+          echo ${{ secrets.HELP2000_PAT }} | docker login ghcr.io -u dev-help2000 --password-stdin
+          docker build -t amt-project/help2000 .
+          docker tag amt-project/help2000 ghcr.io/amtteamheig/amt_project
+          docker push ghcr.io/amtteamheig/amt_project
+
 ## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 #jobs:
 #  # This workflow contains a single job called "build"
