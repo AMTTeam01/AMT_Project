@@ -121,7 +121,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run IT
         run: |
-          ./run-app.sh
+          docker-compose -f docker-compose.yml -f docker-compose.local.yml build db
+          docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d db
           cp src/test/resources/arquillian_example.xml src/test/resources/arquillian.xml
           ./run-integration-tests.sh
           mvn liberty:stop
