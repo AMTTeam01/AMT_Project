@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.ui.web;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +16,9 @@ public class HomePageRenderer extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+
+        APIUtils.register();
+        APIUtils.createPointScale("Test", "This is a test");
     }
 
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response)

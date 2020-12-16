@@ -65,16 +65,27 @@ public class APIUtils {
             return;
         }
 
-
-        HttpPost request = makePostRequest("/registration", new ArrayList<>(Arrays.asList(
+        HttpPost request = makePostRequest("/pointScales", new ArrayList<>(Arrays.asList(
                 new BasicNameValuePair("name", name),
                 new BasicNameValuePair("description", description)
         )));
 
+        HttpResponse response = null;
         try {
-            HttpResponse response = HTTP_CLIENT.execute(request);
+             response = HTTP_CLIENT.execute(request);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if(response != null) {
+            switch(response.getStatusLine().getStatusCode()) {
+                case 201:
+                    if(DEBUG) System.out.println("Successfully created a new point scale : " + name);
+                    break;
+                case 401:
+                    if(DEBUG) System.out.println("The API Key is missing.");
+                    break;
+            }
         }
     }
 
