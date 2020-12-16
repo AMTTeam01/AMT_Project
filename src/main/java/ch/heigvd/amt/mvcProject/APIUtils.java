@@ -26,8 +26,7 @@ public class APIUtils {
     private static String API_KEY = "";
 
     /**
-     * Registers a new application to the gamification service
-     * @return api key used for identification
+     * Registers this application to the gamification service
      */
     public static void register() {
 
@@ -35,13 +34,7 @@ public class APIUtils {
 
         try {
             HttpResponse response = HTTP_CLIENT.execute(request);
-            HttpEntity entity = response.getEntity();
-
-            StringWriter writer = new StringWriter();
-            String encoding = StandardCharsets.UTF_8.name();
-            IOUtils.copy(entity.getContent(), writer, encoding);
-
-            JSONObject result = new JSONObject(writer.toString());
+            JSONObject result = getJsonFromResponse(response);
             API_KEY = result.getString("value");
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,14 +44,35 @@ public class APIUtils {
     }
 
     public static void rewardBadge() {
+        if(API_KEY.isEmpty()) {
+            System.out.println("This application is not registered.");
+            return;
+        }
 
-
-
+        
     }
 
+    /**
+     * Make an HTTP post request
+     * @param endpoint : endpoint for the request
+     * @return http post request
+     */
     private static HttpPost makePostRequest(String endpoint) {
         HttpPost result = new HttpPost(BASE_URL + endpoint);
         if(DEBUG) System.out.println("POST Request : " + BASE_URL + endpoint);
         return result;
+    }
+
+    /**
+     * Get the JSON object from an http response
+     * @param response : http response
+     * @return json object from response
+     * @throws IOException
+     */
+    private static JSONObject getJsonFromResponse(HttpResponse response) throws IOException {
+        StringWriter writer = new StringWriter();
+        String encoding = StandardCharsets.UTF_8.name();
+        IOUtils.copy(response.getEntity().getContent(), writer, encoding);
+        return new JSONObject(writer.toString());
     }
 }
