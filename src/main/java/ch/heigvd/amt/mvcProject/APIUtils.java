@@ -14,15 +14,24 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Utils for the gamification API service
+ */
 public class APIUtils {
 
     private static final String BASE_URL = "http://localhost:8080";
     private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().build();
+    private static final boolean DEBUG = true;
 
-    public static String register() {
+    private static String API_KEY = "";
 
-        String apiKey = "";
-        HttpPost request = new HttpPost(BASE_URL+ "/registration");
+    /**
+     * Registers a new application to the gamification service
+     * @return api key used for identification
+     */
+    public static void register() {
+
+        HttpPost request = makePostRequest("/registration");
 
         try {
             HttpResponse response = HTTP_CLIENT.execute(request);
@@ -33,16 +42,23 @@ public class APIUtils {
             IOUtils.copy(entity.getContent(), writer, encoding);
 
             JSONObject result = new JSONObject(writer.toString());
-            apiKey = result.getString("value");
-
+            API_KEY = result.getString("value");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println(apiKey);
-
-        return apiKey;
+        if(DEBUG) System.out.println("Successfully registered : " + API_KEY);
     }
 
+    public static void rewardBadge() {
 
+
+
+    }
+
+    private static HttpPost makePostRequest(String endpoint) {
+        HttpPost result = new HttpPost(BASE_URL + endpoint);
+        if(DEBUG) System.out.println("POST Request : " + BASE_URL + endpoint);
+        return result;
+    }
 }
