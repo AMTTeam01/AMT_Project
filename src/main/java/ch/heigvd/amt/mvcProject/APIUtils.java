@@ -3,16 +3,22 @@ package ch.heigvd.amt.mvcProject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import javax.json.JsonObject;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Utils for the gamification API service
@@ -30,7 +36,7 @@ public class APIUtils {
      */
     public static void register() {
 
-        HttpPost request = makePostRequest("/registration");
+        HttpPost request = makePostRequest("/registration", null);
 
         try {
             HttpResponse response = HTTP_CLIENT.execute(request);
@@ -43,13 +49,33 @@ public class APIUtils {
         if(DEBUG) System.out.println("Successfully registered : " + API_KEY);
     }
 
-    public static void rewardBadge() {
+    /**
+     * Create a new point scale
+     * @param name : name of the point scale
+     * @param description : description of the point scale
+     */
+    public static void createPointScale(String name, String description) {
         if(API_KEY.isEmpty()) {
             System.out.println("This application is not registered.");
             return;
         }
 
-        
+        if(name.isEmpty() || description.isEmpty()) {
+            System.out.println("Invalid parameters.");
+            return;
+        }
+
+
+        HttpPost request = makePostRequest("/registration", new ArrayList<>(Arrays.asList(
+                new BasicNameValuePair("name", name),
+                new BasicNameValuePair("description", description)
+        )));
+
+        try {
+            HttpResponse response = HTTP_CLIENT.execute(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -57,8 +83,18 @@ public class APIUtils {
      * @param endpoint : endpoint for the request
      * @return http post request
      */
-    private static HttpPost makePostRequest(String endpoint) {
+    private static HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters) {
         HttpPost result = new HttpPost(BASE_URL + endpoint);
+
+        // Add parameters
+        if(postParameters != null && !postParameters.isEmpty()) {
+            try {
+                result.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
         if(DEBUG) System.out.println("POST Request : " + BASE_URL + endpoint);
         return result;
     }
