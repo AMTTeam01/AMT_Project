@@ -90,6 +90,8 @@ public class APIUtils {
                     throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
             }
         }
+
+        return "";
     }
 
     /**
