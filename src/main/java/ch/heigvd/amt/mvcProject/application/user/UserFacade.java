@@ -1,17 +1,13 @@
 package ch.heigvd.amt.mvcProject.application.user;
 
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
-import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.edit.EditUserCommand;
 import ch.heigvd.amt.mvcProject.application.user.edit.EditFailedException;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
