@@ -40,6 +40,7 @@ public class UserFacadeTestIT {
     private final String newPassword = "5678";
     private CurrentUserDTO currentUserDTO = null;
 
+
     @Deployment(testable = true)
     public static WebArchive createDeployment() {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, WARNAME)
@@ -205,6 +206,73 @@ public class UserFacadeTestIT {
 
         EditUserCommand editUserCommand = EditUserCommand.builder()
                 .email("liechti@gmail.com")
+                .username("")
+                .password("")
+                .confirmationPassword("")
+                .build();
+
+        assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
+    }
+
+    @Test
+    public void itShouldThrownAnErrorIfTheUsernameIsAlreadyExist() throws RegistrationFailedException {
+
+
+        // Create another user
+        String username = "Bastien";
+        String password = "1234";
+        String email = "Bastien@gmail.com";
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
+        RegisterCommand registerCommand = RegisterCommand
+                .builder()
+                .clearTxtPassword(password)
+                .confirmationClearTxtPassword(password)
+                .username(username)
+                .email(email)
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+
+        // Edit the current username with the new user
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .email("")
+                .username(username)
+                .password("")
+                .confirmationPassword("")
+                .build();
+
+        assertThrows(EditFailedException.class, () -> userFacade.editUser(editUserCommand));
+    }
+
+    @Test
+    public void itShouldThrownAnErrorIfTheEmailIsAlreadyExist() throws RegistrationFailedException {
+
+
+        // Create another user
+        String username = "Bastien";
+        String password = "1234";
+        String email = "Bastien@gmail.com";
+        AuthenticationFacade authenticationFacade = serviceRegistry.getAuthenticationFacade();
+
+        RegisterCommand registerCommand = RegisterCommand
+                .builder()
+                .clearTxtPassword(password)
+                .confirmationClearTxtPassword(password)
+                .username(username)
+                .email(email)
+                .build();
+
+        authenticationFacade.register(registerCommand);
+
+        // Edit the current email with the new user
+        UserFacade userFacade = serviceRegistry.getUserFacade();
+
+        EditUserCommand editUserCommand = EditUserCommand.builder()
+                .email(email)
                 .username("")
                 .password("")
                 .confirmationPassword("")
