@@ -8,6 +8,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -112,14 +113,16 @@ public class APIUtils {
         HttpPost result = new HttpPost(BASE_URL + endpoint);
 
         // Add header for authorization
-        result.setHeader("Content-type", "application/x-www-form-urlencoded");
         if(registered)
             result.setHeader("X-API-KEY", API_KEY);
 
         // Add parameters
+        StringEntity entityParams = null;
         if(postParameters != null && !postParameters.isEmpty()) {
             try {
-                result.setEntity(getJsonFromParams(postParameters));
+                entityParams = new StringEntity(getJsonFromParams(postParameters).toString());
+                result.setHeader("Content-type", "application/json");
+                result.setEntity(entityParams);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -129,7 +132,14 @@ public class APIUtils {
             System.out.println("POST Request : " + BASE_URL + endpoint);
             for(Header header : result.getAllHeaders())
                 System.out.println("\t\tHeader : " + header.getName() + " : " + header.getValue());
-            System.out.println(result.getEntity());
+            if(entityParams != null) {
+                System.out.println("\t\t" + entityParams);
+                try {
+                    System.out.println("\t\t" + entityParams.getContent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return result;
@@ -150,13 +160,17 @@ public class APIUtils {
 
     private static JSONObject getJsonFromParams(ArrayList<NameValuePair> params) {
 
-        String jsonParams = "{";
+        StringBuilder jsonParams = new StringBuilder("{");
         for(int i = 0; i < params.size(); ++i) {
             NameValuePair param = params.get(i);
-            jsonParams += "\"" + param.getName() + "\":\"" + param.getValue() + "\"";
-            if(i < params.size() - 1) jsonParams += ",";
+            jsonParams.append("\"")
+                      .append(param.getName())
+                      .append("\":\"")
+                      .append(param.getValue())
+                      .append("\"");
+            if(i < params.size() - 1) jsonParams.append(",");
         }
-
-        return new JSONObject(jsonParams);
+        jsonParams.append("}");
+        return new JSONObject(jsonParams.toString());
     }
 }
