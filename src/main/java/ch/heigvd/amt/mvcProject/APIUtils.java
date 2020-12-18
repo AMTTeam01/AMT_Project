@@ -36,28 +36,24 @@ public class APIUtils {
     /**
      * Registers this application to the gamification service
      */
-    public static void register() {
+    public static void register() throws Exception {
 
+        // Create post request without parameters
         HttpPost request = makePostRequest("/registration", null, false);
 
-        HttpResponse response = null;
-        try {
-            response = HTTP_CLIENT.execute(request);
-            JSONObject result = getJsonFromResponse(response);
-            API_KEY = result.getString("value");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Get the response to retrieve our API-KEY
+        HttpResponse response = HTTP_CLIENT.execute(request);
+        JSONObject result = getJsonFromResponse(response);
+        API_KEY = result.getString("value");
 
-        if(response != null) {
-            switch(response.getStatusLine().getStatusCode()) {
-                case 201:
-                    if (DEBUG) System.out.println("Successfully registered : " + API_KEY);
-                    break;
-                default:
-                    if(DEBUG) System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
-                    break;
-            }
+        // Get response code
+        switch(response.getStatusLine().getStatusCode()) {
+            case 201:
+                if (DEBUG) System.out.println("Successfully registered : " + API_KEY);
+                break;
+            default:
+                if(DEBUG) System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
+                throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
         }
     }
 
@@ -66,28 +62,23 @@ public class APIUtils {
      * @param name : name of the point scale
      * @param description : description of the point scale
      */
-    public static void createPointScale(String name, String description) {
+    public static void createPointScale(String name, String description) throws Exception {
         if(API_KEY.isEmpty()) {
-            System.out.println("This application is not registered.");
-            return;
+            throw new Exception("This application is not registered.");
         }
 
         if(name.isEmpty() || description.isEmpty()) {
-            System.out.println("Invalid parameters.");
-            return;
+            throw new Exception("Invalid parameters");
         }
 
+        // Make post request with parameters
         HttpPost request = makePostRequest("/pointScales", new ArrayList<>(Arrays.asList(
                 new BasicNameValuePair("name", name),
                 new BasicNameValuePair("description", description)
         )), true);
 
-        HttpResponse response = null;
-        try {
-             response = HTTP_CLIENT.execute(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Get response
+        HttpResponse response = HTTP_CLIENT.execute(request);
 
         if(response != null) {
             switch(response.getStatusLine().getStatusCode()) {
@@ -96,10 +87,10 @@ public class APIUtils {
                     break;
                 case 401:
                     if(DEBUG) System.out.println("The API Key is missing.");
-                    break;
+                    throw new Exception("The API Key is missing.");
                 default:
                     if(DEBUG) System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
-                    break;
+                    throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
             }
         }
     }
@@ -109,18 +100,19 @@ public class APIUtils {
      * @param endpoint : endpoint for the request
      * @return http post request
      */
-    private static HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters, boolean registered) {
+    private static HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters,
+                                            boolean registered) {
         HttpPost result = new HttpPost(BASE_URL + endpoint);
 
         // Add header for authorization
         if(registered)
             result.setHeader("X-API-KEY", API_KEY);
 
-        // Add parameters
+        // Add parameters if there are any
         StringEntity entityParams = null;
         if(postParameters != null && !postParameters.isEmpty()) {
             try {
-                entityParams = new StringEntity(getJsonFromParams(postParameters).toString());
+                entityParams = new StringEntity(getJsonFromParams(postParameters));
                 result.setHeader("Content-type", "application/json");
                 result.setEntity(entityParams);
             } catch (UnsupportedEncodingException e) {
@@ -158,7 +150,12 @@ public class APIUtils {
         return new JSONObject(writer.toString());
     }
 
-    private static JSONObject getJsonFromParams(ArrayList<NameValuePair> params) {
+    /**
+     * Get the JSON Format for parameters
+     * @param params : parameters
+     * @return json for the parameter
+     */
+    private static String getJsonFromParams(ArrayList<NameValuePair> params) {
 
         StringBuilder jsonParams = new StringBuilder("{");
         for(int i = 0; i < params.size(); ++i) {
@@ -171,6 +168,7 @@ public class APIUtils {
             if(i < params.size() - 1) jsonParams.append(",");
         }
         jsonParams.append("}");
-        return new JSONObject(jsonParams.toString());
+
+        return jsonParams.toString();
     }
 }

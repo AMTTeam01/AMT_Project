@@ -17,8 +17,13 @@ public class HomePageRenderer extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        APIUtils.register();
-        APIUtils.createPointScale("Test", "This is a test");
+        // TEMP : APIUtils Usage (once we implement in the website)
+        try {
+            APIUtils.register();
+            APIUtils.createPointScale("Test", "This is a test");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response)
