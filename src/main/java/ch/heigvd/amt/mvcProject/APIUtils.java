@@ -2,79 +2,76 @@ package ch.heigvd.amt.mvcProject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import javax.json.JsonObject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Utils for the gamification API service
  */
 public class APIUtils {
 
-    private static final String BASE_URL = "http://localhost:8080";
     private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().build();
     private static final boolean DEBUG = true;
 
+    // API Values (todo : in env. variables)
+    private static final String BASE_URL = "http://localhost:8080";
     private static String API_KEY = "";
 
-    /**
-     * Registers this application to the gamification service
-     */
-    public static void register() throws Exception {
+    // EVENTS
+    private static final String EVENT_COMMENT = "COMMENT";
+    private static final String EVENT_UPVOTE = "UPVOTE";
+    private static final String EVENT_DOWNVOTE = "DOWNVOTE";
+    private static final String EVENT_POST_QUESTION = "POST_QUESTION";
+    private static final ArrayList<String> EVENT_TYPES = new ArrayList<>(Arrays.asList(
+            EVENT_COMMENT, EVENT_UPVOTE, EVENT_DOWNVOTE, EVENT_POST_QUESTION
+    ));
 
-        // Create post request without parameters
-        HttpPost request = makePostRequest("/registration", null, false);
-
-        // Get the response to retrieve our API-KEY
-        HttpResponse response = HTTP_CLIENT.execute(request);
-        JSONObject result = getJsonFromResponse(response);
-        API_KEY = result.getString("value");
-
-        // Get response code
-        switch(response.getStatusLine().getStatusCode()) {
-            case 201:
-                if (DEBUG) System.out.println("Successfully registered : " + API_KEY);
-                break;
-            default:
-                if(DEBUG) System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
-                throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
-        }
+    public static String postUpvoteEvent(String userId) throws Exception {
+        return postEvent(EVENT_UPVOTE, userId);
     }
 
-    /**
-     * Create a new point scale
-     * @param name : name of the point scale
-     * @param description : description of the point scale
-     */
-    public static void createPointScale(String name, String description) throws Exception {
+
+    public static String postDownvoteEvent(String userId) throws Exception {
+        return postEvent(EVENT_DOWNVOTE, userId);
+    }
+
+
+    public static String postAskedAQuestionEvent(String userId) throws Exception {
+        return postEvent(EVENT_POST_QUESTION, userId);
+    }
+
+    public static String postCommentEvent(String userId) throws Exception {
+        return postEvent(EVENT_COMMENT, userId);
+    }
+
+    private static String postEvent(String type, String userId) throws Exception {
         if(API_KEY.isEmpty()) {
             throw new Exception("This application is not registered.");
         }
 
-        if(name.isEmpty() || description.isEmpty()) {
-            throw new Exception("Invalid parameters");
+        if(type.isEmpty() || !EVENT_TYPES.contains(type)) {
+            throw new Exception("Invalid type");
         }
 
         // Make post request with parameters
-        HttpPost request = makePostRequest("/pointScales", new ArrayList<>(Arrays.asList(
-                new BasicNameValuePair("name", name),
-                new BasicNameValuePair("description", description)
+        HttpPost request = makePostRequest("/event", new ArrayList<>(Arrays.asList(
+                new BasicNameValuePair("userId", userId),
+                new BasicNameValuePair("timestamp", new Date().toString()),
+                new BasicNameValuePair("type", type)
         )), true);
 
         // Get response
@@ -83,8 +80,8 @@ public class APIUtils {
         if(response != null) {
             switch(response.getStatusLine().getStatusCode()) {
                 case 201:
-                    if(DEBUG) System.out.println("Successfully created a new point scale : " + name);
-                    break;
+                    if(DEBUG) System.out.println("Successfully created a new event of type " + type + " for user " + userId);
+                    return getJsonFromResponse(response).toString();
                 case 401:
                     if(DEBUG) System.out.println("The API Key is missing.");
                     throw new Exception("The API Key is missing.");
