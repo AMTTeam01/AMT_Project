@@ -39,6 +39,7 @@ jobs:
 
       - name: Run tests with Maven
         run: mvn -B test --file pom.xml
+
   e2e:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -96,6 +97,11 @@ jobs:
           mvn clean package -Dmaven.test.skip=true
           mvn liberty:create liberty:install-feature liberty:deploy
           mvn liberty:start
+
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '5s'
 
       # Codeceptjs
       - name: Run End2End Tests
