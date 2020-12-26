@@ -89,7 +89,7 @@ jobs:
           cd e2e
           npm ci
 
-      - name: start the serve
+      - name: Start the serve
         run: |
           docker-compose -f docker-compose.yml -f docker-compose.local.yml build db
           docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d db
@@ -98,10 +98,8 @@ jobs:
           mvn liberty:create liberty:install-feature liberty:deploy
           mvn liberty:start
 
-      - name: Sleep for 30 seconds
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '5s'
+      - name: Wait
+        run:  ./wait.sh
 
       # Codeceptjs
       - name: Run End2End Tests
