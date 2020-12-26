@@ -16,7 +16,7 @@ EXIT_CODE=$(docker inspect $CONTAINER_ID --format='{{.State.ExitCode}}')
 
 docker-compose down --remove-orphan
 
-EXIT $EXIT_CODE
+exit $EXIT_CODE
 
 
 
