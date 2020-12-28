@@ -108,8 +108,8 @@ jobs:
           npm run test
 
       - name: Run End2End Tests bis
-        if: ${{ succes() }}
-        run: |
+      allow_failure: true
+      run: |
           cd e2e
           npm run test
 
