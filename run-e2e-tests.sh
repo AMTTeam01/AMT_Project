@@ -1,27 +1,16 @@
 #!/bin/bash
 
 # Start web app and database
-sh run-app.sh
+docker-compose down
+rm -rf ./volumes/db
+docker-compose -f docker-compose.yml -f docker-compose.local.yml build
+docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d
 
-until $(curl --output /dev/null --silent --head --fail http://localhost:9080); do
-    printf '.'
-    sleep 5
-done
+mvn liberty:stop
 
-docker-compose -f docker-compose.yml -f docker-compose.local.yml build codecpetjs
-docker-compose -f docker-compose.yml -f docker-compose.local.yml up codecpetjs
+mvn clean package -Dmaven.test.skip=true
+mvn liberty:create liberty:install-feature liberty:deploy
+mvn liberty:start
 
-CONTAINER_ID=$(docker ps -aqf "name=help2000_codeceptjs")
-EXIT_CODE=$(docker inspect $CONTAINER_ID --format='{{.State.ExitCode}}')
-
-docker-compose down --remove-orphan
-
-exit $EXIT_CODE
-
-
-
-# Restart web app and database
-#docker-compose down
-#rm -rf ./volumes/db
-#docker-compose build
-#docker-compose up -d db
+cd e2e/
+npm run test
