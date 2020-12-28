@@ -106,6 +106,10 @@ jobs:
         run: |
           cd e2e
           npm run test
+
+      - name: Run End2End Tests bis
+        run: |
+          cd e2e
           npm run test
 
       - name: Save output
