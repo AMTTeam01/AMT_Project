@@ -6,4 +6,4 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:9080); d
 done
 
 
-sleep 10
+sleep 1m
