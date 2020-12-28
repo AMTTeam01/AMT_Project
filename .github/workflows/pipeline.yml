@@ -106,6 +106,7 @@ jobs:
         run: |
           cd e2e
           npm run test
+          npm run test
 
       - name: Save output
         uses: actions/upload-artifact@v2
