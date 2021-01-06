@@ -1,17 +1,13 @@
 package ch.heigvd.amt.mvcProject.application.user;
 
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
-import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
 import ch.heigvd.amt.mvcProject.application.user.edit.EditUserCommand;
 import ch.heigvd.amt.mvcProject.application.user.edit.EditFailedException;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.user.IUserRepository;
 import ch.heigvd.amt.mvcProject.domain.user.User;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,7 +56,7 @@ public class UserFacade {
         if (query == null) {
             throw new UserFailedException("query is null");
         } else {
-            if (query.userId == null ) {
+            if (query.userId == null) {
                 throw new UserFailedException("query.userId is null");
             } else {
                 Optional<User> userFound = userRepository.findById(query.userId);
@@ -81,6 +77,7 @@ public class UserFacade {
 
     /**
      * Removes the user with the id userId passed in parameter in the repository
+     *
      * @param userId the id of the user which will be removed
      */
     public void removeUser(UserId userId) {
@@ -111,6 +108,14 @@ public class UserFacade {
 
         if (!command.getPassword().equals(command.getConfirmationPassword())) {
             throw new EditFailedException("The password and the confirmation of password are different");
+        }
+
+        if (userRepository.findByUsername(command.getUsername()).isPresent()) {
+            throw new EditFailedException("The username already exist");
+        }
+
+        if(userRepository.findByEmail(command.getEmail()).isPresent()){
+            throw new EditFailedException("The email already exist");
         }
 
         try {
