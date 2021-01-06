@@ -220,9 +220,30 @@ hr.solid {
   font-weight: bold;
   color: #FF7300;
 }
-.my_profile .my-questions .title {
+.my_profile .title {
   color: #FF7300;
   font-size: 20px;
+}
+.my_profile .badge-container .right-border {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+.my_profile .badge-container .gold {
+  color: #ffd700;
+}
+.my_profile .badge-container .silver {
+  color: #c0c0c0;
+}
+.my_profile .badge-container .bronze {
+  color: #cd7f32;
+}
+.my_profile .badge-container .badge-h-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+.my_profile .badge-container .item {
+  background-color: transparent;
+}
+.my_profile .badge-container .list-group-flush li:first-child {
+  border-top: none;
 }
 .my_profile .fragment-profile {
   padding: 20px;
