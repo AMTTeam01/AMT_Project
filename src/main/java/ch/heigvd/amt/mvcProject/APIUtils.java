@@ -44,11 +44,9 @@ public class APIUtils {
         return postEvent(EVENT_UPVOTE, userId);
     }
 
-
     public static String postDownvoteEvent(String userId) throws Exception {
         return postEvent(EVENT_DOWNVOTE, userId);
     }
-
 
     public static String postAskedAQuestionEvent(String userId) throws Exception {
         return postEvent(EVENT_POST_QUESTION, userId);
