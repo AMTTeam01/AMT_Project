@@ -105,7 +105,7 @@ jobs:
       - name: Run End2End Tests
         run: |
           cd e2e
-          npm run docker-test
+          npm run test
 
       - name: Save output
         uses: actions/upload-artifact@v2

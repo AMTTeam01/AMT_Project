@@ -10,7 +10,7 @@ exports.config = {
     helpers: {
         Puppeteer: {
             url: 'http://localhost:9080',
-            show: false,
+            show: true,
             windowSize: '1200x900',
             chrome: {
                 args: ["--headless", "--no-sandbox"]
