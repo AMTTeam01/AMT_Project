@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.ApiFailException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
@@ -16,11 +17,13 @@ import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ch.heigvd.amt.mvcProject.APIUtils.postAskedAQuestionEvent;
 import static ch.heigvd.amt.mvcProject.application.VoteUtils.*;
 
 /**
@@ -72,8 +75,17 @@ public class QuestionFacade {
                     .userId(submittedQuestion.getUserId())
                     .build();
 
+            // Add event to the gamification server
+            postAskedAQuestionEvent(user.getId().asString());
+
             return newQuestion;
 
+        } catch (ApiFailException e) {
+            e.printStackTrace();
+            throw new QuestionFailedException("Error with gamification server");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new QuestionFailedException("Internal server error, retry later");
         } catch (Exception e) {
             throw new QuestionFailedException(e.getMessage());
         }
@@ -104,9 +116,11 @@ public class QuestionFacade {
         } else {
 
             if (query.userId != null && query.title == null) {
-                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(), new ArrayList<>());
+                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(),
+                        new ArrayList<>());
             } else if (query.userId == null && query.title != null) {
-                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(), new ArrayList<>());
+                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(),
+                        new ArrayList<>());
 
             } else {
                 throw new QuestionFailedException("Query invalid");
@@ -259,11 +273,13 @@ public class QuestionFacade {
 
     /**
      * Vote on a question
-     * @param userId : id of the user voting
+     *
+     * @param userId     : id of the user voting
      * @param questionId : id of the question being voted
-     * @param vote : value that is being done (upvote / downvote)
+     * @param vote       : value that is being done (upvote / downvote)
      */
-    public void vote(UserId userId, QuestionId questionId, int vote) throws QuestionFailedException, UserFailedException {
+    public void vote(UserId userId, QuestionId questionId, int vote)
+            throws QuestionFailedException, UserFailedException {
 
         checkIfUserExists(userId);
 
@@ -278,6 +294,7 @@ public class QuestionFacade {
 
     /**
      * Checks if the given user id is linked to an actual user
+     *
      * @param userId : id of the user we want to search
      * @throws QuestionFailedException if the user doesn't exist
      * @throws UserFailedException
