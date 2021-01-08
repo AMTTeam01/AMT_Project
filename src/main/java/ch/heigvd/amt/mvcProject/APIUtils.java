@@ -58,6 +58,17 @@ public class APIUtils {
     }
 
     /**
+     * Get one badge from the api
+     * @param id : id of the badge
+     * @return the requested badge
+     * @throws Exception
+     */
+    public static BadgesDTO.BadgeDTO getBadge(long id) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(getBadgeApiCall(id), BadgesDTO.BadgeDTO.class);
+    }
+
+    /**
      * Inform the api that a user gave an upvote
      * @param userId : id of the user
      * @return api response
@@ -156,6 +167,35 @@ public class APIUtils {
             switch(response.getStatusLine().getStatusCode()) {
                 case 200:
                     if(DEBUG) System.out.println("Successfully loaded all badges.");
+                    return getJsonFromResponse(response).toString();
+                case 401:
+                    if(DEBUG) System.out.println("The API Key is missing.");
+                    throw new Exception("The API Key is missing.");
+                default:
+                    if(DEBUG) System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
+                    throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
+            }
+        }
+
+        // No response from the api
+        return "";
+    }
+
+    private static String getBadgeApiCall(long id) throws Exception {
+        if(API_KEY.isEmpty()) {
+            throw new Exception("This application is not registered.");
+        }
+
+        // Make get request with no parameters
+        HttpGet request = makeGetRequest("/badges/" + id, new ArrayList<>(), true);
+
+        // Get response
+        HttpResponse response = HTTP_CLIENT.execute(request);
+
+        if(response != null) {
+            switch(response.getStatusLine().getStatusCode()) {
+                case 200:
+                    if(DEBUG) System.out.println("Successfully loaded one badge.");
                     return getJsonFromResponse(response).toString();
                 case 401:
                     if(DEBUG) System.out.println("The API Key is missing.");
