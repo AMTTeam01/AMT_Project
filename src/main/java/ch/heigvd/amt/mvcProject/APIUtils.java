@@ -17,7 +17,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,12 +35,13 @@ public class APIUtils {
     private static String API_KEY = "86d1b80d-126a-4396-8886-72f8e083b858";
 
     // EVENTS
-    private static final String EVENT_COMMENT = "COMMENT";
-    private static final String EVENT_UPVOTE = "UPVOTE";
-    private static final String EVENT_DOWNVOTE = "DOWNVOTE";
+    private static final String EVENT_COMMENT = "commentPosted";
+    private static final String EVENT_RATE = "rateCommentOrQuestion";
     private static final String EVENT_POST_QUESTION = "questionPosted";
+    private static final String EVENT_POST_FIRST_QUESTION = "firstPost";
+    private static final String EVENT_POPULAR_COMMENT_QUESTION = "popularCommentOrQuestion";
     private static final ArrayList<String> EVENT_TYPES = new ArrayList<>(Arrays.asList(
-            EVENT_COMMENT, EVENT_UPVOTE, EVENT_DOWNVOTE, EVENT_POST_QUESTION
+            EVENT_COMMENT, EVENT_RATE, EVENT_POST_QUESTION, EVENT_POST_FIRST_QUESTION, EVENT_POPULAR_COMMENT_QUESTION
     ));
 
     // Date formatter
@@ -49,12 +49,8 @@ public class APIUtils {
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
 
-    public static String postUpvoteEvent(String userId) throws ApiFailException, IOException {
-        return postEvent(EVENT_UPVOTE, userId);
-    }
-
-    public static String postDownvoteEvent(String userId) throws ApiFailException, IOException {
-        return postEvent(EVENT_DOWNVOTE, userId);
+    public static String postRateEvent(String userId) throws ApiFailException, IOException {
+        return postEvent(EVENT_RATE, userId);
     }
 
     public static String postAskedAQuestionEvent(String userId) throws ApiFailException, IOException {
@@ -63,6 +59,14 @@ public class APIUtils {
 
     public static String postCommentEvent(String userId) throws ApiFailException, IOException {
         return postEvent(EVENT_COMMENT, userId);
+    }
+
+    public static String postFirstQuestionEvent(String userId) throws ApiFailException, IOException {
+        return postEvent(EVENT_POST_FIRST_QUESTION, userId);
+    }
+
+    public static String postPopularCommentOrQuestion(String userId) throws ApiFailException, IOException {
+        return postEvent(EVENT_POPULAR_COMMENT_QUESTION, userId);
     }
 
     private static String postEvent(String type, String userId) throws ApiFailException, IOException {
