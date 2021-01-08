@@ -46,6 +46,8 @@ module.exports = function() {
         this.fillField('#txt_cpassword',secret(user.password))
         this.click('Sign up')
       }
+
+      return users
     },
 
     login(i) {
