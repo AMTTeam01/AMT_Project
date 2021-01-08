@@ -77,6 +77,14 @@ public class QuestionFacade {
             // Add event to the gamification server
             APIUtils.postAskedAQuestionEvent(user.getId().asString());
 
+            // Check if it's the user first question
+            QuestionQuery query = QuestionQuery.builder().userId(user.getId()).build();
+
+            QuestionsDTO res = this.getQuestions(query);
+            if (res.getQuestions().size() == 1) {
+               APIUtils.postFirstQuestionEvent(user.getId().asString());
+            }
+
             return newQuestion;
 
         } catch (ApiFailException e) {
