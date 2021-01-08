@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.ui.web;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
