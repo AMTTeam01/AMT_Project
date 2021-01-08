@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
 import ch.heigvd.amt.mvcProject.ApiFailException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
@@ -11,7 +12,6 @@ import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ch.heigvd.amt.mvcProject.APIUtils.postAskedAQuestionEvent;
 import static ch.heigvd.amt.mvcProject.application.VoteUtils.*;
 
 /**
@@ -76,7 +75,7 @@ public class QuestionFacade {
                     .build();
 
             // Add event to the gamification server
-            postAskedAQuestionEvent(user.getId().asString());
+            APIUtils.postAskedAQuestionEvent(user.getId().asString());
 
             return newQuestion;
 

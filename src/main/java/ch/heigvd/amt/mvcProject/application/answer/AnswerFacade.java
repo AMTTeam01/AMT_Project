@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.answer;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
+import ch.heigvd.amt.mvcProject.ApiFailException;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.comment.CommentQuery;
@@ -19,6 +21,7 @@ import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -86,7 +89,17 @@ public class AnswerFacade {
                     .id(submittedAnswer.getId())
                     .build();
 
+            // Send event to gamification API
+            APIUtils.postCommentEvent(existingUser.getUsers().get(0).getId().asString());
+
+
             return newAnswer;
+        } catch (ApiFailException e) {
+            e.printStackTrace();
+            throw new AnswerFailedException("Error with gamification server");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AnswerFailedException("Internal server error, retry later");
         } catch (Exception e) {
             throw new AnswerFailedException(e.getMessage());
         }
@@ -94,6 +107,7 @@ public class AnswerFacade {
 
     /**
      * Return AnswersDTO for the given query
+     *
      * @param query query to filter result
      * @return AnswersDTO requested
      * @throws AnswerFailedException
@@ -169,6 +183,7 @@ public class AnswerFacade {
 
     /**
      * Return the DTO of the answer in the parameter
+     *
      * @param answer Answer to convert to DTO
      * @return the DTO corresponding to the parameter
      */
@@ -213,9 +228,10 @@ public class AnswerFacade {
 
     /**
      * Vote on an answer
-     * @param userId : id of the user voting
+     *
+     * @param userId   : id of the user voting
      * @param answerId : id of the answer being voted
-     * @param vote : value that is being done (upvote / downvote)
+     * @param vote     : value that is being done (upvote / downvote)
      */
     public void vote(UserId userId, AnswerId answerId, int vote) throws UserFailedException, AnswerFailedException {
 
@@ -231,6 +247,7 @@ public class AnswerFacade {
 
     /**
      * Checks if the given user id is linked to an actual user
+     *
      * @param userId : id of the user we want to search
      * @throws QuestionFailedException if the user doesn't exist
      * @throws UserFailedException
