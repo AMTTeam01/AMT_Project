@@ -44,7 +44,9 @@ module.exports = function() {
         this.fillField('#txt_email',user.email)
         this.fillField('#txt_password',secret(user.password))
         this.fillField('#txt_cpassword',secret(user.password))
-        this.click('Sign up')
+        this.clickLink('Sign up')
+
+        this.dontSeeElement('.bg-danger');
       }
 
       return users
@@ -59,7 +61,9 @@ module.exports = function() {
       this.amOnPage('/login')
       this.fillField('#txt_username', user.username)
       this.fillField('#txt_password',secret(user.password))
-      this.click('Login')
+      this.clickLink('Login')
+
+      this.dontSeeElement('.bg-danger');
     },
 
     testLogin(){

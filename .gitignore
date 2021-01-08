@@ -90,3 +90,5 @@ docker/images/payara/apps/help-2020.war
 *.iml
 
 src/test/resources/arquillian.xml
+
+*.log
