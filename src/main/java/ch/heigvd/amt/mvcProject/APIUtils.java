@@ -40,22 +40,53 @@ public class APIUtils {
             EVENT_COMMENT, EVENT_UPVOTE, EVENT_DOWNVOTE, EVENT_POST_QUESTION
     ));
 
+    /**
+     * Inform the api that a user gave an upvote
+     * @param userId : id of the user
+     * @return api response
+     * @throws Exception
+     */
     public static String postUpvoteEvent(String userId) throws Exception {
         return postEvent(EVENT_UPVOTE, userId);
     }
 
+    /**
+     * Inform the api that a user gave an upvote
+     * @param userId : id of the user
+     * @return api response
+     * @throws Exception
+     */
     public static String postDownvoteEvent(String userId) throws Exception {
         return postEvent(EVENT_DOWNVOTE, userId);
     }
 
+    /**
+     * Inform the api that a user asked a question
+     * @param userId : id of the user
+     * @return api response
+     * @throws Exception
+     */
     public static String postAskedAQuestionEvent(String userId) throws Exception {
         return postEvent(EVENT_POST_QUESTION, userId);
     }
 
+    /**
+     * Inform the api that a user wrote a comment
+     * @param userId : id of the user
+     * @return api response
+     * @throws Exception
+     */
     public static String postCommentEvent(String userId) throws Exception {
         return postEvent(EVENT_COMMENT, userId);
     }
 
+    /**
+     * Post an event to the api
+     * @param type : type of the event
+     * @param userId : id of the user
+     * @return api response
+     * @throws Exception
+     */
     private static String postEvent(String type, String userId) throws Exception {
         if(API_KEY.isEmpty()) {
             throw new Exception("This application is not registered.");
@@ -89,6 +120,7 @@ public class APIUtils {
             }
         }
 
+        // No response from the api
         return "";
     }
 
