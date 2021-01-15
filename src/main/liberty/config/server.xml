@@ -17,7 +17,7 @@
     <dataSource jndiName="jdbc/help2000DS">
         <jdbcDriver libraryRef="MySqlLib"/>
         <properties databaseName="help2000"
-                    serverName="localhost"
+                    serverName="db"
                     portNumber="${env.MYSQL_PORT}"
                     user="${env.MYSQL_USER}"
                     password="${env.MYSQL_PASSWORD}"/>

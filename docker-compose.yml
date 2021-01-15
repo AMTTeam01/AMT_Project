@@ -39,7 +39,7 @@ services:
       - '3307:3306'
     expose:
       # Opens port 3307 on the container
-      - '3307'
+      - '3306'
     volumes:
       - ./docker/database/:/docker-entrypoint-initdb.d/
     healthcheck:
