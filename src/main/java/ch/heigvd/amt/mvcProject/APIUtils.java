@@ -129,7 +129,7 @@ public class APIUtils {
                 new BasicNameValuePair("userId", userId),
                 new BasicNameValuePair("timestamp", new Date().toString()),
                 new BasicNameValuePair("type", type)
-        )), true);
+        )));
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -158,7 +158,7 @@ public class APIUtils {
         }
 
         // Make get request with no parameters
-        HttpGet request = makeGetRequest("/badges", new ArrayList<>(), true);
+        HttpGet request = makeGetRequest("/badges", new ArrayList<>());
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -187,7 +187,7 @@ public class APIUtils {
         }
 
         // Make get request with no parameters
-        HttpGet request = makeGetRequest("/badges/" + id, new ArrayList<>(), true);
+        HttpGet request = makeGetRequest("/badges/" + id, new ArrayList<>());
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -215,13 +215,11 @@ public class APIUtils {
      * @param endpoint : endpoint for the request
      * @return http post request
      */
-    private static HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters,
-                                            boolean registered) {
+    private static HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters) {
         HttpPost result = new HttpPost(BASE_URL + endpoint);
 
         // Add header for authorization
-        if(registered)
-            result.setHeader("X-API-KEY", API_KEY);
+        result.setHeader("X-API-KEY", API_KEY);
 
         // Add parameters if there are any
         StringEntity entityParams = null;
@@ -257,8 +255,7 @@ public class APIUtils {
      * @param endpoint : endpoint for the request
      * @return http get request
      */
-    private static HttpGet makeGetRequest(String endpoint, ArrayList<NameValuePair> getParameters,
-                                            boolean registered) {
+    private static HttpGet makeGetRequest(String endpoint, ArrayList<NameValuePair> getParameters) {
         StringBuilder getUrl = new StringBuilder(BASE_URL + endpoint);
 
         // Add parameters if there are any
@@ -279,8 +276,7 @@ public class APIUtils {
         HttpGet result = new HttpGet(getUrl.toString());
 
         // Add header for authorization
-        if(registered)
-            result.setHeader("X-API-KEY", API_KEY);
+        result.setHeader("X-API-KEY", API_KEY);
 
         if(DEBUG)  {
             System.out.println("POST Request : " + getUrl.toString());
