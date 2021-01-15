@@ -42,6 +42,8 @@ public class AnswerHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+        // remove attribute errors
+
         req.getSession().removeAttribute("errors");
 
         // retrieve the username
