@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-md-6 fragment-profile">
                     <c:forEach var="error" items="${errors}">
-                        <div class="col-md-12 p-2 mt-2 bg-danger text-white">${error}</div>
+                        <div id="error" class="col-md-12 p-2 mt-2 bg-danger text-white">${error}</div>
                     </c:forEach>
                     <form method="POST" action="${pageContext.request.contextPath}/edit_profile.do">
                         <input id="txt_username" name="txt_username" class="form-control classic-form"

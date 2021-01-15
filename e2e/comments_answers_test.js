@@ -14,24 +14,24 @@ Scenario('test comments and answers', (I) => {
 
     //add question
     I.amOnPage('/new_question')
-    I.fillField('#txt_title',questionTitle)
-    I.fillField('#txt_description',questionDescription)
+    I.fillField('#txt_title', questionTitle)
+    I.fillField('#txt_description', questionDescription)
     I.click('Submit')
     I.click(questionTitle)
 
     //question page
     I.click('Comment')
-    I.fillField('#txt_question_comment',comment)
+    I.fillField('#txt_question_comment', comment)
     I.click('#bnt_submit_question_comment')
     I.see(comment)
 
-    I.fillField('txt_answer',answer)
+    I.fillField('txt_answer', answer)
     I.click('Answer')
     I.see(answer)
 
     I.click('#add_comment_answer_toggleVisible')
     I.waitForText('Your comment')
-    I.fillField('txt_question_comment',commentOnAnswer)
+    I.fillField('txt_question_comment', commentOnAnswer)
     I.click('Comment this answer')
 
 });
