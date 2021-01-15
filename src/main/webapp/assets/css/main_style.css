@@ -233,6 +233,18 @@ hr.solid {
   color: #A8B1A9;
 }
 
+.gold {
+  color: #ffd700;
+}
+
+.silver {
+  color: #c0c0c0;
+}
+
+.bronze {
+  color: #cd7f32;
+}
+
 /* Attention, l'étoile signifie qu'il n'y a pas besoin de spécifier
 l'espace de nom précédant la variable sinon on devrait écrire base.$main-color */
 
