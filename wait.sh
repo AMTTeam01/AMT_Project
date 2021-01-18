@@ -4,6 +4,3 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:9080); d
     printf '.'
     sleep 5
 done
-
-
-sleep 3m
