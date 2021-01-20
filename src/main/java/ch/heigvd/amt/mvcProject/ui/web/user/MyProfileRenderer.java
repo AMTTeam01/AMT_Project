@@ -2,12 +2,12 @@ package ch.heigvd.amt.mvcProject.ui.web.user;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeFacade;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
 import ch.heigvd.amt.mvcProject.application.question.QuestionsDTO;
-import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
-import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -24,6 +24,7 @@ public class MyProfileRenderer extends HttpServlet {
     @Inject
     private ServiceRegistry serviceRegistry;
     private QuestionFacade questionFacade;
+    private BadgeFacade badgeFacade;
 
     /**
      * Init servlet
@@ -34,6 +35,7 @@ public class MyProfileRenderer extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         questionFacade = serviceRegistry.getQuestionFacade();
+        badgeFacade = serviceRegistry.getBadgeFacade();
     }
 
     /**
@@ -52,11 +54,18 @@ public class MyProfileRenderer extends HttpServlet {
         request.setAttribute("user", currentUser);
         
         QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
+        BadgeQuery badgeQuery = BadgeQuery.builder().userId(currentUser.getUserId()).build();
 
         QuestionsDTO questionsDTO = null;
         try {
             questionsDTO = questionFacade.getQuestions(query);
         } catch (QuestionFailedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            badgeFacade.getBadges(badgeQuery);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         request.setAttribute("questions", questionsDTO);

@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -77,6 +78,12 @@ public class APIUtils {
         ObjectMapper mapper = new ObjectMapper();
         BadgesDTO.BadgeDTO[] badges = mapper.readValue(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
         return new ArrayList<>(Arrays.asList(badges));
+    }
+
+    public ArrayList<BadgesDTO.BadgeDTO> getBadgesFromUser(UserId userId) throws Exception {
+        String s = getProfile(userId);
+        System.out.println(s);
+        return new ArrayList<>();
     }
 
     /**
@@ -200,6 +207,39 @@ public class APIUtils {
                     if (DEBUG) System.out.println("Unknown status code : " + response.getStatusLine()
                             .getStatusCode() + "\n" + getJsonFromResponse(response).toString());
                     throw new ApiFailException("Unknown status code : " + response.getStatusLine().getStatusCode());
+            }
+        }
+
+        // No response from the api
+        return "";
+    }
+
+    private String getProfile(UserId id) throws Exception {
+        if (gamificationConfig.getApiKey().isEmpty()) {
+            throw new Exception("This application is not registered.");
+        }
+
+        // Make get request with no parameters
+        HttpGet request = makeGetRequest("/users/" + id.asString(), new ArrayList<>());
+
+        // Get response
+        HttpResponse response = HTTP_CLIENT.execute(request);
+
+        if (response != null) {
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200:
+                    if (DEBUG) System.out.println("Successfully loaded the profile of the userId " + id.toString());
+                    return getJsonFromResponse(response).toString();
+                case 401:
+                    if (DEBUG) System.out.println("The API Key is missing.");
+                    throw new Exception("The API Key is missing.");
+                case 404:
+                    if (DEBUG) System.out.println("User is not found");
+                    throw new Exception("User is not found");
+                default:
+                    if (DEBUG)
+                        System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
+                    throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
             }
         }
 
