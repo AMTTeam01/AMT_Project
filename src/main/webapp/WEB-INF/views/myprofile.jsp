@@ -40,10 +40,10 @@
                             <div class="text-center gold title">Gold</div>
                             <ul class="list-group list-group-flush">
                                 <!-- TODO: Bind with badge retrieved -->
-                                <c:forEach begin="0" end="5" varStatus="loop">
+                                <c:forEach var="badge" items="${goldBadges}">
                                     <jsp:include page="fragments/badge_item.jsp">
-                                        <jsp:param name="name" value="Name"/>
-                                        <jsp:param name="date" value="13.01.2020"/>
+                                        <jsp:param name="name" value="${badge.name}"/>
+                                        <jsp:param name="date" value="${badge.date}"/>
                                     </jsp:include>
                                 </c:forEach>
                             </ul>
@@ -52,10 +52,10 @@
                             <div class="text-center silver title">Silver</div>
                             <ul class="list-group list-group-flush">
                                 <!-- TODO: Bind with badge retrieved -->
-                                <c:forEach begin="0" end="5" varStatus="loop">
+                                <c:forEach var="badge" items="${silverBadges}">
                                     <jsp:include page="fragments/badge_item.jsp">
-                                        <jsp:param name="name" value="Name"/>
-                                        <jsp:param name="date" value="13.01.2020"/>
+                                        <jsp:param name="name" value="${badge.name}"/>
+                                        <jsp:param name="date" value="${badge.date}"/>
                                     </jsp:include>
                                 </c:forEach>
                             </ul>
@@ -64,10 +64,10 @@
                             <div class="text-center bronze title">Bronze</div>
                             <ul class="list-group list-group-flush">
                                 <!-- TODO: Bind with badge retrieved -->
-                                <c:forEach begin="0" end="5" varStatus="loop">
+                                <c:forEach var="badge" items="${bronzeBadges}">
                                     <jsp:include page="fragments/badge_item.jsp">
-                                        <jsp:param name="name" value="Name"/>
-                                        <jsp:param name="date" value="13.01.2020"/>
+                                        <jsp:param name="name" value="${badge.name}"/>
+                                        <jsp:param name="date" value="${badge.date}"/>
                                     </jsp:include>
                                 </c:forEach>
                             </ul>

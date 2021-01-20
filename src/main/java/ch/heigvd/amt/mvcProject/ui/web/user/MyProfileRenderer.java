@@ -68,6 +68,7 @@ public class MyProfileRenderer extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         request.setAttribute("questions", questionsDTO);
 
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
