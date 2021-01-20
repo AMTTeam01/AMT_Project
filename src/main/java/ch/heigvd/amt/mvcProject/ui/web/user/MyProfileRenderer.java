@@ -4,6 +4,7 @@ import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeFacade;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeQuery;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.ProfileFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
@@ -24,7 +25,7 @@ public class MyProfileRenderer extends HttpServlet {
     @Inject
     private ServiceRegistry serviceRegistry;
     private QuestionFacade questionFacade;
-    private BadgeFacade badgeFacade;
+    private ProfileFacade profileFacade;
 
     /**
      * Init servlet
@@ -35,7 +36,7 @@ public class MyProfileRenderer extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         questionFacade = serviceRegistry.getQuestionFacade();
-        badgeFacade = serviceRegistry.getBadgeFacade();
+        profileFacade = serviceRegistry.getProfileFacade();
     }
 
     /**
@@ -54,7 +55,6 @@ public class MyProfileRenderer extends HttpServlet {
         request.setAttribute("user", currentUser);
         
         QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
-        BadgeQuery badgeQuery = BadgeQuery.builder().userId(currentUser.getUserId()).build();
 
         QuestionsDTO questionsDTO = null;
         try {
@@ -64,7 +64,7 @@ public class MyProfileRenderer extends HttpServlet {
         }
 
         try {
-            badgeFacade.getBadges(badgeQuery);
+            profileFacade.getProfile(currentUser.getUserId());
         } catch (Exception e) {
             e.printStackTrace();
         }

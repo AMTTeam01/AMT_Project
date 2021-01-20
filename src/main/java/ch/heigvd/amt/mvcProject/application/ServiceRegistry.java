@@ -5,6 +5,7 @@ import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeFacade;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.ProfileFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.domain.answer.IAnswerRepository;
@@ -54,6 +55,7 @@ public class ServiceRegistry {
     private CommentFacade commentFacade;
 
     private BadgeFacade badgeFacade;
+    private ProfileFacade profileFacade;
 
     public ServiceRegistry() {
     }
@@ -66,6 +68,7 @@ public class ServiceRegistry {
         questionFacade = new QuestionFacade(questionRepository, userFacade, commentFacade, apiUtils);
         answerFacade = new AnswerFacade(answerRepository, userFacade, questionFacade, commentFacade);
         badgeFacade = new BadgeFacade(apiUtils);
+        profileFacade = new ProfileFacade(apiUtils);
     }
 
     public AuthenticationFacade getAuthenticationFacade() {
@@ -90,6 +93,10 @@ public class ServiceRegistry {
 
     public BadgeFacade getBadgeFacade() {
         return badgeFacade;
+    }
+
+    public ProfileFacade getProfileFacade() {
+        return profileFacade;
     }
 }
 

@@ -1,6 +1,8 @@
 package ch.heigvd.amt.mvcProject.application.gamificationapi.badge;
 
 import ch.heigvd.amt.mvcProject.APIUtils;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.BadgesAwardDTO;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import java.util.ArrayList;
 
@@ -14,10 +16,7 @@ public class BadgeFacade {
         this.utils = utils;
     }
 
-    public ArrayList<BadgesDTO.BadgeDTO> getBadges(BadgeQuery query) throws Exception {
-        if (query.getUserId() != null) {
-            return utils.getBadgesFromUser(query.getUserId());
-        }
-        return null;
+    public ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
+        return utils.getBadges();
     }
 }

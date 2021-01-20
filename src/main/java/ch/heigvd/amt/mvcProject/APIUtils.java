@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.UsersProfileDTO;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -80,10 +81,10 @@ public class APIUtils {
         return new ArrayList<>(Arrays.asList(badges));
     }
 
-    public ArrayList<BadgesDTO.BadgeDTO> getBadgesFromUser(UserId userId) throws Exception {
-        String s = getProfile(userId);
-        System.out.println(s);
-        return new ArrayList<>();
+    public UsersProfileDTO.UserProfileDTO getProfil(UserId id) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        UsersProfileDTO.UserProfileDTO profile = mapper.readValue(getProfileAPI(id), UsersProfileDTO.UserProfileDTO.class);
+        return profile;
     }
 
     /**
@@ -214,7 +215,7 @@ public class APIUtils {
         return "";
     }
 
-    private String getProfile(UserId id) throws Exception {
+    private String getProfileAPI(UserId id) throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }

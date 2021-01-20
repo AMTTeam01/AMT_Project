@@ -1,5 +1,6 @@
-package ch.heigvd.amt.mvcProject.application.gamificationapi.badge;
+package ch.heigvd.amt.mvcProject.application.gamificationapi.profile;
 
+import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class BadgesAwardDTO {
     public static class BadgeAwardDTO{
         private String reason;
         private String timestamp;
-        private BadgesDTO.BadgeDTO badge;
+        private String path;
     }
 
     @Singular
