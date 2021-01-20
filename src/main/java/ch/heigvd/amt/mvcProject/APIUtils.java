@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.user.UsersPointsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -151,6 +152,18 @@ public class APIUtils {
     }
 
     /**
+     * Get all users from the API
+     *
+     * @return list of all users
+     * @throws Exception
+     */
+    public ArrayList<UsersPointsDTO.UserPointDTO> getTop10UserPoints() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        UsersPointsDTO.UserPointDTO[] userPointDTOS = mapper.readValue(getTop10UsersPointApiCall(), UsersPointsDTO.UserPointDTO[].class);
+        return new ArrayList<>(Arrays.asList(userPointDTOS));
+    }
+
+    /**
      * Post an event to the api
      *
      * @param type   : type of the event
@@ -200,6 +213,36 @@ public class APIUtils {
                     if (DEBUG) System.out.println("Unknown status code : " + response.getStatusLine()
                             .getStatusCode() + "\n" + getJsonFromResponse(response).toString());
                     throw new ApiFailException("Unknown status code : " + response.getStatusLine().getStatusCode());
+            }
+        }
+
+        // No response from the api
+        return "";
+    }
+
+    private String getTop10UsersPointApiCall() throws Exception {
+        if (gamificationConfig.getApiKey().isEmpty()) {
+            throw new Exception("This application is not registered.");
+        }
+
+        // Make get request with no parameters
+        HttpGet request = makeGetRequest("/leaderboards/pointScales/10", new ArrayList<>());
+
+        // Get response
+        HttpResponse response = HTTP_CLIENT.execute(request);
+
+        if (response != null) {
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200:
+                    if (DEBUG) System.out.println("Successfully loaded all badges.");
+                    return getJsonFromResponse(response).toString();
+                case 401:
+                    if (DEBUG) System.out.println("The API Key is missing.");
+                    throw new Exception("The API Key is missing.");
+                default:
+                    if (DEBUG)
+                        System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
+                    throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
             }
         }
 
