@@ -32,7 +32,8 @@
     <httpEndpoint host="*" httpPort="${env.HTTP_PORT}"
                   httpsPort="${env.HTTPS_PORT}" id="defaultHttpEndpoint"/>
 
-    <variable name="address" defaultValue="${env.API_ADDRESS}"/>
-    <variable name="port" defaultValue="${env.API_PORT}"/>
+    <variable name="address"/>
+    <variable name="port"/>
+    <variable name="apikey"/>
 
 </server>

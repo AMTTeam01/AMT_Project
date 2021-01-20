@@ -43,9 +43,6 @@ public class APIUtils {
     private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().build();
     private static final boolean DEBUG = true;
 
-
-    private static String API_KEY = "1493a75b-db69-43bb-9450-bf36e810a944";
-
     // EVENTS
     private static final String EVENT_COMMENT = "commentPosted";
     private static final String EVENT_POST_QUESTION = "questionPosted";
@@ -60,7 +57,7 @@ public class APIUtils {
 
     private static final ArrayList<String> EVENT_TYPES = new ArrayList<>(Arrays.asList(
             EVENT_COMMENT, EVENT_POST_QUESTION, EVENT_POST_OPEN_QUESTION, EVENT_POPULAR_COMMENT_QUESTION,
-            EVENT_UPVOTE, EVENT_DOWNVOTE
+            EVENT_UPVOTE, EVENT_DOWNVOTE, EVENT_POST_FIRST_QUESTION
     ));
 
     // Date formatter
@@ -162,7 +159,8 @@ public class APIUtils {
      * @throws Exception
      */
     private String postEvent(String type, String userId) throws ApiFailException, IOException {
-        if (API_KEY.isEmpty()) {
+        System.out.println("post event type :" + type);
+        if (gamificationConfig.getApiKey().isEmpty()) {
             throw new ApiFailException("This application is not registered.");
         }
 
@@ -210,7 +208,7 @@ public class APIUtils {
     }
 
     private String getBadgesApiCall() throws Exception {
-        if (API_KEY.isEmpty()) {
+        if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }
 
@@ -240,7 +238,7 @@ public class APIUtils {
     }
 
     private String getBadgeApiCall(long id) throws Exception {
-        if (API_KEY.isEmpty()) {
+        if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }
 
@@ -276,10 +274,13 @@ public class APIUtils {
      * @return http post request
      */
     private HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters) {
+        String url = gamificationConfig.getUrl();
+        String addr = gamificationConfig.getAddress();
+        int port = gamificationConfig.getPort();
         HttpPost result = new HttpPost(gamificationConfig.getUrl() + endpoint);
 
         // Add header for authorization
-        result.setHeader("X-API-KEY", API_KEY);
+        result.setHeader("X-API-KEY", gamificationConfig.getApiKey());
 
         // Add parameters if there are any
         StringEntity entityParams = null;
@@ -337,7 +338,7 @@ public class APIUtils {
         HttpGet result = new HttpGet(getUrl.toString());
 
         // Add header for authorization
-        result.setHeader("X-API-KEY", API_KEY);
+        result.setHeader("X-API-KEY", gamificationConfig.getApiKey());
 
         if (DEBUG) {
             System.out.println("POST Request : " + getUrl.toString());
