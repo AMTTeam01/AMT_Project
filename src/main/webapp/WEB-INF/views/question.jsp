@@ -9,6 +9,9 @@
 <script src="../../assets/js/Utils.js"></script>
 
 <div class="container-fluid body-with-navbar col-8">
+    <c:forEach var="error" items="${errors}">
+        <div id="error" class="col-md-12 p-2 mt-2 bg-danger text-white">${error}</div>
+    </c:forEach>
     <h1>${question.title}</h1>
     <div class="row mt-5 mb-5" id="question">
         <jsp:include page="fragments/vote.jsp">

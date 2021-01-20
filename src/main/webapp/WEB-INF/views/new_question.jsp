@@ -5,6 +5,9 @@
 <div class="container-fluid body-with-navbar">
     <div class="col-md-6 new-question-form mx-auto">
         <h1>New Question</h1>
+        <c:forEach var="error" items="${errors}">
+            <div id="error" class="col-md-12 p-2 mt-2 bg-danger text-white">${error}</div>
+        </c:forEach>
         <form method="POST" action="${pageContext.request.contextPath}/new_question.do">
             <input id="txt_title" name="txt_title" class="form-control classic-form" placeholder="Insert your question" required />
             <textarea id="txt_description" name="txt_description" class="form-control classic-form bigger-text-area" placeholder="Insert your description" required></textarea>

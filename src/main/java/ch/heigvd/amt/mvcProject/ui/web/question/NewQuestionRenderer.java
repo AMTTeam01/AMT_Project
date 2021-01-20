@@ -11,6 +11,10 @@ import java.io.IOException;
 public class NewQuestionRenderer extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Object errors = request.getSession().getAttribute("errors");
+        request.setAttribute("errors", errors);
+        request.getSession().removeAttribute("errors");
+    
         request.getRequestDispatcher("/WEB-INF/views/new_question.jsp").forward(request, response);
     }
 }
