@@ -21,6 +21,7 @@ import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,12 +41,18 @@ public class AnswerFacade {
 
     private CommentFacade commentFacade;
 
+    @Inject
+    private APIUtils apiUtils;
+
     public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade, QuestionFacade questionFacade,
                         CommentFacade commentFacade) {
         this.answerRepository = answerRepository;
         this.userFacade = userFacade;
         this.questionFacade = questionFacade;
         this.commentFacade = commentFacade;
+    }
+
+    public AnswerFacade() {
     }
 
     /**
@@ -90,7 +97,7 @@ public class AnswerFacade {
                     .build();
 
             // Send event to gamification API
-            APIUtils.postCommentEvent(existingUser.getUsers().get(0).getId().asString());
+            apiUtils.postCommentEvent(existingUser.getUsers().get(0).getId().asString());
 
 
             return newAnswer;

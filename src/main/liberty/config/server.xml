@@ -3,6 +3,9 @@
         <feature>webProfile-8.0</feature>
 
         <feature>localConnector-1.0</feature>
+        <feature>mpConfig-1.3</feature>
+        <feature>cdi-2.0</feature>
+
     </featureManager>
 
     <applicationMonitor updateTrigger="mbean"/>
@@ -23,10 +26,13 @@
                     password="${env.MYSQL_PASSWORD}"/>
     </dataSource>
 
-    <variable name="env.HTTP_PORT" defaultValue="9080" />
-    <variable name="env.HTTPS_PORT" defaultValue="9443" />
+    <variable name="env.HTTP_PORT" defaultValue="9080"/>
+    <variable name="env.HTTPS_PORT" defaultValue="9443"/>
 
     <httpEndpoint host="*" httpPort="${env.HTTP_PORT}"
                   httpsPort="${env.HTTPS_PORT}" id="defaultHttpEndpoint"/>
+
+    <variable name="address" defaultValue="${env.API_ADDRESS}"/>
+    <variable name="port" defaultValue="${env.API_PORT}"/>
 
 </server>

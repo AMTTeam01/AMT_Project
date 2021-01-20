@@ -1,7 +1,6 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -13,9 +12,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -26,25 +26,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.List;
 
 
 /**
  * Utils for the gamification API service
  */
+@ApplicationScoped
 public class APIUtils {
+
+    @Inject
+    private GamificationConfig gamificationConfig;
 
     private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().build();
     private static final boolean DEBUG = true;
 
-    // API Values (todo : in env. variables)
-    private static final String BASE_URL = "http://localhost:8080";
-    private static String API_KEY = "86d1b80d-126a-4396-8886-72f8e083b858";
+
+    private static String API_KEY = "1493a75b-db69-43bb-9450-bf36e810a944";
 
     // EVENTS
     private static final String EVENT_COMMENT = "commentPosted";
     private static final String EVENT_POST_QUESTION = "questionPosted";
     private static final String EVENT_POST_FIRST_QUESTION = "firstPost";
+    private static final String EVENT_POST_OPEN_QUESTION = "openAQuestion";
+
     private static final String EVENT_POPULAR_COMMENT_QUESTION = "popularCommentOrQuestion";
 
     //TODO: Not used yet, need to defined in the api
@@ -52,7 +56,7 @@ public class APIUtils {
     private static final String EVENT_DOWNVOTE = "DOWNVOTE";
 
     private static final ArrayList<String> EVENT_TYPES = new ArrayList<>(Arrays.asList(
-            EVENT_COMMENT, EVENT_POST_QUESTION, EVENT_POST_FIRST_QUESTION, EVENT_POPULAR_COMMENT_QUESTION,
+            EVENT_COMMENT, EVENT_POST_QUESTION, EVENT_POST_OPEN_QUESTION, EVENT_POPULAR_COMMENT_QUESTION,
             EVENT_UPVOTE, EVENT_DOWNVOTE
     ));
 
@@ -60,13 +64,16 @@ public class APIUtils {
     private static final TimeZone tz = TimeZone.getTimeZone("UTC");
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
+    public APIUtils() {
+    }
+
     /**
      * Get all badges from the API
      *
      * @return list of all badges
      * @throws Exception
      */
-    public static ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
+    public ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         BadgesDTO.BadgeDTO[] badges = mapper.readValue(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
         return new ArrayList<>(Arrays.asList(badges));
@@ -79,7 +86,7 @@ public class APIUtils {
      * @return the requested badge
      * @throws Exception
      */
-    public static BadgesDTO.BadgeDTO getBadge(long id) throws Exception {
+    public BadgesDTO.BadgeDTO getBadge(long id) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(getBadgeApiCall(id), BadgesDTO.BadgeDTO.class);
     }
@@ -91,7 +98,7 @@ public class APIUtils {
      * @return api response
      * @throws Exception
      */
-    public static String postUpvoteEvent(String userId) throws Exception {
+    public String postUpvoteEvent(String userId) throws Exception {
         return postEvent(EVENT_UPVOTE, userId);
     }
 
@@ -102,7 +109,7 @@ public class APIUtils {
      * @return api response
      * @throws Exception
      */
-    public static String postDownvoteEvent(String userId) throws Exception {
+    public String postDownvoteEvent(String userId) throws Exception {
         return postEvent(EVENT_DOWNVOTE, userId);
     }
 
@@ -113,7 +120,7 @@ public class APIUtils {
      * @return api response
      * @throws Exception
      */
-    public static String postAskedAQuestionEvent(String userId) throws ApiFailException, IOException {
+    public String postAskedAQuestionEvent(String userId) throws ApiFailException, IOException {
         return postEvent(EVENT_POST_QUESTION, userId);
     }
 
@@ -124,16 +131,23 @@ public class APIUtils {
      * @return api response
      * @throws Exception
      */
-    public static String postCommentEvent(String userId) throws ApiFailException, IOException {
+    public String postCommentEvent(String userId) throws ApiFailException, IOException {
         return postEvent(EVENT_COMMENT, userId);
     }
 
-    public static String postFirstQuestionEvent(String userId) throws ApiFailException, IOException {
+    public String postFirstQuestionEvent(String userId) throws ApiFailException, IOException {
         return postEvent(EVENT_POST_FIRST_QUESTION, userId);
     }
 
-    public static String postPopularCommentOrQuestion(String userId) throws ApiFailException, IOException {
-        return postEvent(EVENT_POPULAR_COMMENT_QUESTION, userId);
+    /**
+     * Inform the api that a user open a question page
+     *
+     * @param userId : id of the user
+     * @return api response
+     * @throws Exception
+     */
+    public String postOpenAQuestion(String userId) throws Exception {
+        return postEvent(EVENT_POST_OPEN_QUESTION, userId);
     }
 
     /**
@@ -144,7 +158,7 @@ public class APIUtils {
      * @return api response
      * @throws Exception
      */
-    private static String postEvent(String type, String userId) throws ApiFailException, IOException {
+    private String postEvent(String type, String userId) throws ApiFailException, IOException {
         if (API_KEY.isEmpty()) {
             throw new ApiFailException("This application is not registered.");
         }
@@ -192,7 +206,7 @@ public class APIUtils {
         return "";
     }
 
-    private static String getBadgesApiCall() throws Exception {
+    private String getBadgesApiCall() throws Exception {
         if (API_KEY.isEmpty()) {
             throw new Exception("This application is not registered.");
         }
@@ -222,7 +236,7 @@ public class APIUtils {
         return "";
     }
 
-    private static String getBadgeApiCall(long id) throws Exception {
+    private String getBadgeApiCall(long id) throws Exception {
         if (API_KEY.isEmpty()) {
             throw new Exception("This application is not registered.");
         }
@@ -258,8 +272,8 @@ public class APIUtils {
      * @param endpoint : endpoint for the request
      * @return http post request
      */
-    private static HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters) {
-        HttpPost result = new HttpPost(BASE_URL + endpoint);
+    private HttpPost makePostRequest(String endpoint, ArrayList<NameValuePair> postParameters) {
+        HttpPost result = new HttpPost(gamificationConfig.getUrl() + endpoint);
 
         // Add header for authorization
         result.setHeader("X-API-KEY", API_KEY);
@@ -277,7 +291,7 @@ public class APIUtils {
         }
 
         if (DEBUG) {
-            System.out.println("POST Request : " + BASE_URL + endpoint);
+            System.out.println("POST Request : " + gamificationConfig.getUrl() + endpoint);
             for (Header header : result.getAllHeaders())
                 System.out.println("\t\tHeader : " + header.getName() + " : " + header.getValue());
             if (entityParams != null) {
@@ -299,8 +313,8 @@ public class APIUtils {
      * @param endpoint : endpoint for the request
      * @return http get request
      */
-    private static HttpGet makeGetRequest(String endpoint, ArrayList<NameValuePair> getParameters) {
-        StringBuilder getUrl = new StringBuilder(BASE_URL + endpoint);
+    private HttpGet makeGetRequest(String endpoint, ArrayList<NameValuePair> getParameters) {
+        StringBuilder getUrl = new StringBuilder(gamificationConfig.getUrl() + endpoint);
 
         // Add parameters if there are any
         if (getParameters != null && !getParameters.isEmpty()) {

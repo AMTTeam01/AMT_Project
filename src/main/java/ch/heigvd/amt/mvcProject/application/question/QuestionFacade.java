@@ -17,6 +17,7 @@ import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +38,11 @@ public class QuestionFacade {
 
     private CommentFacade commentFacade;
 
+    @Inject
+    private APIUtils apiUtils;
+
+    public QuestionFacade() {
+    }
 
     public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, CommentFacade commentFacade) {
         this.questionRepository = questionRepository;
@@ -75,14 +81,14 @@ public class QuestionFacade {
                     .build();
 
             // Add event to the gamification server
-            APIUtils.postAskedAQuestionEvent(user.getId().asString());
+            apiUtils.postAskedAQuestionEvent(user.getId().asString());
 
             // Check if it's the user first question
             QuestionQuery query = QuestionQuery.builder().userId(user.getId()).build();
 
             QuestionsDTO res = this.getQuestions(query);
             if (res.getQuestions().size() == 1) {
-               APIUtils.postFirstQuestionEvent(user.getId().asString());
+                apiUtils.postFirstQuestionEvent(user.getId().asString());
             }
 
             return newQuestion;
@@ -161,21 +167,31 @@ public class QuestionFacade {
                 if (!query.isWithDetail()) {
                     question = questionRepository.findById(query.getQuestionId())
                             .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-                } else {
-                    question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
-                            .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+                } else { // Open a question page
+                    try {
+                        apiUtils.postOpenAQuestion(query.userId.asString());
 
-                    answersDTO = getAnswers(question);
-                    commentsDTO = commentFacade.getComments(
-                            CommentQuery.builder()
-                                    .questionId(question.getId())
-                                    .build()
-                    ).getComments();
+                        question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
+                                .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
+                        answersDTO = getAnswers(question);
+                        commentsDTO = commentFacade.getComments(
+                                CommentQuery.builder()
+                                        .questionId(question.getId())
+                                        .build()
+                        ).getComments();
+                    } catch (ApiFailException e) {
+                        e.printStackTrace();
+                        throw new QuestionFailedException("Error with gamification server");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new QuestionFailedException("Internal server error, retry later");
+                    } catch (Exception e) {
+                        throw new QuestionFailedException(e.getMessage());
+                    }
                 }
 
                 questionFound = getQuestionAsDTO(question, answersDTO, commentsDTO);
-
 
             } else {
                 throw new QuestionFailedException("Query invalid");
