@@ -1,7 +1,8 @@
 package ch.heigvd.amt.mvcProject.ui.web;
 
 import ch.heigvd.amt.mvcProject.APIUtils;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.user.UsersPointsDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.pointScale.PointScaleDTO;
+//import ch.heigvd.amt.mvcProject.application.gamificationapi.pointScale.PointScalesDTO;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -10,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "LeaderboardRenderer", urlPatterns = "/leaderboard")
 public class LeaderboardRenderer extends HttpServlet {
@@ -26,15 +28,15 @@ public class LeaderboardRenderer extends HttpServlet {
             throws javax.servlet.ServletException,
             IOException {
 
-        ArrayList<UsersPointsDTO.UserPointDTO> gamifiedUsers = new ArrayList<>();
+        List<PointScaleDTO> pointScales = new ArrayList<>();
 
         try {
-            gamifiedUsers = apiUtils.getTop10UserPoints();
+            pointScales = apiUtils.getTop10UserPointScales();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        request.setAttribute("users", gamifiedUsers);
+        request.setAttribute("pointscales", pointScales);
         request.getRequestDispatcher("/WEB-INF/views/leaderboard.jsp").forward(request, response);
     }
 }

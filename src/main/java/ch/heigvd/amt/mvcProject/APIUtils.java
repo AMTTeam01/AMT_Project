@@ -1,7 +1,7 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.user.UsersPointsDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.pointScale.PointScaleDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -13,7 +13,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,10 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**
@@ -157,9 +153,15 @@ public class APIUtils {
      * @return list of all users
      * @throws Exception
      */
-    public ArrayList<UsersPointsDTO.UserPointDTO> getTop10UserPoints() throws Exception {
+    public List<PointScaleDTO> getTop10UserPointScales() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        UsersPointsDTO.UserPointDTO[] userPointDTOS = mapper.readValue(getTop10UsersPointApiCall(), UsersPointsDTO.UserPointDTO[].class);
+        String json = getTop10UsersPointScaleApiCall();
+        System.out.println("JSON : " + json);
+        PointScaleDTO[] userPointDTOS
+                = mapper.readValue(json, PointScaleDTO[].class);
+
+        System.out.println("Length : " + userPointDTOS.length);
+
         return new ArrayList<>(Arrays.asList(userPointDTOS));
     }
 
@@ -220,7 +222,7 @@ public class APIUtils {
         return "";
     }
 
-    private String getTop10UsersPointApiCall() throws Exception {
+    private String getTop10UsersPointScaleApiCall() throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }
@@ -234,8 +236,8 @@ public class APIUtils {
         if (response != null) {
             switch (response.getStatusLine().getStatusCode()) {
                 case 200:
-                    if (DEBUG) System.out.println("Successfully loaded all badges.");
-                    return getJsonFromResponse(response).toString();
+                    if (DEBUG) System.out.println("Successfully loaded the top 10 users.");
+                    return getJsonFromResponse(response);
                 case 401:
                     if (DEBUG) System.out.println("The API Key is missing.");
                     throw new Exception("The API Key is missing.");
@@ -265,7 +267,7 @@ public class APIUtils {
             switch (response.getStatusLine().getStatusCode()) {
                 case 200:
                     if (DEBUG) System.out.println("Successfully loaded all badges.");
-                    return getJsonFromResponse(response).toString();
+                    return getJsonFromResponse(response);
                 case 401:
                     if (DEBUG) System.out.println("The API Key is missing.");
                     throw new Exception("The API Key is missing.");
@@ -399,11 +401,12 @@ public class APIUtils {
      * @return json object from response
      * @throws IOException
      */
-    private static JSONObject getJsonFromResponse(HttpResponse response) throws IOException {
+    private static String getJsonFromResponse(HttpResponse response) throws IOException {
         StringWriter writer = new StringWriter();
         String encoding = StandardCharsets.UTF_8.name();
         IOUtils.copy(response.getEntity().getContent(), writer, encoding);
-        return new JSONObject(writer.toString());
+        System.out.println(writer.toString());
+        return writer.toString();
     }
 
     /**
