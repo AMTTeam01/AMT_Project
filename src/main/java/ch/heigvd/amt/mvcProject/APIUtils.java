@@ -224,6 +224,12 @@ public class APIUtils {
         return "";
     }
 
+    /**
+     * Get a response from the api
+     * @param endpoint : endpoint of the api
+     * @return a validated string response
+     * @throws Exception
+     */
     private String getResponseFromApiCall(String endpoint) throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
