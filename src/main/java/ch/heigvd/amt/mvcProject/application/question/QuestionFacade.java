@@ -1,5 +1,7 @@
 package ch.heigvd.amt.mvcProject.application.question;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
+import ch.heigvd.amt.mvcProject.ApiFailException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
@@ -10,12 +12,13 @@ import ch.heigvd.amt.mvcProject.application.user.UserFacade;
 import ch.heigvd.amt.mvcProject.application.user.UserQuery;
 import ch.heigvd.amt.mvcProject.application.user.UsersDTO;
 import ch.heigvd.amt.mvcProject.application.user.exceptions.UserFailedException;
-import ch.heigvd.amt.mvcProject.domain.comment.Comment;
 import ch.heigvd.amt.mvcProject.domain.question.IQuestionRepository;
 import ch.heigvd.amt.mvcProject.domain.question.Question;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
+import javax.inject.Inject;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,11 +38,16 @@ public class QuestionFacade {
 
     private CommentFacade commentFacade;
 
+    private APIUtils apiUtils;
 
-    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, CommentFacade commentFacade) {
+    public QuestionFacade() {
+    }
+
+    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, CommentFacade commentFacade, APIUtils utils) {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
         this.commentFacade = commentFacade;
+        this.apiUtils = utils;
     }
 
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command)
@@ -72,8 +80,25 @@ public class QuestionFacade {
                     .userId(submittedQuestion.getUserId())
                     .build();
 
+            // Add event to the gamification server
+            apiUtils.postAskedAQuestionEvent(user.getId().asString());
+
+            // Check if it's the user first question
+            QuestionQuery query = QuestionQuery.builder().userId(user.getId()).build();
+
+            QuestionsDTO res = this.getQuestions(query);
+            if (res.getQuestions().size() == 1) {
+                apiUtils.postFirstQuestionEvent(user.getId().asString());
+            }
+
             return newQuestion;
 
+        } catch (ApiFailException e) {
+            e.printStackTrace();
+            throw new QuestionFailedException("Error with gamification server");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new QuestionFailedException("Internal server error, retry later");
         } catch (Exception e) {
             throw new QuestionFailedException(e.getMessage());
         }
@@ -104,9 +129,11 @@ public class QuestionFacade {
         } else {
 
             if (query.userId != null && query.title == null) {
-                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(), new ArrayList<>());
+                return getQuestionsAsDTO(questionRepository.findByUserId(query.userId), new ArrayList<>(),
+                        new ArrayList<>());
             } else if (query.userId == null && query.title != null) {
-                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(), new ArrayList<>());
+                return getQuestionsAsDTO(questionRepository.findByTitleContaining(query.title), new ArrayList<>(),
+                        new ArrayList<>());
 
             } else {
                 throw new QuestionFailedException("Query invalid");
@@ -140,21 +167,31 @@ public class QuestionFacade {
                 if (!query.isWithDetail()) {
                     question = questionRepository.findById(query.getQuestionId())
                             .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
-                } else {
-                    question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
-                            .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
+                } else { // Open a question page
+                    try {
+                        apiUtils.postOpenAQuestion(query.userId.asString());
 
-                    answersDTO = getAnswers(question);
-                    commentsDTO = commentFacade.getComments(
-                            CommentQuery.builder()
-                                    .questionId(question.getId())
-                                    .build()
-                    ).getComments();
+                        question = questionRepository.findByIdWithAllDetails(query.getQuestionId())
+                                .orElseThrow(() -> new QuestionFailedException("The question hasn't been found"));
 
+                        answersDTO = getAnswers(question);
+                        commentsDTO = commentFacade.getComments(
+                                CommentQuery.builder()
+                                        .questionId(question.getId())
+                                        .build()
+                        ).getComments();
+                    } catch (ApiFailException e) {
+                        e.printStackTrace();
+                        throw new QuestionFailedException("Error with gamification server");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new QuestionFailedException("Internal server error, retry later");
+                    } catch (Exception e) {
+                        throw new QuestionFailedException(e.getMessage());
+                    }
                 }
 
                 questionFound = getQuestionAsDTO(question, answersDTO, commentsDTO);
-
 
             } else {
                 throw new QuestionFailedException("Query invalid");
@@ -259,11 +296,13 @@ public class QuestionFacade {
 
     /**
      * Vote on a question
-     * @param userId : id of the user voting
+     *
+     * @param userId     : id of the user voting
      * @param questionId : id of the question being voted
-     * @param vote : value that is being done (upvote / downvote)
+     * @param vote       : value that is being done (upvote / downvote)
      */
-    public void vote(UserId userId, QuestionId questionId, int vote) throws QuestionFailedException, UserFailedException {
+    public void vote(UserId userId, QuestionId questionId, int vote)
+            throws QuestionFailedException, UserFailedException {
 
         checkIfUserExists(userId);
 
@@ -278,6 +317,7 @@ public class QuestionFacade {
 
     /**
      * Checks if the given user id is linked to an actual user
+     *
      * @param userId : id of the user we want to search
      * @throws QuestionFailedException if the user doesn't exist
      * @throws UserFailedException

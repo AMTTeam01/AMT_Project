@@ -49,4 +49,5 @@ services:
 
 networks:
   help2000:
+    name: "amt"
     driver: "bridge"
