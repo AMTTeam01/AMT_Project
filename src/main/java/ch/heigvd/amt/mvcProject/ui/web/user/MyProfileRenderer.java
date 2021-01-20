@@ -2,9 +2,8 @@ package ch.heigvd.amt.mvcProject.ui.web.user;
 
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeFacade;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeQuery;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.ProfileFacade;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTOJSON;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
@@ -57,6 +56,7 @@ public class MyProfileRenderer extends HttpServlet {
         QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
 
         QuestionsDTO questionsDTO = null;
+        UsersProfileDTOJSON.UserProfileDTOJSON userProfileDTO = null;
         try {
             questionsDTO = questionFacade.getQuestions(query);
         } catch (QuestionFailedException e) {
@@ -64,7 +64,7 @@ public class MyProfileRenderer extends HttpServlet {
         }
 
         try {
-            profileFacade.getProfile(currentUser.getUserId());
+            userProfileDTO = profileFacade.getProfile(currentUser.getUserId());
         } catch (Exception e) {
             e.printStackTrace();
         }

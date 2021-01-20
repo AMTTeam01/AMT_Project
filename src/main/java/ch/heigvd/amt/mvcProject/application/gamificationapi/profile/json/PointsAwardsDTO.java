@@ -1,4 +1,4 @@
-package ch.heigvd.amt.mvcProject.application.gamificationapi.profile;
+package ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

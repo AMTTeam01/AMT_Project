@@ -1,7 +1,7 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.UsersProfileDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTOJSON;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -15,6 +15,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -76,15 +78,21 @@ public class APIUtils {
      * @throws Exception
      */
     public ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        BadgesDTO.BadgeDTO[] badges = mapper.readValue(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
+        Gson gson = new Gson();
+        BadgesDTO.BadgeDTO[] badges = gson.fromJson(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
         return new ArrayList<>(Arrays.asList(badges));
     }
 
-    public UsersProfileDTO.UserProfileDTO getProfil(UserId id) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        UsersProfileDTO.UserProfileDTO profile = mapper.readValue(getProfileAPI(id), UsersProfileDTO.UserProfileDTO.class);
-        return profile;
+    /**
+     * Get a profile of an user
+     * @param id id of the user
+     * @return the profile of the user
+     * @throws Exception
+     */
+    public UsersProfileDTOJSON.UserProfileDTOJSON getProfile(UserId id) throws Exception {
+        Gson gson = new Gson();
+        String profileAPI = getProfileApiCall(id);
+        return gson.fromJson(profileAPI, UsersProfileDTOJSON.UserProfileDTOJSON.class);
     }
 
     /**
@@ -215,7 +223,7 @@ public class APIUtils {
         return "";
     }
 
-    private String getProfileAPI(UserId id) throws Exception {
+    private String getProfileApiCall(UserId id) throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }

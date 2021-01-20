@@ -1,8 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.gamificationapi.badge;
 
 import ch.heigvd.amt.mvcProject.APIUtils;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.BadgesAwardDTO;
-import ch.heigvd.amt.mvcProject.domain.user.UserId;
 
 import java.util.ArrayList;
 

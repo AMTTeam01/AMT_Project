@@ -1,6 +1,5 @@
-package ch.heigvd.amt.mvcProject.application.gamificationapi.profile;
+package ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json;
 
-import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

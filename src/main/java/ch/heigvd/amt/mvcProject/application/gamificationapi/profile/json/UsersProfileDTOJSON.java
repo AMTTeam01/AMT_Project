@@ -1,6 +1,5 @@
-package ch.heigvd.amt.mvcProject.application.gamificationapi.profile;
+package ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json;
 
-import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,11 +11,11 @@ import java.util.List;
 @Builder
 @Getter
 @EqualsAndHashCode
-public class UsersProfileDTO {
+public class UsersProfileDTOJSON {
     @Builder
     @Getter
     @EqualsAndHashCode
-    public static class UserProfileDTO {
+    public static class UserProfileDTOJSON {
         private String id;
         private ArrayList<BadgesAmountDTO.BadgeAmountDTO> badgesAmount;
         private ArrayList<PointscalesAmountDTO.PointscaleAmountDTO> pointScalesAmount;
@@ -25,5 +24,5 @@ public class UsersProfileDTO {
     }
 
     @Singular
-    private List<UserProfileDTO> userProfileDTOS;
+    private List<UserProfileDTOJSON> userProfileDTOS;
 }
