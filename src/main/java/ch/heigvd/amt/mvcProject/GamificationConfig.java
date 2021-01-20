@@ -2,9 +2,12 @@ package ch.heigvd.amt.mvcProject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
+@Named("GamificationConfig")
 public class GamificationConfig {
 
     @Inject

@@ -38,16 +38,16 @@ public class QuestionFacade {
 
     private CommentFacade commentFacade;
 
-    @Inject
     private APIUtils apiUtils;
 
     public QuestionFacade() {
     }
 
-    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, CommentFacade commentFacade) {
+    public QuestionFacade(IQuestionRepository questionRepository, UserFacade userFacade, CommentFacade commentFacade, APIUtils utils) {
         this.questionRepository = questionRepository;
         this.userFacade = userFacade;
         this.commentFacade = commentFacade;
+        this.apiUtils = utils;
     }
 
     public QuestionsDTO.QuestionDTO addQuestion(QuestionCommand command)

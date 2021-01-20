@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -32,9 +33,11 @@ import java.util.TimeZone;
  * Utils for the gamification API service
  */
 @ApplicationScoped
+@Named("APIUtils")
 public class APIUtils {
 
     @Inject
+    @Named("GamificationConfig")
     private GamificationConfig gamificationConfig;
 
     private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().build();
