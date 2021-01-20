@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Builder
@@ -17,7 +18,7 @@ public class BadgesAwardDTO {
     @EqualsAndHashCode
     public static class BadgeAwardDTO{
         private String reason;
-        private String timestamp;
+        private Timestamp timestamp;
         private String path;
     }
 

@@ -42,8 +42,8 @@
                                 <!-- TODO: Bind with badge retrieved -->
                                 <c:forEach var="badge" items="${goldBadges}">
                                     <jsp:include page="fragments/badge_item.jsp">
-                                        <jsp:param name="name" value="${badge.name}"/>
-                                        <jsp:param name="date" value="${badge.date}"/>
+                                        <jsp:param name="name" value="${badge.reason}"/>
+                                        <jsp:param name="date" value="${badge.timestamp}" />
                                     </jsp:include>
                                 </c:forEach>
                             </ul>
@@ -54,8 +54,8 @@
                                 <!-- TODO: Bind with badge retrieved -->
                                 <c:forEach var="badge" items="${silverBadges}">
                                     <jsp:include page="fragments/badge_item.jsp">
-                                        <jsp:param name="name" value="${badge.name}"/>
-                                        <jsp:param name="date" value="${badge.date}"/>
+                                        <jsp:param name="name" value="${badge.reason}"/>
+                                        <jsp:param name="date" value="${badge.timestamp}"/>
                                     </jsp:include>
                                 </c:forEach>
                             </ul>
@@ -66,8 +66,8 @@
                                 <!-- TODO: Bind with badge retrieved -->
                                 <c:forEach var="badge" items="${bronzeBadges}">
                                     <jsp:include page="fragments/badge_item.jsp">
-                                        <jsp:param name="name" value="${badge.name}"/>
-                                        <jsp:param name="date" value="${badge.date}"/>
+                                        <jsp:param name="name" value="${badge.reason}"/>
+                                        <jsp:param name="date"  value="${badge.timestamp}"/>
                                     </jsp:include>
                                 </c:forEach>
                             </ul>
