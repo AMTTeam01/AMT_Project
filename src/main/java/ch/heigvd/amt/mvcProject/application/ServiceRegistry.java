@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.authentication.AuthenticationFacade;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFacade;
@@ -21,6 +22,10 @@ import javax.inject.Named;
  */
 @ApplicationScoped
 public class ServiceRegistry {
+
+    @Inject
+    @Named("APIUtils")
+    APIUtils apiUtils;
 
     // Users
     @Inject
@@ -47,7 +52,6 @@ public class ServiceRegistry {
     ICommentRepository commentRepository;
     private CommentFacade commentFacade;
 
-
     public ServiceRegistry() {
     }
 
@@ -56,7 +60,7 @@ public class ServiceRegistry {
         authenticationFacade = new AuthenticationFacade(userRepository);
         userFacade = new UserFacade(userRepository);
         commentFacade = new CommentFacade(commentRepository, userFacade);
-        questionFacade = new QuestionFacade(questionRepository, userFacade, commentFacade);
+        questionFacade = new QuestionFacade(questionRepository, userFacade, commentFacade, apiUtils);
         answerFacade = new AnswerFacade(answerRepository, userFacade, questionFacade, commentFacade);
     }
 

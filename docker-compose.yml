@@ -5,12 +5,21 @@ services:
   web:
     image: ghcr.io/amtteamheig/amt_project:latest
     container_name: 'help2000_webapp_container'
+    networks:
+      - help2000
     ports:
       - "9080:9080"
     depends_on:
       - db
     expose:
       - '9080'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9080" ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 
   # Database
   db:
@@ -23,11 +32,22 @@ services:
       MYSQL_USER: 'dbDevHelp2000'
       MYSQL_PASSWORD: 'devpass'
       MYSQL_ROOT_PASSWORD: 'devpa$$'
+    networks:
+      - help2000
     ports:
       # <Port exposed> : < MySQL Port running inside container>
-      - '3306:3306'
+      - '3307:3306'
     expose:
-      # Opens port 3306 on the container
+      # Opens port 3307 on the container
       - '3306'
     volumes:
       - ./docker/database/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+networks:
+  help2000:
+    name: "amt"
+    driver: "bridge"
