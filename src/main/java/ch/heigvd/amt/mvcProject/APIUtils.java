@@ -4,6 +4,7 @@ import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTOJSON;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -92,7 +93,17 @@ public class APIUtils {
     public UsersProfileDTOJSON.UserProfileDTOJSON getProfile(UserId id) throws Exception {
         Gson gson = new Gson();
         String profileAPI = getProfileApiCall(id);
-        return gson.fromJson(profileAPI, UsersProfileDTOJSON.UserProfileDTOJSON.class);
+        if(!profileAPI.isEmpty()) {
+            return gson.fromJson(profileAPI, UsersProfileDTOJSON.UserProfileDTOJSON.class);
+        } else {
+            return UsersProfileDTOJSON.UserProfileDTOJSON.builder()
+                    .badgesAmount(new ArrayList<>())
+                    .badgesAwards(new ArrayList<>())
+                    .pointsAwards(new ArrayList<>())
+                    .pointScalesAmount(new ArrayList<>())
+                    .id(id.asString())
+                    .build();
+        }
     }
 
     /**
@@ -243,8 +254,8 @@ public class APIUtils {
                     if (DEBUG) System.out.println("The API Key is missing.");
                     throw new Exception("The API Key is missing.");
                 case 404:
-                    if (DEBUG) System.out.println("User is not found");
-                    throw new Exception("User is not found");
+                    if (DEBUG) System.out.println("Profile of Gamification API : User is not found");
+                    return "";
                 default:
                     if (DEBUG)
                         System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
