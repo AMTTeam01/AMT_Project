@@ -1,10 +1,9 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTOJSON;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTO;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -90,13 +89,13 @@ public class APIUtils {
      * @return the profile of the user
      * @throws Exception
      */
-    public UsersProfileDTOJSON.UserProfileDTOJSON getProfile(UserId id) throws Exception {
+    public UsersProfileDTO.UserProfileDTO getProfile(UserId id) throws Exception {
         Gson gson = new Gson();
         String profileAPI = getProfileApiCall(id);
         if(!profileAPI.isEmpty()) {
-            return gson.fromJson(profileAPI, UsersProfileDTOJSON.UserProfileDTOJSON.class);
+            return gson.fromJson(profileAPI, UsersProfileDTO.UserProfileDTO.class);
         } else {
-            return UsersProfileDTOJSON.UserProfileDTOJSON.builder()
+            return UsersProfileDTO.UserProfileDTO.builder()
                     .badgesAmount(new ArrayList<>())
                     .badgesAwards(new ArrayList<>())
                     .pointsAwards(new ArrayList<>())
@@ -234,6 +233,39 @@ public class APIUtils {
         return "";
     }
 
+    public String doGetRequestWithString(String endpoint) throws ApiFailException, IOException {
+        if (gamificationConfig.getApiKey().isEmpty()) {
+            throw new ApiFailException("This application is not registered.");
+        }
+
+        HttpGet request = makeGetRequest(endpoint, new ArrayList<>());
+
+        HttpResponse response = HTTP_CLIENT.execute(request);
+
+        if (response != null) {
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200:
+                    return getJsonFromResponse(response).toString();
+                case 401:
+                    if (DEBUG) System.out.println("The API Key is missing.");
+                    throw new ApiFailException("The API Key is missing.");
+                default:
+                    if (DEBUG) System.out.println("Unknown status code : " + response.getStatusLine()
+                            .getStatusCode() + "\n" + getJsonFromResponse(response).toString());
+                    throw new ApiFailException("Unknown status code : " + response.getStatusLine().getStatusCode());
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * Get the profile of an user
+     *
+     * @param id
+     * @return a JSON Object string
+     * @throws Exception
+     */
     private String getProfileApiCall(UserId id) throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");

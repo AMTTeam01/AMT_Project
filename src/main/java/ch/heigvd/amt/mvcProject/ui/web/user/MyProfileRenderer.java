@@ -3,10 +3,9 @@ package ch.heigvd.amt.mvcProject.ui.web.user;
 import ch.heigvd.amt.mvcProject.application.ServiceRegistry;
 import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgeFacade;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.ProfileFacade;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.BadgesAwardDTO;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTOJSON;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.BadgesAwardWithBadgeDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileWithBadgeDTO;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFacade;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionQuery;
@@ -21,9 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 @WebServlet(name = "MyProfileServlet", urlPatterns = "/my_profile")
 public class MyProfileRenderer extends HttpServlet {
@@ -33,6 +30,11 @@ public class MyProfileRenderer extends HttpServlet {
     private QuestionFacade questionFacade;
     private ProfileFacade profileFacade;
     private BadgeFacade badgeFacade;
+
+    // List of the names of the badges
+    private String BRONZE_NAME = "Bronze";
+    private String SILVER_NAME = "Silver";
+    private String GOLD_NAME = "Gold";
 
     /**
      * Init servlet
@@ -65,7 +67,7 @@ public class MyProfileRenderer extends HttpServlet {
         QuestionQuery query = QuestionQuery.builder().userId(currentUser.getUserId()).build();
 
         QuestionsDTO questionsDTO = null;
-        UsersProfileDTOJSON.UserProfileDTOJSON userProfileDTO = null;
+        UsersProfileWithBadgeDTO.UserProfileWithBadgeDTO userProfileDTO = null;
 
         try {
             questionsDTO = questionFacade.getQuestions(query);
@@ -79,24 +81,21 @@ public class MyProfileRenderer extends HttpServlet {
             e.printStackTrace();
         }
 
-        HashMap<String, ArrayList<BadgesAwardDTO.BadgeAwardDTO>> sets = new HashMap<>();
+        HashMap<String, ArrayList<BadgesAwardWithBadgeDTO.BadgeAwardWithBadgeDTO>> sets = new HashMap<>();
 
-        for(BadgesAwardDTO.BadgeAwardDTO badgeAwardDTO : userProfileDTO.getBadgesAwards()) {
-            if(!sets.containsKey(badgeAwardDTO.getPath())) {
-                sets.put(badgeAwardDTO.getPath(), new ArrayList<>());
+        for(BadgesAwardWithBadgeDTO.BadgeAwardWithBadgeDTO badgeAwardDTO : userProfileDTO.getBadgesAwards()) {
+
+            if(!sets.containsKey(badgeAwardDTO.getBadgeDTO().getName())) {
+                sets.put(badgeAwardDTO.getBadgeDTO().getName(), new ArrayList<>());
             }
 
-            sets.get(badgeAwardDTO.getPath()).add(badgeAwardDTO);
+            sets.get(badgeAwardDTO.getBadgeDTO().getName()).add(badgeAwardDTO);
         }
 
-        String bronzePath = "/badges/1";
-        String silverPath = "/badges/2";
-        String goldPath = "/badges/3";
-
         request.setAttribute("questions", questionsDTO);
-        request.setAttribute("bronzeBadges", sets.get(bronzePath) == null ? new ArrayList<>() : sets.get(bronzePath));
-        request.setAttribute("silverBadges", sets.get(silverPath) == null ? new ArrayList<>() : sets.get(silverPath));
-        request.setAttribute("goldBadges", sets.get(goldPath) == null ? new ArrayList<>() : sets.get(goldPath));
+        request.setAttribute("bronzeBadges", sets.get(BRONZE_NAME) == null ? new ArrayList<>() : sets.get(BRONZE_NAME));
+        request.setAttribute("silverBadges", sets.get(SILVER_NAME) == null ? new ArrayList<>() : sets.get(SILVER_NAME));
+        request.setAttribute("goldBadges", sets.get(GOLD_NAME) == null ? new ArrayList<>() : sets.get(GOLD_NAME));
 
         request.getRequestDispatcher("/WEB-INF/views/myprofile.jsp").forward(request, response);
     }

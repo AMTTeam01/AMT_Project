@@ -11,18 +11,18 @@ import java.util.List;
 @Builder
 @Getter
 @EqualsAndHashCode
-public class UsersProfileDTOJSON {
+public class UsersProfileWithBadgeDTO {
     @Builder
     @Getter
     @EqualsAndHashCode
-    public static class UserProfileDTOJSON {
+    public static class UserProfileWithBadgeDTO {
         private String id;
         private ArrayList<BadgesAmountDTO.BadgeAmountDTO> badgesAmount;
         private ArrayList<PointscalesAmountDTO.PointscaleAmountDTO> pointScalesAmount;
-        private ArrayList<BadgesAwardDTO.BadgeAwardDTO> badgesAwards;
+        private ArrayList<BadgesAwardWithBadgeDTO.BadgeAwardWithBadgeDTO> badgesAwards;
         private ArrayList<PointsAwardsDTO.PointAwardDTO> pointsAwards;
     }
 
     @Singular
-    private List<UserProfileDTOJSON> userProfileDTOS;
+    private List<UserProfileWithBadgeDTO> userProfileDTOS;
 }
