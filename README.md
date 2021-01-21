@@ -5,16 +5,20 @@
 - Sign up / login
 - Create question
 - Comment/Answer
-- Upvote questions
 - Browse and filter questions
-- My profile view
+- My profile view and edit
 
 ## Features not working
 
-- Edit profile works, but no checks on if the user is already taken, new password does not work
-- JMeter load tests missing a bunch
+- JMeter load tests are missing
+- Upvote and down vote
+- Add tags to a question
 
 ## Get Started
+
+This project is dependant to our [REST API project](https://github.com/amtteamheig/amt_project_api). Before launging this project, run the REST API first and retreive the API key after running the `populate-api.sh` and past the key in the file `src/main/resources/META-INF/microprofile-config.properties` under the propertie `apikey`.
+
+Don't forget to set the correct link to the API, `localhost` if you're running with `mvn liberty:dev` or `gamification-container` if you're using docker. You can set this value in the file`src/main/resources/META-INF/microprofile-config.properties` .
 
 To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker container.
 
@@ -79,3 +83,4 @@ src/
 
 ## Downloading the package
 The package can be downloaded from the organisation's packages, since the organisation is private you need to ask for privileges to one of the administrators. Then you can run this command with docker to get the container : `docker pull ghcr.io/amtteamheig/amt_project:latest`
+
