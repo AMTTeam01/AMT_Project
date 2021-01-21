@@ -10,7 +10,7 @@ Alongside, a gamification API will interact with the **Help2000** interface in o
 
 ### Sign up / login
 
-The user can sign up and then login to have a **help2000** profile. After a profile has been created, it can be accessed on the profile page. The user will be able to change its personal data.
+The user can sign up and then login to have a **Help2000** profile. After a profile has been created, it can be accessed on the profile page. The user will be able to change its personal data.
  
 ### Questions
 
@@ -24,11 +24,12 @@ The user can also browse and filter questions. A question can be opened by simpl
 
 The gamification API will give our users the ability to gain badges and points. A user can see its badges on the profile page. The leaderboard page shows the top 10 users based on their total points in a certain category.
 
-## Features not working
+## Features not working & Issues
 
 - JMeter load tests are missing
 - Upvote and down vote
 - Add tags to a question
+- Connectivity issue between the API and Help2000 : some requests (randomly) sent by the web-app aren't received by the API but are send by the web-app (checked with Wireshark). There is no error from Open Liberty, but the server is waiting in an endless loop for an answer.
 
 ## Get Started
 
@@ -42,7 +43,11 @@ To get started and launch the database and the web app, run the command `./run-a
 
 ### API Access
 
-To access the gamification API, we have the class ```APIUtils.java```. This class enables a direct access to the API's endpoint. In order to be able to use those endpoints our application has to be registered and with an access token. This token is then taken to authenticate the application from an environnement variable.
+To access the gamification API, we have the class ```APIUtils.java```. This class enables a direct access to the API's endpoint. In order to be able to use those endpoints our application has to be registered and with an access token. This token is then taken to authenticate the application from an environnement variable*. 
+
+We use the apache HttpClient library to access the api's endpoints and gson for deserializing the api's responses.
+
+*If you want to launch the docker web-app you need to go to the ```microprofile-config.properties``` and uncomment the address to ```gamification-container``` and comment the one with ```localhost```.
 
 ## Access to the database
 
