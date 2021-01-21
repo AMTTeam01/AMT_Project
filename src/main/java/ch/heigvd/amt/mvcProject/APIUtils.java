@@ -1,7 +1,8 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
-import ch.heigvd.amt.mvcProject.application.gamificationapi.pointScale.PointScaleDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTO;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -13,6 +14,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+
+import com.google.gson.Gson;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -70,12 +73,31 @@ public class APIUtils {
      * @throws Exception
      */
     public ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        BadgesDTO.BadgeDTO[] badges = mapper.readValue(getResponseFromApiCall(
-                "/badges"),
-                BadgesDTO.BadgeDTO[].class
-        );
+        Gson gson = new Gson();
+        BadgesDTO.BadgeDTO[] badges = gson.fromJson(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
         return new ArrayList<>(Arrays.asList(badges));
+    }
+
+    /**
+     * Get a profile of an user
+     * @param id id of the user
+     * @return the profile of the user
+     * @throws Exception
+     */
+    public UsersProfileDTO.UserProfileDTO getProfile(UserId id) throws Exception {
+        Gson gson = new Gson();
+        String profileAPI = getProfileApiCall(id);
+        if(!profileAPI.isEmpty()) {
+            return gson.fromJson(profileAPI, UsersProfileDTO.UserProfileDTO.class);
+        } else {
+            return UsersProfileDTO.UserProfileDTO.builder()
+                    .badgesAmount(new ArrayList<>())
+                    .badgesAwards(new ArrayList<>())
+                    .pointsAwards(new ArrayList<>())
+                    .pointScalesAmount(new ArrayList<>())
+                    .id(id.asString())
+                    .build();
+        }
     }
 
     /**
@@ -224,6 +246,72 @@ public class APIUtils {
         return "";
     }
 
+    public String doGetRequestWithString(String endpoint) throws ApiFailException, IOException {
+        if (gamificationConfig.getApiKey().isEmpty()) {
+            throw new ApiFailException("This application is not registered.");
+        }
+
+        HttpGet request = makeGetRequest(endpoint, new ArrayList<>());
+
+        HttpResponse response = HTTP_CLIENT.execute(request);
+
+        if (response != null) {
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200:
+                    return getJsonFromResponse(response).toString();
+                case 401:
+                    if (DEBUG) System.out.println("The API Key is missing.");
+                    throw new ApiFailException("The API Key is missing.");
+                default:
+                    if (DEBUG) System.out.println("Unknown status code : " + response.getStatusLine()
+                            .getStatusCode() + "\n" + getJsonFromResponse(response).toString());
+                    throw new ApiFailException("Unknown status code : " + response.getStatusLine().getStatusCode());
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * Get the profile of an user
+     *
+     * @param id
+     * @return a JSON Object string
+     * @throws Exception
+     */
+    private String getProfileApiCall(UserId id) throws Exception {
+        if (gamificationConfig.getApiKey().isEmpty()) {
+            throw new Exception("This application is not registered.");
+        }
+
+        // Make get request with no parameters
+        HttpGet request = makeGetRequest("/users/" + id.asString(), new ArrayList<>());
+
+        // Get response
+        HttpResponse response = HTTP_CLIENT.execute(request);
+
+        if (response != null) {
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200:
+                    if (DEBUG) System.out.println("Successfully loaded the profile of the userId " + id.toString());
+                    return getJsonFromResponse(response).toString();
+                case 401:
+                    if (DEBUG) System.out.println("The API Key is missing.");
+                    throw new Exception("The API Key is missing.");
+                case 404:
+                    if (DEBUG) System.out.println("Profile of Gamification API : User is not found");
+                    return "";
+                default:
+                    if (DEBUG)
+                        System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
+                    throw new Exception("Unknown status code : " + response.getStatusLine().getStatusCode());
+            }
+        }
+
+        // No response from the api
+        return "";
+    }
+
     /**
      * Get a response from the api
      * @param endpoint : endpoint of the api
@@ -236,7 +324,7 @@ public class APIUtils {
         }
 
         // Make get request with no parameters
-        HttpGet request = makeGetRequest(endpoint, new ArrayList<>());
+        HttpGet request = makeGetRequest("/badges/" + id, new ArrayList<>());
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -244,8 +332,8 @@ public class APIUtils {
         if (response != null) {
             switch (response.getStatusLine().getStatusCode()) {
                 case 200:
-                    if (DEBUG) System.out.println("Successfully loaded objects from the endpoint " + endpoint);
-                    return getJsonFromResponse(response);
+                    if (DEBUG) System.out.println("Successfully loaded one badge.");
+                    return getJsonFromResponse(response).toString();
                 case 401:
                     if (DEBUG) System.out.println("The API Key is missing.");
                     throw new Exception("The API Key is missing.");

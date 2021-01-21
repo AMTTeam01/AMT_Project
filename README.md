@@ -16,7 +16,11 @@
 
 ## Get Started
 
-To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker container.
+1. Launch the second project https://github.com/amtteamheig/amt_project_api
+2. Launch the script `populate-api.sh`
+3. Change the value inside the file `microprofile-config.properties`, inside the directory `ressrouces/META-INF`
+with the new API-Key displayed at the end of the script
+4. To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker container.
 
 ## Access to the database
 
