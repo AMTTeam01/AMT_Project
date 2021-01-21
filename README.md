@@ -38,6 +38,12 @@ Don't forget to set the correct link to the API, `localhost` if you're running w
 
 To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker container.
 
+## Implementation
+
+### API Access
+
+To access the gamification API, we have the class ```APIUtils.java```. This class enables a direct access to the API's endpoint. In order to be able to use those endpoints our application has to be registered and with an access token. This token is then taken to authenticate the application from an environnement variable.
+
 ## Access to the database
 
 To get access to the database, you need to follow those steps : 
