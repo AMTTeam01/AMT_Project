@@ -1,6 +1,7 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.pointScale.PointScaleDTO;
 import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTO;
 import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,7 +75,7 @@ public class APIUtils {
      */
     public ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
         Gson gson = new Gson();
-        BadgesDTO.BadgeDTO[] badges = gson.fromJson(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
+        BadgesDTO.BadgeDTO[] badges = gson.fromJson(getResponseFromApiCall("/badges"), BadgesDTO.BadgeDTO[].class);
         return new ArrayList<>(Arrays.asList(badges));
     }
 
@@ -181,11 +182,9 @@ public class APIUtils {
      * @throws Exception
      */
     public List<PointScaleDTO> getTop10UserPointScales() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        PointScaleDTO[] userPointDTOS = mapper.readValue(getResponseFromApiCall(
-                "/leaderboards/pointScales/10"),
-                PointScaleDTO[].class
-        );
+        Gson gson = new Gson();
+        PointScaleDTO[] userPointDTOS = gson.fromJson(getResponseFromApiCall(
+                "/leaderboards/pointScales/10"), PointScaleDTO[].class);
         return new ArrayList<>(Arrays.asList(userPointDTOS));
     }
 
@@ -246,30 +245,8 @@ public class APIUtils {
         return "";
     }
 
-    public String doGetRequestWithString(String endpoint) throws ApiFailException, IOException {
-        if (gamificationConfig.getApiKey().isEmpty()) {
-            throw new ApiFailException("This application is not registered.");
-        }
-
-        HttpGet request = makeGetRequest(endpoint, new ArrayList<>());
-
-        HttpResponse response = HTTP_CLIENT.execute(request);
-
-        if (response != null) {
-            switch (response.getStatusLine().getStatusCode()) {
-                case 200:
-                    return getJsonFromResponse(response).toString();
-                case 401:
-                    if (DEBUG) System.out.println("The API Key is missing.");
-                    throw new ApiFailException("The API Key is missing.");
-                default:
-                    if (DEBUG) System.out.println("Unknown status code : " + response.getStatusLine()
-                            .getStatusCode() + "\n" + getJsonFromResponse(response).toString());
-                    throw new ApiFailException("Unknown status code : " + response.getStatusLine().getStatusCode());
-            }
-        }
-
-        return "";
+    public String doGetRequestWithString(String endpoint) throws Exception {
+        return getResponseFromApiCall(endpoint);
     }
 
     /**
@@ -324,7 +301,7 @@ public class APIUtils {
         }
 
         // Make get request with no parameters
-        HttpGet request = makeGetRequest("/badges/" + id, new ArrayList<>());
+        HttpGet request = makeGetRequest(endpoint, new ArrayList<>());
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -332,7 +309,7 @@ public class APIUtils {
         if (response != null) {
             switch (response.getStatusLine().getStatusCode()) {
                 case 200:
-                    if (DEBUG) System.out.println("Successfully loaded one badge.");
+                    if (DEBUG) System.out.println("Successfully loaded the response.");
                     return getJsonFromResponse(response).toString();
                 case 401:
                     if (DEBUG) System.out.println("The API Key is missing.");
