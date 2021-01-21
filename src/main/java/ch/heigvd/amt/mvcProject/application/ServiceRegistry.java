@@ -66,7 +66,7 @@ public class ServiceRegistry {
         userFacade = new UserFacade(userRepository);
         commentFacade = new CommentFacade(commentRepository, userFacade);
         questionFacade = new QuestionFacade(questionRepository, userFacade, commentFacade, apiUtils);
-        answerFacade = new AnswerFacade(answerRepository, userFacade, questionFacade, commentFacade);
+        answerFacade = new AnswerFacade(answerRepository, userFacade, questionFacade, commentFacade, apiUtils);
         badgeFacade = new BadgeFacade(apiUtils);
         profileFacade = new ProfileFacade(apiUtils);
     }
