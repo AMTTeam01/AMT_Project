@@ -32,11 +32,11 @@ The gamification API will give our users the ability to gain badges and points. 
 
 ## Get Started
 
-This project is dependant to our [REST API project](https://github.com/amtteamheig/amt_project_api). Before launging this project, run the REST API first and retreive the API key after running the `populate-api.sh` and past the key in the file `src/main/resources/META-INF/microprofile-config.properties` under the propertie `apikey`.
+This project is dependant to our [REST API project](https://github.com/amtteamheig/amt_project_api). Before launching this project, run the REST API following the guidelines in the README and retreive the API key after running the `populate-api.sh` script. Once you have the key, put it in the file `src/main/resources/META-INF/microprofile-config.properties` under the variable `apikey`.
 
 Don't forget to set the correct link to the API, `localhost` if you're running with `mvn liberty:dev` or `gamification-container` if you're using docker. You can set this value in the file`src/main/resources/META-INF/microprofile-config.properties` .
 
-To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker container.
+To get started and launch the database and the web app, run the command `./run-app.sh`. This will start both entities in seperate docker containers.
 
 ## Access to the database
 
@@ -55,7 +55,7 @@ To get access to the database, you need to follow those steps :
 ## How to automate the docker deployment
 
 - Build the image with the script `build-image.sh`
-- You can access to the site at the port `http://localhost:9000/home`
+- You can access to the at `http://localhost:9000/home`
 
 ## Package structure
 
