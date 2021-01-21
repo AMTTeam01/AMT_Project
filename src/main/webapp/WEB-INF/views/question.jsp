@@ -14,11 +14,6 @@
     </c:forEach>
     <h1>${question.title}</h1>
     <div class="row mt-5 mb-5" id="question">
-        <jsp:include page="fragments/vote.jsp">
-            <jsp:param name="votes" value="${question.votes}"/>
-            <jsp:param name="servlet" value="q_vote"/>
-            <jsp:param name="extras" value="id=${question.id.asString()}"/>
-        </jsp:include>
         <div class="col-10" id="question_description">
             <p class="justify-content-between">${question.description}</p>
         </div>

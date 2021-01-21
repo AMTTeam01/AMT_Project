@@ -3,23 +3,58 @@
 .my_profile {
   margin-left: 20px;
   margin-right: 20px;
+
   .txt-username,
-  .txt-email{
+  .txt-email {
     text-align: center;
   }
-  .txt-username{
+
+  .txt-username {
     font-size: 34px;
     font-weight: bold;
     color: $main-color;
   }
-  .my-questions{
-    .title{
-      color: $main-color;
-      font-size: 20px;
+
+  .title {
+    color: $main-color;
+    font-size: 20px;
+  }
+
+
+
+  .badge-container{
+    .right-border{
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .gold{
+      color: #ffd700;
+    }
+
+    .silver{
+      color: #c0c0c0;
+    }
+
+    .bronze{
+      color: #cd7f32;
+    }
+
+    .badge-h-divider{
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .item{
+      background-color: transparent;
+    }
+
+    // remove first child border
+    .list-group-flush li:first-child {
+      border-top: none;
     }
   }
+
   .fragment-profile {
     padding: 20px;
     background-color: $body-lighter-color;
   }
+
 }

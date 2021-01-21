@@ -41,15 +41,15 @@ public class AnswerFacade {
 
     private CommentFacade commentFacade;
 
-    @Inject
     private APIUtils apiUtils;
 
     public AnswerFacade(IAnswerRepository answerRepository, UserFacade userFacade, QuestionFacade questionFacade,
-                        CommentFacade commentFacade) {
+                        CommentFacade commentFacade, APIUtils apiUtils) {
         this.answerRepository = answerRepository;
         this.userFacade = userFacade;
         this.questionFacade = questionFacade;
         this.commentFacade = commentFacade;
+        this.apiUtils = apiUtils;
     }
 
     public AnswerFacade() {

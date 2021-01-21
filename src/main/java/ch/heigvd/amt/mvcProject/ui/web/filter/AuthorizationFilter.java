@@ -68,6 +68,8 @@ public class AuthorizationFilter implements Filter {
             return true;
         if (URI.equals("/")) // Home page
             return true;
+        if (URI.startsWith("/leaderboard"))
+            return true;
         return false;
     }
 }
