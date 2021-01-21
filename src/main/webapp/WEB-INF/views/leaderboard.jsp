@@ -7,7 +7,7 @@
         <div>
             <!-- For each point scale we display the top 10 -->
             <c:forEach var="pointscale" items="${pointscales}" varStatus="loop">
-                <div class="row header">
+                <div class="row header mt-4">
                     <div class="col-1 "></div>
                     <div class="col font-weight-bold">Username</div>
                     <div class="col font-weight-bold">Total points</div>
