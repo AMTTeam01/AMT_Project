@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "codeceptjs run --steps",
+    "test": "codeceptjs run --steps --verbose",
     "test:ci": "export HEADLESS=true && codeceptjs run --steps"
   },
   "keywords": [],

@@ -35,13 +35,6 @@ public class NewQuestionRequestHandler extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        //TODO : commit on user tags or change to prepared ones
-        //format tags : split by commas, to lower case, remove all spaces
-        List<String> tags = Arrays.asList(req.getParameter("txt_tags")
-                .toLowerCase()
-                .replaceAll("\\s+", "")
-                .split("[,]", 0));
-
         CurrentUserDTO currentUserDTO = (CurrentUserDTO) req.getSession().getAttribute("currentUser");
 
         QuestionCommand command = QuestionCommand.builder()
@@ -49,7 +42,7 @@ public class NewQuestionRequestHandler extends HttpServlet {
                 .description(req.getParameter("txt_description"))
                 .creationDate(new Date())
                 .userId(currentUserDTO.getUserId())
-                .tags(tags)
+                .tags(new ArrayList<>())
                 .build();
 
         try {

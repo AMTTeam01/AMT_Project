@@ -6,6 +6,7 @@ import ch.heigvd.amt.mvcProject.application.answer.AnswerFacade;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerQuery;
 import ch.heigvd.amt.mvcProject.application.answer.AnswersDTO;
+import ch.heigvd.amt.mvcProject.application.authentication.CurrentUserDTO;
 import ch.heigvd.amt.mvcProject.application.comment.CommentFailedException;
 import ch.heigvd.amt.mvcProject.application.question.*;
 import ch.heigvd.amt.mvcProject.domain.question.QuestionId;
@@ -40,11 +41,11 @@ public class QuestionRenderer extends HttpServlet {
         request.setAttribute("errors", errors);
         request.getSession().removeAttribute("errors");
 
-
+        CurrentUserDTO currentUser = (CurrentUserDTO) request.getSession().getAttribute("currentUser");
 
         //build a question command with attribute id in URL
         QuestionId id = new QuestionId(request.getParameter("id"));
-        QuestionQuery query = QuestionQuery.builder().questionId(id).withDetail(true).build();
+        QuestionQuery query = QuestionQuery.builder().questionId(id).withDetail(true).userId(currentUser.getUserId()).build();
         QuestionsDTO.QuestionDTO questionDTO = null;
 
         //check if question ID exists. If not, come back to browsing

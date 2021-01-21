@@ -1,5 +1,6 @@
 package ch.heigvd.amt.mvcProject.application.comment;
 
+import ch.heigvd.amt.mvcProject.APIUtils;
 import ch.heigvd.amt.mvcProject.application.answer.AnswerFailedException;
 import ch.heigvd.amt.mvcProject.application.question.QuestionFailedException;
 import ch.heigvd.amt.mvcProject.application.user.UserFacade;

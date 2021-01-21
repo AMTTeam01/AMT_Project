@@ -24,6 +24,9 @@
                 <li class="nav-item nav-item-cell">
                     <a class="nav-link" href="${pageContext.request.contextPath}/new_question"><i class="fas fa-question"></i> New question</a>
                 </li>
+                <li class="nav-item nav-item-cell">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/leaderboard"><i class="fas fa-trophy"></i> Leaderboard</a>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <c:choose>

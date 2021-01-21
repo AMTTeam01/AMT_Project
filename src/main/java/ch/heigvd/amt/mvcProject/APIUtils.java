@@ -1,6 +1,9 @@
 package ch.heigvd.amt.mvcProject;
 
 import ch.heigvd.amt.mvcProject.application.gamificationapi.badge.BadgesDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.pointScale.PointScaleDTO;
+import ch.heigvd.amt.mvcProject.application.gamificationapi.profile.json.UsersProfileDTO;
+import ch.heigvd.amt.mvcProject.domain.user.UserId;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -12,7 +15,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,10 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**
@@ -48,7 +49,6 @@ public class APIUtils {
     private static final String EVENT_POST_QUESTION = "questionPosted";
     private static final String EVENT_POST_FIRST_QUESTION = "firstPost";
     private static final String EVENT_POST_OPEN_QUESTION = "openAQuestion";
-
     private static final String EVENT_POPULAR_COMMENT_QUESTION = "popularCommentOrQuestion";
 
     //TODO: Not used yet, need to defined in the api
@@ -74,9 +74,31 @@ public class APIUtils {
      * @throws Exception
      */
     public ArrayList<BadgesDTO.BadgeDTO> getBadges() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        BadgesDTO.BadgeDTO[] badges = mapper.readValue(getBadgesApiCall(), BadgesDTO.BadgeDTO[].class);
+        Gson gson = new Gson();
+        BadgesDTO.BadgeDTO[] badges = gson.fromJson(getResponseFromApiCall("/badges"), BadgesDTO.BadgeDTO[].class);
         return new ArrayList<>(Arrays.asList(badges));
+    }
+
+    /**
+     * Get a profile of an user
+     * @param id id of the user
+     * @return the profile of the user
+     * @throws Exception
+     */
+    public UsersProfileDTO.UserProfileDTO getProfile(UserId id) throws Exception {
+        Gson gson = new Gson();
+        String profileAPI = getProfileApiCall(id);
+        if(!profileAPI.isEmpty()) {
+            return gson.fromJson(profileAPI, UsersProfileDTO.UserProfileDTO.class);
+        } else {
+            return UsersProfileDTO.UserProfileDTO.builder()
+                    .badgesAmount(new ArrayList<>())
+                    .badgesAwards(new ArrayList<>())
+                    .pointsAwards(new ArrayList<>())
+                    .pointScalesAmount(new ArrayList<>())
+                    .id(id.asString())
+                    .build();
+        }
     }
 
     /**
@@ -88,7 +110,10 @@ public class APIUtils {
      */
     public BadgesDTO.BadgeDTO getBadge(long id) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(getBadgeApiCall(id), BadgesDTO.BadgeDTO.class);
+        return mapper.readValue(getResponseFromApiCall(
+                "/badges/" + id),
+                BadgesDTO.BadgeDTO.class
+        );
     }
 
     /**
@@ -151,6 +176,19 @@ public class APIUtils {
     }
 
     /**
+     * Get all users from the API
+     *
+     * @return list of all users
+     * @throws Exception
+     */
+    public List<PointScaleDTO> getTop10UserPointScales() throws Exception {
+        Gson gson = new Gson();
+        PointScaleDTO[] userPointDTOS = gson.fromJson(getResponseFromApiCall(
+                "/leaderboards/pointScales/10"), PointScaleDTO[].class);
+        return new ArrayList<>(Arrays.asList(userPointDTOS));
+    }
+
+    /**
      * Post an event to the api
      *
      * @param type   : type of the event
@@ -207,13 +245,24 @@ public class APIUtils {
         return "";
     }
 
-    private String getBadgesApiCall() throws Exception {
+    public String doGetRequestWithString(String endpoint) throws Exception {
+        return getResponseFromApiCall(endpoint);
+    }
+
+    /**
+     * Get the profile of an user
+     *
+     * @param id
+     * @return a JSON Object string
+     * @throws Exception
+     */
+    private String getProfileApiCall(UserId id) throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }
 
         // Make get request with no parameters
-        HttpGet request = makeGetRequest("/badges", new ArrayList<>());
+        HttpGet request = makeGetRequest("/users/" + id.asString(), new ArrayList<>());
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -221,11 +270,14 @@ public class APIUtils {
         if (response != null) {
             switch (response.getStatusLine().getStatusCode()) {
                 case 200:
-                    if (DEBUG) System.out.println("Successfully loaded all badges.");
+                    if (DEBUG) System.out.println("Successfully loaded the profile of the userId " + id.toString());
                     return getJsonFromResponse(response).toString();
                 case 401:
                     if (DEBUG) System.out.println("The API Key is missing.");
                     throw new Exception("The API Key is missing.");
+                case 404:
+                    if (DEBUG) System.out.println("Profile of Gamification API : User is not found");
+                    return "";
                 default:
                     if (DEBUG)
                         System.out.println("Unknown status code : " + response.getStatusLine().getStatusCode());
@@ -237,13 +289,19 @@ public class APIUtils {
         return "";
     }
 
-    private String getBadgeApiCall(long id) throws Exception {
+    /**
+     * Get a response from the api
+     * @param endpoint : endpoint of the api
+     * @return a validated string response
+     * @throws Exception
+     */
+    private String getResponseFromApiCall(String endpoint) throws Exception {
         if (gamificationConfig.getApiKey().isEmpty()) {
             throw new Exception("This application is not registered.");
         }
 
         // Make get request with no parameters
-        HttpGet request = makeGetRequest("/badges/" + id, new ArrayList<>());
+        HttpGet request = makeGetRequest(endpoint, new ArrayList<>());
 
         // Get response
         HttpResponse response = HTTP_CLIENT.execute(request);
@@ -251,7 +309,7 @@ public class APIUtils {
         if (response != null) {
             switch (response.getStatusLine().getStatusCode()) {
                 case 200:
-                    if (DEBUG) System.out.println("Successfully loaded one badge.");
+                    if (DEBUG) System.out.println("Successfully loaded the response.");
                     return getJsonFromResponse(response).toString();
                 case 401:
                     if (DEBUG) System.out.println("The API Key is missing.");
@@ -356,11 +414,12 @@ public class APIUtils {
      * @return json object from response
      * @throws IOException
      */
-    private static JSONObject getJsonFromResponse(HttpResponse response) throws IOException {
+    private static String getJsonFromResponse(HttpResponse response) throws IOException {
         StringWriter writer = new StringWriter();
         String encoding = StandardCharsets.UTF_8.name();
         IOUtils.copy(response.getEntity().getContent(), writer, encoding);
-        return new JSONObject(writer.toString());
+        System.out.println(writer.toString());
+        return writer.toString();
     }
 
     /**
