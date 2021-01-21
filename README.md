@@ -1,18 +1,34 @@
-# AMT_Project
+# AMT : Help2000
 
-## Features working
+## Introduction
 
-- Sign up / login
-- Create question
-- Comment/Answer
-- Upvote questions
-- Browse and filter questions
-- My profile view
+For the AMT Course at HEIG-VD, we will be developping a stackoverflow-copycat called **Help2000**. This website will enable its users to browse, post questions and comments.
+
+Alongside, a gamification API will interact with the **Help2000** interface in order to challenge users to try and win badges and points.
+
+## Features
+
+### Sign up / login
+
+The user can sign up and then login to have a **help2000** profile. After a profile has been created, it can be accessed on the profile page. The user will be able to change its personal data.
+ 
+### Questions
+
+A logged in user can create a question with a title and a description. Other users will then be able to comment on the questions and give answers as well.
+
+### Feed
+
+The user can also browse and filter questions. A question can be opened by simply clicking on it.
+
+### Gamification enhancement 
+
+The gamification API will give our users the ability to gain badges and points. A user can see its badges on the profile page. The leaderboard page shows the top 10 users based on their total points in a certain category.
 
 ## Features not working
 
 - Edit profile works, but no checks on if the user is already taken, new password does not work
 - JMeter load tests missing a bunch
+- Upvotes gave up on life
 
 ## Get Started
 
